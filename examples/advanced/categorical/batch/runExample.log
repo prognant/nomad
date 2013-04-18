@@ -1,0 +1,58 @@
+Warning: {
+	Model use is disabled for direction type. Direction types ORTHO N+1 QUAD are changed to ORTHO N+1 NEG.
+	Warning: {
+		Model use is disabled for problem with categorical variables.
+	} 
+
+NOMAD - version 3.6.0 - www.gerad.ca/nomad
+
+Copyright (C) 2001-2013 {
+	Mark A. Abramson     - The Boeing Company
+	Charles Audet        - Ecole Polytechnique de Montreal
+	Gilles Couture       - Ecole Polytechnique de Montreal
+	John E. Dennis, Jr.  - Rice University
+	Sebastien Le Digabel - Ecole Polytechnique de Montreal
+	Christophe Tribes    - Ecole Polytechnique de Montreal
+} 
+
+Funded in part by AFOSR and Exxon Mobil.
+
+License   : '$NOMAD_HOME/src/lgpl.txt'
+User guide: '$NOMAD_HOME/doc/user_guide.pdf'
+Examples  : '$NOMAD_HOME/examples'
+Tools     : '$NOMAD_HOME/tools'
+
+Please report bugs to nomad@gerad.ca
+
+	MADS run {
+
+		BBE	(	SOL	)	OBJ
+
+		  1	(	0 100.0000000000 1 100.0000000000 )	159.6460000000
+		  3	(	0 100.0000000000 1 1100.0000000000 )	150.4540000000
+		  4	(	0 100.0000000000 1 4100.0000000000 )	111.1390000000
+		  6	(	0 100.0000000000 1 6100.0000000000 )	85.9544000000
+		 14	(	0 100.0000000000 1 8100.0000000000 )	64.1532000000
+		 24	(	0 100.0000000000 1 9100.0000000000 )	55.8612000000
+		 32	(	0 1100.0000000000 1 8100.0000000000 )	52.5820000000
+		 47	(	0 1600.0000000000 1 8100.0000000000 )	47.6450000000
+		 55	(	0 1850.0000000000 1 8100.0000000000 )	45.3357000000
+		 72	(	0 1853.4179687500 1 8111.7187500000 )	45.2005000000
+		 75	(	0 1833.8867187500 1 8132.2265625000 )	45.1958000000
+		 76	(	0 1775.2929687500 1 8193.7500000000 )	45.1911000000
+		 80	(	0 1900.2929687500 1 8068.7500000000 )	45.1620000000
+		 89	(	0 1923.7304687500 1 8058.9843750000 )	45.0398000000
+		 98	(	0 1899.3164062500 1 8083.3984375000 )	45.0394000000
+		105	(	0 1892.4804687500 1 8106.8359375000 )	44.8919000000
+		114	(	0 1923.7304687500 1 8075.5859375000 )	44.8905000000
+		137	(	0 1922.9360580444 1 8076.6168594360 )	44.8884000000
+		146	(	0 1922.1416473389 1 8077.6477813721 )	44.8863000000
+		162	(	0 1922.1003413200 1 8077.7624607086 )	44.8856000000
+		169	(	0 1922.0590353012 1 8077.8771400452 )	44.8850000000
+		171	(	0 1921.9208717346 1 8078.0774116516 )	44.8844000000
+		294	(	0 1921.9208717346 1 8078.0774116516 )	44.8844000000
+
+	} end of run (mesh index limits (+/- 50))
+
+	blackbox evaluations    : 294
+	best feasible solution  : ( 0 1921.920872 1 8078.077412 ) h=0 f=44.8844

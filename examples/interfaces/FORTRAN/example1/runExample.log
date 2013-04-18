@@ -1,0 +1,16 @@
+
+MADS run {
+
+	BBE	OBJ
+
+	  2	275.2281000000
+	  3	0.0000000000
+	 11	-1.5000000000
+	 55	-3.0000000000
+	100	-3.0000000000
+
+} end of run (max number of blackbox evaluations)
+
+blackbox evaluations    : 100
+best infeasible solution: ( 0.55 1.8 2.6 -1.5 -3 ) h=0.6525 f=-3
+best feasible solution  : ( 1.65 1.8 1.95 -1.5 -3 ) h=0 f=-3
