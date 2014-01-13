@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -247,7 +247,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	const std::string              old_his_file = _p.get_history_file();
 	bool                                old_uce = _p.get_user_calls_enabled();
 	bool                                old_epe = _p.get_extended_poll_enabled();
-	const std::vector<NOMAD::bb_output_type> old_bbot = _p.get_bb_output_type();   
+	const std::vector<NOMAD::bb_output_type> old_bbot = _p.get_bb_output_type();  
 
 	
 	
@@ -294,7 +294,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	// DISPLAY_STATS:
 	{
 		if ( has_sgte )
-			_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (VNS--surrogate)" );   
+			_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (VNS--surrogate)" );  
  		else 
 		{
 			std::list<std::string>                 ds    = old_ds;
@@ -325,7 +325,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 			++it;
 		}
 		sf.push_back ( " (VNS)" );
-		_p.set_STATS_FILE ( old_stats_file_name , sf ); 
+		_p.set_STATS_FILE ( old_stats_file_name , sf );  
 	}
 	
 	
@@ -596,7 +596,6 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 			new_infeas_inc = bi;
 			// check the PEB constraints: if we have a new best infeasible
 			// incumbent from another infeasible incumbent
-			// ( active_barrier.check_PEB_constraints() ):
 			if ( _p.get_barrier_type() == NOMAD::PEB_P ) 
 				( ( _p.get_opt_only_sgte() ) ? sgte_barrier : true_barrier ).check_PEB_constraints ( *new_infeas_inc , display_degree==NOMAD::FULL_DISPLAY );
 		}		

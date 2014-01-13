@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -283,7 +283,7 @@ void NOMAD::LH_Search::values_for_var_i ( int                          p        
 
     // both bounds exist:
     if ( lb_def && ub_def )
-     v = lb + ( i + NOMAD::RNG::rand()/NOMAD::D_INT_MAX ) * w;  
+     v = lb + ( i + NOMAD::RNG::rand()/NOMAD::D_INT_MAX ) * w; 
 
     // one of the bounds does not exist:
     else {
@@ -304,7 +304,7 @@ void NOMAD::LH_Search::values_for_var_i ( int                          p        
 	
 	// there are no bounds: mapping [0;1] --> ]-INF;+INF[
 	else
-	  v = (NOMAD::RNG::rand()%2 ? -1.0 : 1.0) * delta_m_max * 10 *
+	  v = (NOMAD::RNG::rand()%2 ? -1.0 : 1.0) * delta_m_max * 10 * 
 	    sqrt ( - log ( NOMAD::DEFAULT_EPSILON +
 			   ( i + NOMAD::RNG::rand()/NOMAD::D_INT_MAX ) * w ) ); 
       }

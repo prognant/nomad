@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -373,7 +373,7 @@ bool NOMAD::strings_to_direction_type ( const std::list<std::string> & ls ,
 		++it;
 		if ( it == end )
 		{
-			dt = NOMAD::ORTHO_NP1_NEG;  // Default for ORTHO
+			dt = NOMAD::ORTHO_NP1_QUAD;  // Default for ORTHO
 			return true;
 		}
 		if ( *it == "1" )
@@ -398,7 +398,7 @@ bool NOMAD::strings_to_direction_type ( const std::list<std::string> & ls ,
 			++it;
 			if (it==end)
 			{
-				dt = NOMAD::ORTHO_NP1_NEG;   // Default for ORTHO N+1
+				dt = NOMAD::ORTHO_NP1_QUAD;   // Default for ORTHO N+1
 				return true;
 			}
 			s = *it;
@@ -860,13 +860,6 @@ int NOMAD::get_rank(double ** M,
 /*           M is given as first argument and becomes U         */
 /*           W is given as a size-n vector                      */
 /*           V is given, not V'                                 */
-/*                                                              */
-/*--------------------------------------------------------------*/
-/* 2011-08-16 -- BUG REPORT (found by Etienne Duclos)           */
-/*                                                              */
-/* the -Wall option gave a warning when nm was not initialized  */
-/*                                                              */
-/* Solution: initialize nm = 0                                  */
 /*                                                              */
 /*--------------------------------------------------------------*/
 bool NOMAD::SVD_decomposition ( std::string & error_msg ,

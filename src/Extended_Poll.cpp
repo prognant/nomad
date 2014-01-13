@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -528,8 +528,6 @@ void NOMAD::Extended_Poll::set_descent_parameters
 		descent_p.set_STOP_IF_FEASIBLE ( _p.get_stop_if_feasible() );
 		descent_p.set_MODEL_EVAL_SORT ( _p.get_model_eval_sort());
 		descent_p.set_MODEL_SEARCH (_p.has_model_search());
-		
-		
 	}
 	
 	descent_p.set_DIRECTION_TYPE    ( _p.get_direction_types()    );
@@ -602,9 +600,8 @@ void NOMAD::Extended_Poll::set_descent_parameters
 	else
 		descent_p.set_DISPLAY_DEGREE ( _p.out().get_poll_dd());
 	
-	// Stats style modified
 	if ( has_sgte )
-		descent_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );   
+		descent_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );    
 	else 
 	{
 		std::list<std::string> ds = _p.get_display_stats();
@@ -648,18 +645,6 @@ void NOMAD::Extended_Poll::set_descent_parameters
 		int ell = NOMAD::Mesh::get_mesh_index();
 		descent_p.set_INITIAL_MESH_INDEX ( ell );
 		descent_p.set_MAX_MESH_INDEX     ( ell );
-		
-		/*---------------------------------------------------------------------*/
-		/* 2011-07-14 -- BUG REPORT (found by Dominique Orban)                 */
-		/*                                                                     */
-		/* The initial mesh size in desent_p does not always correspond        */
-		/* to the one in _p; This causes the following test in Parameters.cpp  */
-		/* ( bool fail = ( *new_s != *_extern_signature ); ) to be false,      */
-		/* which throws an exception.                                          */
-		/*                                                                     */
-		/* Solution: add the following instruction                             */
-		/*                                                                     */
-		/*---------------------------------------------------------------------*/
 		descent_p.set_INITIAL_MESH_SIZE ( mesh.get_initial_mesh_size() , false );
 		
 				

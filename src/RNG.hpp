@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2010  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -77,7 +77,7 @@ namespace NOMAD {
 			/param b Upper bound  -- \b IN.
 		    /return A double in the interval [a,b].
 		 */		
-		static double rand(double a, double b){return a+((b-a)*rand())/UINT32_MAX;}
+		static double rand(double a, double b){return a+((b-a)*NOMAD::RNG::rand())/UINT32_MAX;}
 		
 	private:
 		static uint32_t x,y,z;  ///< Default parameter value for the random seed generator.

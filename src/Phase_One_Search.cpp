@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -145,7 +145,6 @@ void NOMAD::Phase_One_Search::search ( NOMAD::Mads              & mads          
 			   true ,    // remove_solution_file = true
 			   false    ); // remove_stats_file    = false
 	
-
 	// modify evaluator:
 	NOMAD::Evaluator           * old_ev = ev_control.get_evaluator();
 	NOMAD::Phase_One_Evaluator * p1ev   = new NOMAD::Phase_One_Evaluator ( _p , *old_ev );

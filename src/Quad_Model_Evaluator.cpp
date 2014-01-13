@@ -34,12 +34,12 @@
 /*  You can find information on the NOMAD software at www.gerad.ca/nomad               */
 /*-------------------------------------------------------------------------------------*/
 /**
- \file   Quad_Model_Evaluator.cpp
- \brief  NOMAD::Evaluator subclass for quadratic model optimization (implementation)
- \author Sebastien Le Digabel
- \date   2010-08-31
- \see    Quad_Mopel_Evaluator.hpp
- */
+  \file   Quad_Model_Evaluator.cpp
+  \brief  NOMAD::Evaluator subclass for quadratic model optimization (implementation)
+  \author Sebastien Le Digabel
+  \date   2010-08-31
+  \see    Quad_Mopel_Evaluator.hpp
+*/
 #include "Quad_Model_Evaluator.hpp"
 
 /*-----------------------------*/
@@ -47,14 +47,14 @@
 /*-----------------------------*/
 NOMAD::Quad_Model_Evaluator::Quad_Model_Evaluator
 ( const NOMAD::Parameters & p     ,
- const NOMAD::Quad_Model & model   )
-:  
-_n               ( model.get_n()         ) ,
-_nm1             ( _n-1                  ) , 
-_m               ( p.get_bb_nb_outputs() ) ,
-_x               ( NULL                  ) ,
-_alpha           ( NULL                  ) ,
-_model_ready     ( model.check()         )
+  const NOMAD::Quad_Model & model   )
+  :  
+	_n               ( model.get_n()         ) ,
+    _nm1             ( _n-1                  ) , 
+    _m               ( p.get_bb_nb_outputs() ) ,
+    _x               ( NULL                  ) ,
+    _alpha           ( NULL                  ) ,
+    _model_ready     ( model.check()         )
 {
 	if ( _model_ready )
 	{
@@ -116,13 +116,13 @@ _model_ready     ( model.check()         )
 /*-----------------------------*/
 NOMAD::Quad_Model_Evaluator::~Quad_Model_Evaluator ( void )
 {
-	if ( _model_ready ) {
-		for ( int i = 0 ; i < _m ; ++i )
-			if ( _alpha[i] )
-				delete [] _alpha[i];
-		delete [] _alpha;
-		delete [] _x;
-	}
+  if ( _model_ready ) {
+    for ( int i = 0 ; i < _m ; ++i )
+      if ( _alpha[i] )
+	delete [] _alpha[i];
+    delete [] _alpha;
+    delete [] _x;
+  }
 }
 
 /*------------------------------------------------------------------------*/
@@ -134,8 +134,8 @@ NOMAD::Quad_Model_Evaluator::~Quad_Model_Evaluator ( void )
 /*------------------------------------------------------------------------*/
 bool NOMAD::Quad_Model_Evaluator::eval_x
 ( NOMAD::Eval_Point   & x          ,
- const NOMAD::Double & h_max      ,
- bool                & count_eval   ) const
+  const NOMAD::Double & h_max      ,
+  bool                & count_eval   ) const
 {
 	
 	count_eval=false;
@@ -148,8 +148,7 @@ bool NOMAD::Quad_Model_Evaluator::eval_x
 	for ( i = 0 ; i < _n ; ++i )
 		_x[i] = x[i].value() / 1000.0;
 	
-	for ( int oi = 0 ; oi < _m ; ++oi ) 
-	{
+	for ( int oi = 0 ; oi < _m ; ++oi ) {
 		
 		alpha = _alpha[oi];
 		
@@ -166,7 +165,6 @@ bool NOMAD::Quad_Model_Evaluator::eval_x
 			for ( i = 0 ; i < _nm1 ; ++i )
 				for ( j = i+1 ; j < _n ; ++j )
 					z += alpha[++k] * _x[i] * _x[j];
-			
 			
 			x.set_bb_output ( oi , z );
 		}
@@ -206,9 +204,9 @@ bool NOMAD::Quad_Model_Evaluator::evalGrad_x
 	
 	if ( !alpha )
 		return false;
-	
+		
 	int i , j , k ;
-	
+		
 	for ( k = 1 ; k <= _n ; ++k )
 		g[k-1] = alpha[k] + alpha[k+_n] * _x[k-1];
 	

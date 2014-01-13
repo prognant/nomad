@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -377,7 +377,7 @@ void NOMAD::Quad_Model_Search::search ( NOMAD::Mads              & mads         
 						if ( optimization_ok ) 
 						{
 							
-							// get solution(s), project to mesh, and create trial points:
+							// get solution(s), project to mesh (+round for integers), and create trial points:
 							// ----------------------------------------------------------
 							if ( xf.is_defined() )
 								create_trial_point ( ev_control     ,
@@ -526,29 +526,61 @@ void NOMAD::Quad_Model_Search::create_trial_point
 	// model center:
 	NOMAD::Point center = model.get_center();
 	
+	// model search point:
+	int n = x.size();
+	
 	// projection to mesh:
-	if ( proj_to_mesh ) {
+	if ( proj_to_mesh )
+	{
 		x.project_to_mesh ( center , delta_m , _p.get_lb() , _p.get_ub() );
 		if ( display_degree == NOMAD::FULL_DISPLAY )
 			out << "candidate (after projection) : ( "
 			<< x << " )" << std::endl;
 	}
+
+	 
+	// Round for integer and binary variables:	
+	for (int i=0;i<n;i++)
+	{
+		if ( _p.get_bb_input_type()[i] == NOMAD::INTEGER )
+		{
+			if ( x[i] >= 0.0 )
+				x[i] = x[i].NOMAD::Double::ceil();
+			else
+				x[i] = x[i].NOMAD::Double::floor();
+			if ( display_degree == NOMAD::FULL_DISPLAY )
+				out << "candidate (after rounding integer) : ( "
+				<< x << " )" << std::endl;
+		}
+		// binary variables: 
+		else if ( _p.get_bb_input_type()[i] == NOMAD::BINARY ) 
+		{
+			if ( x[i]!= 0.0 )
+				x[i] = 1.0;
+			if ( display_degree == NOMAD::FULL_DISPLAY )
+				out << "candidate (after rounding binary) : ( "
+				<< x << " )" << std::endl;
+		}
+	}
+	
+	
 	
 	// compare x and center:
-	if ( x == center ) {
+	if ( x == center ) 
+	{
 		if ( display_degree == NOMAD::FULL_DISPLAY )
 			out << "candidate rejected (candidate==model center)" << std::endl;
 		return;
 	}
 	
-	// model search point:
-	int n = x.size();
+
 	
 	NOMAD::Eval_Point * tk = new NOMAD::Eval_Point;
 	
 	// if the search is optimistic, a direction is computed (this
 	// will be used in case of success in the speculative search):
-	if ( _p.get_model_search_optimistic() ) {
+	if ( _p.get_model_search_optimistic() )
+	{
 		NOMAD::Direction dir ( n , 0.0 , NOMAD::MODEL_SEARCH_DIR );
 		dir.Point::operator = ( x - center );
 		tk->set_direction  ( &dir );
@@ -573,7 +605,8 @@ void NOMAD::Quad_Model_Search::create_trial_point
 	model.eval_hf ( NOMAD::Point (n,0) , h_min , h_norm , h0 , f0 );
 	model.eval_hf ( x                  , h_min , h_norm , h1 , f1 );
 	
-	if ( display_degree == NOMAD::FULL_DISPLAY ) {
+	if ( display_degree == NOMAD::FULL_DISPLAY ) 
+	{
 #ifdef DEBUG
 		out << "model at center   : h=" << h0 << " f=" << f0 << std::endl;
 #endif
@@ -585,7 +618,8 @@ void NOMAD::Quad_Model_Search::create_trial_point
 	
 	if ( !f1.is_defined() || !h1.is_defined() )
 		accept_point = false;
-	else {
+	else
+	{
 		if ( !f0.is_defined() || !h0.is_defined() )
 			accept_point = true;
 		else
@@ -593,14 +627,16 @@ void NOMAD::Quad_Model_Search::create_trial_point
 	}
 	
 	// we check that the candidate does not correspond to another candidate:
-	if ( accept_point ) {
+	if ( accept_point ) 
+	{
 		const std::set<NOMAD::Priority_Eval_Point> & eval_lop
 		= ev_control.get_eval_lop();
 		
 		std::set<NOMAD::Priority_Eval_Point>::const_iterator it , end = eval_lop.end();
 		
 		for ( it = eval_lop.begin() ; it != end ; ++it )
-			if ( it->get_point()->NOMAD::Point::operator == ( *tk ) ) {
+			if ( it->get_point()->NOMAD::Point::operator == ( *tk ) ) 
+			{
 				accept_point = false;
 				break;
 			}
@@ -684,8 +720,8 @@ bool NOMAD::Quad_Model_Search::optimize_model
 	model_param.set_BB_OUTPUT_TYPE ( _p.get_bb_output_type() );
 	
 	// blackbox inputs:
-	model_param.set_BB_INPUT_TYPE ( _p.get_bb_input_type() );
-	
+	// Use defaults: all variables are treated as continuous (integer and binary. Categoricals disable models anyway).
+		
 	// barrier parameters:
 	model_param.set_H_MIN  ( _p.get_h_min () );
 	model_param.set_H_NORM ( _p.get_h_norm() );

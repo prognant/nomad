@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -43,6 +43,10 @@
 #ifndef __UTILS__
 #define __UTILS__
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
 #include <cctype>
 #include <vector>
 #include <set>
@@ -56,10 +60,6 @@
 #include <process.h>
 #else
 #include <unistd.h>
-#endif
-
-#ifdef USE_MPI
-#include <mpi.h>
 #endif
 
 #include "defines.hpp"
@@ -312,7 +312,6 @@ namespace NOMAD {
      \return    A boolean equal to \c true if \c s2 is in \c s1.
   */
   bool string_find ( const std::string & s1 , const std::string & s2 );
-	
 	
 	/// Search if a string matches an element in a list of string.
 	/**

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -176,27 +176,24 @@ void NOMAD::Variable_Group::get_directions ( std::list<NOMAD::Direction> & dirs 
 	
 	NOMAD::Point     new_poll_center ( nc );
 	NOMAD::Direction new_fsd , new_isd;  
-	
-
+		
 	if ( feas_success_dir.is_defined() )
 		new_fsd = NOMAD::Direction ( nc , 0.0 , feas_success_dir.get_type() );
 	
 	if ( infeas_success_dir.is_defined() )
 		new_isd = NOMAD::Direction ( nc , 0.0 , infeas_success_dir.get_type() );
-	
-
+		
 	for ( it = _var_indexes.begin() ; it != _var_indexes.end() ; ++it )
 	{
 		
 		new_poll_center[i] = poll_center[*it];
 		
-	
 		if ( feas_success_dir.is_defined() )
 			new_fsd[i] = feas_success_dir  [*it];
 		
 		if ( infeas_success_dir.is_defined() )
 			new_isd[i] = infeas_success_dir[*it];
-		
+				
 		++i;
 	}
 	

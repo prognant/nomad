@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -3737,6 +3737,7 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 				
 				if ( _initial_mesh_size[i].is_defined() )
 				{
+					_initial_mesh_size[i]=_initial_mesh_size[i].round();
 					if ( _initial_mesh_size[i] < 1.0 )
 						_initial_mesh_size[i] = 1.0;
 				}
@@ -3744,14 +3745,15 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 				{
 					
 					// default value for initial mesh size
-					// (r0.1 if there are bounds, 1.0 otherwise):
+					// (r0.1 if there are bounds + rounding to nearest integer not zero, 1.0 otherwise):
 					if ( !_lb[i].is_defined() || !_ub[i].is_defined() )
 						_initial_mesh_size[i] = 1.0;
 					else 
 					{
 						set_INITIAL_MESH_SIZE ( i , 0.1 , true );
+						_initial_mesh_size[i]=_initial_mesh_size[i].round();
 						if ( _initial_mesh_size[i] < 1.0 )
-							_initial_mesh_size[i] = 1.0;
+						   _initial_mesh_size[i] = 1.0;
 					}
 				}
 			}
@@ -4090,27 +4092,137 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 			}
 	}
 	
-	/*----------------------------*/
-	/*        variable groups     */
-	/*       (and Halton seed)    */
-	/*----------------------------*/
+	
+	/*---------------------------*/
+	/*       model parameters    */
+	/*---------------------------*/
 	{
 		
 		// disable models upon request
 		if ( _disable_models)
 		{
 			_model_params.search1 = _model_params.search2 = _model_params.eval_sort	= NOMAD::NO_MODEL;
-			
 			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+			{
+				_out << NOMAD::open_block("Warning:") 
+				<< "Model use is forcefully disabled." << std::endl			
+				<< NOMAD::close_block();
+				
 				if (has_direction_type(NOMAD::ORTHO_NP1_QUAD))
 				{	
-					set_DIRECTION_TYPE_NO_MODEL();
 					_out << NOMAD::open_block("Warning:") 
 					<< "Model use is disabled for direction type. Direction types ORTHO N+1 QUAD are changed to ORTHO N+1 NEG." << std::endl			
 					<< NOMAD::close_block();
 				}
-		}
+			}
+			set_DIRECTION_TYPE_NO_MODEL();    
 
+		}
+				
+		// disable models when requested or for more than 50 variables,
+		// for categorical variables and for surrogate optimization:
+		bool has_categorical=false;
+		for ( i = 0 ; i < _dimension ; ++i )
+		{
+			if ( !_fixed_variables[i].is_defined() && _bb_input_type[i] == NOMAD::CATEGORICAL )
+			{
+				has_categorical=true;
+				break;
+			}
+		}
+		
+		if ( _nb_free_variables >= 50 || has_categorical || _opt_only_sgte )
+		{
+			_model_params.search1 = _model_params.search2 = _model_params.eval_sort	= NOMAD::NO_MODEL;
+			set_DIRECTION_TYPE_NO_MODEL();
+			
+			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+			{
+				if ( _opt_only_sgte)
+					_out << NOMAD::open_block("Warning:") 
+					<< "Model use is disabled when setting the option OPT_ONLY_SGTE to yes." << std::endl;
+				if ( has_categorical)
+					_out << NOMAD::open_block("Warning:") 
+					<< "Model use is disabled for problem with categorical variables." << std::endl
+					<< NOMAD::close_block();
+				if ( _nb_free_variables >= 50)
+					_out << NOMAD::open_block("Warning:") 
+					<< "Model use is disabled for problem with dimension greater than 50." << std::endl
+					<< NOMAD::close_block();
+			}
+		}
+		
+		// disable PEB constraints when categorical variables are present
+		if ( has_categorical && _barrier_type == NOMAD::PEB_P)
+		{
+			
+			change_PEB_to_PB();
+			
+			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+				_out << NOMAD::open_block("Warning:") 
+				<< "PEB constraints are disabled when using categorical variables. PEB constraints have been replaced by PB constraints." << std::endl			
+				<< NOMAD::close_block();
+			
+		}
+			
+		
+		// disable model use in parallel mode:
+#ifdef USE_MPI
+		_model_params.search1 = _model_params.search2 = _model_params.eval_sort = NOMAD::NO_MODEL;
+		set_DIRECTION_TYPE_NO_MODEL(); 
+		if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+			_out << NOMAD::open_block("Warning:") 
+			<< "Model use is disabled in parallel mode." << std::endl
+			<< NOMAD::close_block();
+		
+		
+		if ((has_direction_type(NOMAD::ORTHO_NP1_QUAD) || has_direction_type(NOMAD::ORTHO_NP1_NEG)) && _asynchronous)
+		{
+			set_ASYNCHRONOUS(false);
+			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+				_out << NOMAD::open_block("Warning:") 
+				<< "Asynchronous mode is disabled in parallel mode when dynamic directions (ortho n+1) are used." << std::endl
+				<< NOMAD::close_block();
+		}
+#endif
+		
+		// other checks:
+		if ( ( _model_params.search1 == NOMAD::NO_MODEL &&
+			  _model_params.search2 != NOMAD::NO_MODEL    ) ||
+			( _model_params.search1 != NOMAD::NO_MODEL &&
+			 _model_params.search1 == _model_params.search2 ) )
+			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+									 "invalid parameter: MODEL_SEARCH (conflict with the two types of search)" );
+		
+		if ( _model_params.quad_radius_factor <= 0.0 )
+			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+									 "invalid parameter: MODEL_QUAD_RADIUS_FACTOR (must be > 0)" );
+		
+		if ( _model_params.quad_min_Y_size < 0 )
+			_model_params.quad_min_Y_size = -1;
+		else if ( _model_params.quad_min_Y_size < 2 )
+			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+									 "invalid parameter: MODEL_QUAD_MIN_Y_SIZE (must be in {'N+1',-1,2,3,...})" );
+		
+		if ( _model_params.model_np1_quad_epsilon <= 0.0  || _model_params.model_np1_quad_epsilon >= 1.0)
+			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+									 "invalid parameter: MODEL_NP1_QUAD_EPSILON (must be > 0 and < 1)" );
+		
+		if ( _model_params.quad_max_Y_size <= _nb_free_variables )
+			_model_params.quad_max_Y_size = _nb_free_variables + 1;
+		
+		if ( _model_params.search_max_trial_pts < 1 )
+			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+									 "invalid parameter: MODEL_SEARCH_MAX_TRIAL_PTS (must be >= 1)" );
+	}
+	
+	
+	/*----------------------------*/
+	/*        variable groups     */
+	/*       (and Halton seed)    */
+	/*----------------------------*/
+	{
+		
 		// reset variable groups:
 		reset_variable_groups ( _var_groups );
 		
@@ -4170,7 +4282,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 		std::set<int> vi_cbi;  // list of cont./bin./int. variables
 		std::set<int> vi_cat;  // list of categorical variables
 		
-		for ( i = 0 ; i < _dimension ; ++i ) {
+		for ( i = 0 ; i < _dimension ; ++i ) 
+		{
 			if ( !in_group[i] && !_fixed_variables[i].is_defined() ) {
 				if (  _bb_input_type[i] != NOMAD::CATEGORICAL )
 					vi_cbi.insert(i);
@@ -4180,7 +4293,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 		}
 		
 		// creation of a group for cont./bin./int. variables:
-		if ( !vi_cbi.empty() ) {
+		if ( !vi_cbi.empty() ) 
+		{
 			
 			halton_seed = -1;
 			if ( use_ortho_mads )
@@ -4196,7 +4310,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 		}
 		
 		// creation of a group for categorical variables:
-		if ( !vi_cat.empty() ) {
+		if ( !vi_cat.empty() )
+		{
 			vg = new NOMAD::Variable_Group ( vi_cat              ,
 											_direction_types    ,
 											_sec_poll_dir_types ,
@@ -4214,7 +4329,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 			_tmp_dir = _problem_dir;
 		
 		// check the directory:
-		if ( !_tmp_dir.empty() && !NOMAD::check_read_file ( _tmp_dir ) ) {
+		if ( !_tmp_dir.empty() && !NOMAD::check_read_file ( _tmp_dir ) ) 
+		{
 			std::string err = "invalid parameter: TMP_DIR: cannot access \'" + _tmp_dir + "\'";
 			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ , err );
 		}
@@ -4225,7 +4341,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	/*  (depending on the value of ADD_SEED_TO_FILE_NAMES,  */
 	/*   the seed is added the file names)                  */
 	/*------------------------------------------------------*/
-	if ( _add_seed_to_file_names ) {
+	if ( _add_seed_to_file_names ) 
+	{
 		
 		std::string s_seed = NOMAD::itos(_seed);
 		int         n_seed = static_cast<int>(s_seed.size());
@@ -4237,15 +4354,18 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	
 	// remove old history, solution, and stats files:
 	std::string old_file;
-	if ( remove_history_file && !_history_file.empty() ) {
+	if ( remove_history_file && !_history_file.empty() )
+	{
 		old_file = _problem_dir + _history_file;
 		remove ( old_file.c_str() );
 	}
-	if ( remove_stats_file && !_stats_file_name.empty() ) {
+	if ( remove_stats_file && !_stats_file_name.empty() )
+	{
 		old_file = _problem_dir + _stats_file_name;
 		remove ( old_file.c_str() );
 	}
-	if ( remove_solution_file && !_solution_file.empty() ) {
+	if ( remove_solution_file && !_solution_file.empty() )
+	{
 		old_file = _problem_dir + _solution_file;
 		remove ( old_file.c_str() );
 	}
@@ -4253,7 +4373,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	/*----------------------------*/
 	/*   opportunistic strategy   */
 	/*----------------------------*/
-	if ( !_opportunistic_eval ) {
+	if ( !_opportunistic_eval )
+	{
 		_model_params.eval_sort       = NOMAD::NO_MODEL;
 		_sgte_eval_sort               = false;
 		_opportunistic_lucky_eval     = false;
@@ -4276,23 +4397,28 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	/*----------------------------*/
 	/*         MULTI-MADS         */
 	/*----------------------------*/
-	if ( nb_obj > 1 ) {
+	if ( nb_obj > 1 )
+	{
 		
 		if ( _multi_formulation == NOMAD::UNDEFINED_FORMULATION )
 			_multi_formulation = ( _VNS_search ) ? NOMAD::DIST_L2 : NOMAD::PRODUCT;
 		
-		if ( _multi_nb_mads_runs < 0 ) {
+		if ( _multi_nb_mads_runs < 0 ) 
+		{
 			
-			if ( _multi_overall_bb_eval < 0 ) {
+			if ( _multi_overall_bb_eval < 0 ) 
+			{
 				_multi_nb_mads_runs = 30;
-				if ( !_max_bbe_decided ) {
+				if ( !_max_bbe_decided ) 
+				{
 					_max_bb_eval = 25 * _nb_free_variables;
 					
 					if ( _LH_search_p0 < 0 )
 						_LH_search_p0 = _max_bb_eval;
 				}
 			}
-			else if ( !_max_bbe_decided ) {
+			else if ( !_max_bbe_decided )
+			{
 				_max_bb_eval = static_cast<int>
 				( ceil ( sqrt ( 1.0 * _nb_free_variables * _multi_overall_bb_eval ) ) );
 				
@@ -4300,7 +4426,8 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 					_LH_search_p0 = _max_bb_eval;
 			}
 		}
-		else if ( _multi_overall_bb_eval > 0 && !_max_bbe_decided ) {     
+		else if ( _multi_overall_bb_eval > 0 && !_max_bbe_decided )
+		{     
 			_max_bb_eval = _multi_overall_bb_eval / _multi_nb_mads_runs;
 			if ( _multi_nb_mads_runs * _max_bb_eval < _multi_overall_bb_eval )
 				++_max_bb_eval;
@@ -4333,9 +4460,11 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	}
 	
 	// standard signature:
-	else {
+	else 
+	{
 		
-		if ( _std_signature ) {
+		if ( _std_signature )
+		{
 			delete new_s;
 			
 			_std_signature->reset ( _dimension          ,
@@ -4350,29 +4479,17 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 								   _periodic_variables ,
 								   _var_groups           );
 		}
-		else {
+		else 
+		{
 			_std_signature = new_s;
 			_std_signature->set_std();
 		}
 	}
-	
+	 	
 	bool has_categorical
-    = ( (_std_signature) ? _std_signature : _extern_signature )->has_categorical();
+     = ( (_std_signature) ? _std_signature : _extern_signature )->has_categorical();
 	
-	
-	// disable PEB constraints when categorical variables are present
-	if ( has_categorical && _barrier_type == NOMAD::PEB_P)
-	{
 		
-		change_PEB_to_PB();
-	
-		if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
-			_out << NOMAD::open_block("Warning:") 
-			<< "PEB constraints are disabled when using categorical variables. PEB constraints have been replaced by PB constraints." << std::endl			
-			<< NOMAD::close_block();
-
-	}
-	
 	/*----------------------------*/
 	/*              X0            */
 	/*----------------------------*/
@@ -4401,83 +4518,6 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 									 "invalid parameter: x0 and sgte cache file are the same" );
 	}
 	
-	/*---------------------------*/
-	/*       model parameters    */
-	/*---------------------------*/
-	{
-		
-		// disable models when requested or for more than 50 variables,
-		// for categorical variables, and for surrogate optimization:
-		if ( _nb_free_variables >= 50 || has_categorical || _opt_only_sgte )
-		{
-			_model_params.search1 = _model_params.search2 = _model_params.eval_sort	= NOMAD::NO_MODEL;
-
-			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
-			{
-				if ( _opt_only_sgte)
-					_out << NOMAD::open_block("Warning:") 
-					<< "Model use is disabled when setting the option OPT_ONLY_SGTE to yes." << std::endl;
-				if ( has_categorical)
-					_out << NOMAD::open_block("Warning:") 
-					<< "Model use is disabled for problem with categorical variables." << std::endl
-					<< NOMAD::close_block();
-				if ( _nb_free_variables >= 50)
-					_out << NOMAD::open_block("Warning:") 
-					<< "Model use is disabled for problem with dimension greater than 50." << std::endl
-					<< NOMAD::close_block();
-			}
-			
-		}
-		
-		
-		// disable model search in parallel mode:
-#ifdef USE_MPI
-		_model_params.search1 = _model_params.search2 = NOMAD::NO_MODEL;
-		set_DIRECTION_TYPE_NO_MODEL(); 
-		if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
-			_out << NOMAD::open_block("Warning:") 
-			<< "Model use is disabled in parallel mode." << std::endl
-			<< NOMAD::close_block();
-	
-		if ((has_direction_type(NOMAD::ORTHO_NP1_QUAD) || has_direction_type(NOMAD::ORTHO_NP1_NEG)) && _asynchronous)
-		{
-			set_ASYNCHRONOUS(false);
-			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
-				_out << NOMAD::open_block("Warning:") 
-				<< "Asynchronous mode is disabled in parallel mode when dynamic directions are used." << std::endl
-				<< NOMAD::close_block();
-		}
-#endif
-		
-		// other checks:
-		if ( ( _model_params.search1 == NOMAD::NO_MODEL &&
-			  _model_params.search2 != NOMAD::NO_MODEL    ) ||
-			( _model_params.search1 != NOMAD::NO_MODEL &&
-			 _model_params.search1 == _model_params.search2 ) )
-			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-									 "invalid parameter: MODEL_SEARCH (conflict with the two types of search)" );
-		
-		if ( _model_params.quad_radius_factor <= 0.0 )
-			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-									 "invalid parameter: MODEL_QUAD_RADIUS_FACTOR (must be > 0)" );
-		
-		if ( _model_params.quad_min_Y_size < 0 )
-			_model_params.quad_min_Y_size = -1;
-		else if ( _model_params.quad_min_Y_size < 2 )
-			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-									 "invalid parameter: MODEL_QUAD_MIN_Y_SIZE (must be in {'N+1',-1,2,3,...})" );
-		
-		if ( _model_params.model_np1_quad_epsilon <= 0.0  || _model_params.model_np1_quad_epsilon >= 1.0)
-			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-									 "invalid parameter: MODEL_NP1_QUAD_EPSILON (must be > 0 and < 1)" );
-		
-		if ( _model_params.quad_max_Y_size <= _nb_free_variables )
-			_model_params.quad_max_Y_size = _nb_free_variables + 1;
-		
-		if ( _model_params.search_max_trial_pts < 1 )
-			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-									 "invalid parameter: MODEL_SEARCH_MAX_TRIAL_PTS (must be >= 1)" );
-	}
 	
 	/*----------------------*/
 	
@@ -6314,6 +6354,7 @@ void NOMAD::Parameters::reset_PEB_changes ( void ) const
 			_bb_output_type[k] = NOMAD::PEB_P;
 }
 
+
 // change PEB to PB constraints
 void NOMAD::Parameters::change_PEB_to_PB ( void )
 {
@@ -7370,11 +7411,11 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
 	bool   chk         = false;
 	bool   display_all = false;
 	
+	// if ( NOMAD::string_find ( "ALL PARAMS PARAMETERS EVERYTHING NOMAD" , param_names ) )
 	if ( NOMAD::string_match ( "ALL", param_names) ||  NOMAD::string_match( "PARAMS", param_names ) || 
 		 NOMAD::string_match ( "PARAMETER", param_names) || NOMAD::string_match ( "PARAM", param_names) ||
 		 NOMAD::string_match ( "NOMAD" , param_names ) || NOMAD::string_match ( "EVERYTHING", param_names) )
 			display_all = true;
-	
 	
 	const char registered_key_basic[]="2N ANGLES AVG BARRIER BASIC BASIC BB_EXE BB_INPUT_TYPE BB_OUTPUT_TYPE BI-MADS BI-OBJECTIVES BIMADS \
 	BINARY BIOBJECTIVES BLACK-BOXES	BLACKBOXES BOUNDS CACHE BBEVAL CACHE_FILE CNT_EVAL CONSTRAINTS CONTINUOUS COUNT DEBUG DELTA_0 DIMENSION \

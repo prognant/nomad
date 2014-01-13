@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -66,7 +66,7 @@ NOMAD::Signature::Signature
   const NOMAD::Point                                    & scaling            ,
   const NOMAD::Point                                    & fixed_variables    ,
   const std::vector<bool>                               & periodic_variables ,
-  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups         ,   
+  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp>		& var_groups		 ,   
   const NOMAD::Display                                  & out )
   :  _mesh ( NULL  ) ,
      _std  ( false ) ,
@@ -270,7 +270,7 @@ void NOMAD::Signature::init
   const NOMAD::Point                      & scaling            ,
   const NOMAD::Point                      & fixed_variables    ,
   const std::vector<bool>                 & periodic_variables ,
-  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups )   
+  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups )  
 {
 	// reset directions:
 	_feas_success_dir.clear();
@@ -391,22 +391,18 @@ void NOMAD::Signature::init
 	
 	// variable groups:
 	reset_var_groups();
-	
-
+		
 	std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp>::iterator
     end = var_groups.end() , it;
 	bool mod=false;
 	for ( it = var_groups.begin() ; it != end ; ++it )
 	{
-		
-		
+				
 		if ( !(*it)->check ( _fixed_variables , input_types , NULL, mod ) )
 			throw NOMAD::Signature::Signature_Error ( "Signature.cpp" , __LINE__ , *this ,
 													 "NOMAD::Signature::init(): incompatible variable group" );
-			
 	}
 	
-	// If the indices in var_groups have been modified than var_groups is reconstructed to ensure proper ordering 
 	if (mod)
 	{
 		std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> tmp_var_groups;
@@ -423,7 +419,7 @@ void NOMAD::Signature::init
 	for ( it = var_groups.begin() ; it != end ; ++it )
 		_var_groups.push_back( new NOMAD::Variable_Group (**it) );
 
-
+	
 	// mesh:
 	if ( initial_mesh_size.size() != n                             ||
 		(min_mesh_size.is_defined() && min_mesh_size.size() != n) ||
@@ -520,7 +516,7 @@ bool NOMAD::Signature::is_compatible ( const NOMAD::Point & x ) const
 /*-----------------------------------------------------*/
 void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs              ,
 					NOMAD::poll_type              poll              ,
-					const NOMAD::Point          & poll_center       ,
+					const NOMAD::Point          & poll_center       ,    
 					int                           mesh_index          )
 {
 	
@@ -533,7 +529,9 @@ void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs      
 	// get delta_m (mesh size parameter):
 	int          n = get_n();
 	NOMAD::Point delta_m (n);
+	NOMAD::Point delta_p (n);
 	_mesh->get_delta_m ( delta_m , mesh_index );
+	_mesh->get_delta_p ( delta_p , mesh_index );
 	
 	
 	// Reset dir_group_index.
@@ -574,13 +572,15 @@ void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs      
 				
 				(*pd)[*it_vi] = delta_m[*it_vi] * (*it_dir)[i++];
 				
-				// integer variables:		  
+				// integer variables:
 				if ( _input_types[*it_vi] == NOMAD::INTEGER )
 				{
-					if ( (*pd)[*it_vi] >= 0.0 )
-						(*pd)[*it_vi] = ceil  ( (*pd)[*it_vi].value() );
+					if ( (*pd)[*it_vi] >= delta_p[*it_vi]/3.0 )
+						(*pd)[*it_vi] =  (*pd)[*it_vi].ceil();
+					else if ( (*pd)[*it_vi] <= -delta_p[*it_vi]/3.0 )
+						(*pd)[*it_vi] =  (*pd)[*it_vi].floor();
 					else
-						(*pd)[*it_vi] = floor ( (*pd)[*it_vi].value() );
+						(*pd)[*it_vi] =  (*pd)[*it_vi].round();
 				}
 				
 				// binary variables: 

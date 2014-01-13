@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -59,7 +59,7 @@
 // #define DEBUG 
 
 // define in order to display memory debug information:
-// #define MEMORY_DEBUG
+//#define MEMORY_DEBUG
 
 // define in order to display TGP information.
 // #define TGP_DEBUG
@@ -124,7 +124,7 @@ typedef unsigned int uint32_t;
 namespace NOMAD {
 
   /// Current version:
-  const std::string BASE_VERSION = "3.6.0";
+  const std::string BASE_VERSION = "3.6.1";
 
 #ifdef R_VERSION
   const std::string VERSION = BASE_VERSION + ".R";
@@ -227,7 +227,7 @@ namespace NOMAD {
 
   const double INF = std::numeric_limits<double>::max(); ///< Infinity
 
-  const double D_INT_MAX = UINT32_MAX; ///< The UINT32_MAX constant as a \c double  
+  const double D_INT_MAX = UINT32_MAX; ///< The UINT32_MAX constant as a \c double   
 
   // Singular Value Decomposition (SVD) constants:
   const double SVD_EPS      = 1e-13;      ///< Epsilon for SVD

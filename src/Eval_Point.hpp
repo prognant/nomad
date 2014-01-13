@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -66,7 +66,7 @@ namespace NOMAD {
     
     static int         _current_tag; ///< Current tag for all NOMAD::Eval_Point objects.
     int                _tag;         ///< Unique tag.
-	  
+	  	  
     NOMAD::Signature * _signature;   ///< Signature of the point.
 
     /**
@@ -241,8 +241,8 @@ namespace NOMAD {
     /**
        \return The tag.
     */
-    int get_tag ( void ) const { return _tag; }
-
+    int get_tag ( void ) const { return _tag; }	  
+	  
     /// Access to the objective value \c f.
     /**
        \return The objective value.
@@ -402,7 +402,7 @@ namespace NOMAD {
     /**
        \param tag The tag -- \b IN.
     */
-    void set_tag ( int tag );  
+    void set_tag ( int tag );	  
 	  
     /// Set the objective value \c f.
     /**

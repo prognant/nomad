@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -148,13 +148,6 @@ NOMAD::Mads::~Mads ( void )
   delete _cache_search;
   delete _L_curve;
 
-  /*--------------------------------------------------------------*/
-  /* 2011-08-16 -- BUG REPORT (found by Etienne Duclos)           */
-  /*                                                              */
-  /* Sometimes, _extended_poll was not deleted                    */
-  /*                                                              */
-  /* Solution: delete _extended_poll                              */
-  /*--------------------------------------------------------------*/ 
   if ( _extended_poll && !_user_ext_poll)
     delete _extended_poll;
 }
@@ -305,10 +298,10 @@ NOMAD::stop_type NOMAD::Mads::run ( void )
 
       if ( _p.get_extended_poll_enabled() && !_user_ext_poll ) 
 	  {
-		  if ( _extended_poll )
-			  delete _extended_poll;
-	
-		  _extended_poll = new NOMAD::Extended_Poll ( _p );
+
+		  if (!_extended_poll)
+			_extended_poll = new NOMAD::Extended_Poll ( _p ); // extended poll created only once with the signatures of _p  
+		  
 		  std::string error_str;	
 		  if ( !_extended_poll->set_neighbors_exe ( error_str ) )
 			  throw NOMAD::Exception ( "Mads.cpp" , __LINE__ , error_str );
@@ -1242,8 +1235,8 @@ void NOMAD::Mads::iteration ( bool                     & stop           ,
 
   // SEARCH:
   // -------
-  search ( stop , stop_reason , success , new_feas_inc , new_infeas_inc );
-
+	search ( stop , stop_reason , success , new_feas_inc , new_infeas_inc );
+	
   // POLL:
   // -----
   if ( success != NOMAD::FULL_SUCCESS )
@@ -1354,6 +1347,9 @@ void NOMAD::Mads::iteration ( bool                     & stop           ,
 						 success        ,
 						 new_feas_inc   ,
 						 new_infeas_inc   );
+	
+	
+	
   // displays:
   if ( out.get_iter_dd() == NOMAD::FULL_DISPLAY )
     out << std::endl
@@ -1432,8 +1428,9 @@ void NOMAD::Mads::poll ( bool         & stop                  ,
 			set_poll_directions ( dirs[i_pc] , i_pc , offset , *poll_center , stop , stop_reason );
 			
 			// Reduction is applied only to achieve ortho n+1
-			reducePollToNDir=dirs_have_orthomads_np1(dirs[i_pc]); 			
+			reducePollToNDir=dirs_have_orthomads_np1(dirs[i_pc]); 	
 			
+					
 			// creation of the poll trial points in the evaluator control:
 			k = 0;
 			
@@ -1901,6 +1898,7 @@ bool NOMAD::Mads::set_reduced_poll_to_n_directions(std::list<NOMAD::Direction>	&
 	}
 	const NOMAD::Display    & out = _p.out();
 	NOMAD::dd_type display_degree = out.get_poll_dd();	
+
 	if ( static_cast<int>(dirs.size())!=n-n_cat ) 
 	{
 		if (display_degree == NOMAD::FULL_DISPLAY ) 
@@ -1950,11 +1948,6 @@ int NOMAD::Mads::get_rank_from_dirs(const std::list<NOMAD::Direction> & dirs)
 /*  compute a prospect point by optimizing quadratic models of obj(s) and constraints    */
 /*  (private)                                                                            */
 /*---------------------------------------------------------------------------------------*/
-//     TODO : + try to re-use an existing quadratic model from the search
-//           + use this model for the model_eval_sort strategy
-//           + only the objective is used for the model: if the poll center is not feasible,
-//             then construct a model for h
-//           + obtain the quad_model in a separate method and conduct optimization here
 bool NOMAD::Mads::optimize_quad_model ( const NOMAD::Eval_Point           & poll_center ,
 									    const std::list<NOMAD::Direction> & dirs    ,
 										NOMAD::Point                      & prospect_point    ) 
@@ -1982,7 +1975,6 @@ bool NOMAD::Mads::optimize_quad_model ( const NOMAD::Eval_Point           & poll
 	
 	// Epsilon for quad model hypercube scaling
 	NOMAD::Double epsilon = _p.get_model_np1_quad_epsilon();
-	
 	
 #ifdef DEBUG
 	out << std::endl << NOMAD::open_block ( "Quadratic model for (n+1)th prospect point") << std::endl
@@ -2116,9 +2108,6 @@ bool NOMAD::Mads::optimize_quad_model ( const NOMAD::Eval_Point           & poll
 				// blackbox outputs:
 				model_param.set_BB_OUTPUT_TYPE ( bbot );
 				
-				// blackbox inputs:
-				model_param.set_BB_INPUT_TYPE ( _p.get_bb_input_type() );
-				
 				// barrier parameters:
 				model_param.set_H_MIN  ( _p.get_h_min () );
 				model_param.set_H_NORM ( _p.get_h_norm() );
@@ -2134,7 +2123,7 @@ bool NOMAD::Mads::optimize_quad_model ( const NOMAD::Eval_Point           & poll
 				// no model search and no model ordering:
 				model_param.set_MODEL_SEARCH        ( false );
 				model_param.set_MODEL_EVAL_SORT     ( false );
-				model_param.set_DIRECTION_TYPE (NOMAD::ORTHO_2N);   // use 2N for model search than the default Ortho n+1
+				model_param.set_DIRECTION_TYPE (NOMAD::ORTHO_2N);   // use 2N for model search rather than the default Ortho n+1
 				
 				// display:
 				model_param.set_DISPLAY_DEGREE ( NOMAD::NO_DISPLAY );
@@ -2170,7 +2159,7 @@ bool NOMAD::Mads::optimize_quad_model ( const NOMAD::Eval_Point           & poll
 				NOMAD::Mads::set_flag_p1_active      ( false );
 				
 				// bounds to optimize away from n first direction
-				// Bound are consistent with model evaluator: x in [-1000;1000] for optimziation -> x in [-1;1] for model evaluation
+				// Bound are consistent with model evaluator: x in [0;1000] for optimziation -> x in [-1;1] for model evaluation
 				NOMAD::Point lb ( n , 0.0 );
 				NOMAD::Point ub ( n ,  1000.0 );
 				model_param.set_LOWER_BOUND ( lb );
@@ -2397,7 +2386,8 @@ bool NOMAD::Mads::dirs_have_orthomads_np1( const std::list<NOMAD::Direction> & d
 {
 	std::list<NOMAD::Direction>::const_iterator it , end = dirs.end();
 	for ( it = dirs.begin() ; it != end ; ++it )
-		if ( (*it).get_type()==NOMAD::ORTHO_NP1_QUAD || (*it).get_type()==NOMAD::ORTHO_NP1_NEG)
+		if ( (*it).get_type()==NOMAD::ORTHO_NP1_QUAD || 
+			(*it).get_type()==NOMAD::ORTHO_NP1_NEG)
 			return true;
 	return false;
 }
@@ -2455,10 +2445,11 @@ void NOMAD::Mads::set_poll_trial_points (std::list<NOMAD::Direction> &dirs,
 		// equal to 1 with dir=1: the variables are set to 0 (1+1=0 in binary):
 		for (int i = 0 ; i < n ; ++i )
 			(*pt)[i] =	( bbit[i]==NOMAD::BINARY && (*dir)[i]==1.0 && (poll_center)[i]==1.0 ) ? 0.0 : (*pt)[i] = (poll_center)[i] + (*dir)[i];
-		
+
 		// we check that the new poll trial point is different than the poll center
 		// (this happens when the mesh size becomes too small):
-		if ( !stop && pt->Point::operator == ( poll_center ) ) {
+		if ( !stop && pt->Point::operator == ( poll_center ) ) 
+		{
 			delete pt;
 			if ( display_degree == NOMAD::FULL_DISPLAY )
 				out << "Mads::poll(): could not generate poll trial points: stop"
@@ -2500,7 +2491,7 @@ void NOMAD::Mads::set_poll_trial_points (std::list<NOMAD::Direction> &dirs,
 													NOMAD::Double()         ,
 													NOMAD::Double()         );
 		}
-		
+			
 		++k;
 	}
 
@@ -2613,7 +2604,8 @@ NOMAD::Direction NOMAD::Mads::get_single_dynamic_direction (const std::list<NOMA
 	}
 	
 	// New direction
-	NOMAD::Direction V( n , 0.0 ,NOMAD::DYN_ADDED,(*itDir).get_dir_group_index());
+	int dirGroupIndex=(*dirs.begin()).get_dir_group_index();
+	NOMAD::Direction V( n , 0.0 ,NOMAD::DYN_ADDED,dirGroupIndex);
 	
 	// New direction obtained by quad model optimization or negative sum of directions
 	NOMAD::Point prospect_point;
@@ -3276,147 +3268,166 @@ void NOMAD::Mads::display_pareto_front ( void ) const
 /*---------------------------------------------------------*/
 void NOMAD::Mads::display ( const NOMAD::Display & out ) const
 {
-  NOMAD::dd_type display_degree = out.get_gen_dd();
-
-  if ( !NOMAD::Slave::is_master() )
-    return;
-
-  // 0. no display:
-  // --------------
-  if ( display_degree == NOMAD::NO_DISPLAY || display_degree == NOMAD::MINIMAL_DISPLAY) {
-
-    // there may be a pareto front to write as a stats file:
-    if ( _pareto_front           &&
-	 !_pareto_front->empty() &&
-	 !_p.get_stats_file_name().empty() )
-      display_pareto_front();
-    
-    return;
-  }
-
-  // incumbents:
-  const NOMAD::Eval_Point * bf = get_best_feasible();
-  const NOMAD::Eval_Point * bi = get_best_infeasible();
-
-  // 1. detailed display:
-  // --------------------
-  if ( display_degree == NOMAD::FULL_DISPLAY ) {
-
-    // cache:
-    out << std::endl
-	<< NOMAD::open_block ( "cache" )
-	<< ( _p.get_opt_only_sgte() ?
-	     _ev_control.get_sgte_cache() : _ev_control.get_cache() )
-	<< NOMAD::close_block();
-
-    // constraints:
-    if ( _p.has_constraints() )
-      out << std::endl
-	  << NOMAD::open_block ( "constraints handling") << std::endl
-	  << get_active_barrier()
-	  << NOMAD::close_block();
-
-    // Pareto front:
-    if ( _pareto_front ) {
-      if ( _pareto_front->empty() )
-	out << std::endl << "Pareto front empty" << std::endl;
-      else
-	display_pareto_front();
-    }
-
-    // stats:
-    out << std::endl
-	<< NOMAD::open_block ( "stats" )
-	<< _stats
-	<< NOMAD::close_block();
-
-    // model stats:
-#ifdef DEBUG
-     display_model_stats ( out );
-#endif
-
-    // miscellaneous:
-    if ( !_pareto_front ) {
-      out << std::endl
-	  << NOMAD::open_block ( "miscellaneous" )
-	  << "mesh index      : min="
-	  << NOMAD::Mesh::get_min_mesh_index() << ", max="
-	  << NOMAD::Mesh::get_max_mesh_index() << ", last="
-	  << NOMAD::Mesh::get_mesh_index() << std::endl
-	  << "best feas. sol  : ";
-
-      if ( bf ) {
-	out << "( ";
-	bf->Point::display ( out , " " , -1 , -1 );
-	out << " ) h=" << bf->get_h()
-	    << " f="   << bf->get_f() << std::endl;
-      }
-      else
-	out << "none" << std::endl;
-      out << "best infeas. sol: ";
-      if ( bi ) {
-	out << "( ";
-	bi->Point::display ( out , " " , -1 , -1 );
-	out << " ) h=" << bi->get_h()
-	    << " f="   << bi->get_f() << std::endl;
-      }
-      else
-	out << "none" << std::endl;
-
-      out.close_block();
-    }
-  }
-
-  // 2. normal display:
-  // ------------------
-  else {
-
-    // blackbox evaluations:
-    out << std::endl
-	<< "blackbox evaluations    : " << _stats.get_bb_eval() << std::endl;
-      
-    // output stats:
-    if ( _stats.get_stat_sum().is_defined() )
-      out << "stat sum                : " << _stats.get_stat_sum() << std::endl;
-    if ( _stats.get_stat_avg().is_defined() )
-      out << "stat avg                : " << _stats.get_stat_avg() << std::endl;
-  
-    // Pareto front (multi-objective optimization):
-    if ( _pareto_front ) {
-      out << "number of MADS runs     : " << _stats.get_mads_runs() << std::endl;
-      if ( _pareto_front->empty() )
-	out << "Pareto front            : empty" << std::endl;
-      else
-	display_pareto_front();
-    }
-
-    // single-objective optimization (display of best solutions):
-    else {
-
-      if ( !bf && !bi )
-	out << "no solution" << std::endl;
-      else {
+	NOMAD::dd_type display_degree = out.get_gen_dd();
 	
-	if ( bi ) {
-	  out << "best infeasible solution: ( ";
-	  bi->Point::display ( out , " " , -1 , -1 );
-	  out << " ) h=" << bi->get_h()
-	      << " f="  << bi->get_f() << std::endl;
+	if ( !NOMAD::Slave::is_master() )
+		return;
+	
+	// 0. no display:
+	// --------------
+	if ( display_degree == NOMAD::NO_DISPLAY || display_degree == NOMAD::MINIMAL_DISPLAY) {
+		
+		// there may be a pareto front to write as a stats file:
+		if ( _pareto_front           &&
+			!_pareto_front->empty() &&
+			!_p.get_stats_file_name().empty() )
+			display_pareto_front();
+		
+		return;
 	}
+	
+	// incumbents:
+	const NOMAD::Eval_Point * bf = get_best_feasible();
+	const NOMAD::Eval_Point * bi = get_best_infeasible();
+	const NOMAD::Eval_Point *bimv = get_best_infeasible_min_viol();
+	
+	// save the solution file:
+	if ( bf ) 
+		_ev_control.write_solution_file ( *bf , false);
+	else if (bimv)
+		_ev_control.write_solution_file ( *bimv , true );
+	
+	
+	
+	// 1. detailed display:
+	// --------------------
+	if ( display_degree == NOMAD::FULL_DISPLAY ) 
+	{
+		
+		// cache:
+		out << std::endl
+		<< NOMAD::open_block ( "cache" )
+		<< ( _p.get_opt_only_sgte() ? _ev_control.get_sgte_cache() : _ev_control.get_cache() )
+		<< NOMAD::close_block();
+		
+		// constraints:
+		if ( _p.has_constraints() )
+			out << std::endl
+			<< NOMAD::open_block ( "constraints handling") << std::endl
+			<< get_active_barrier()
+			<< NOMAD::close_block();
+		
+		// Pareto front:
+		if ( _pareto_front )
+		{
+			if ( _pareto_front->empty() )
+				out << std::endl << "Pareto front empty" << std::endl;
+			else
+				display_pareto_front();
+		}
+		
+		// stats:
+		out << std::endl
+		<< NOMAD::open_block ( "stats" )
+		<< _stats
+		<< NOMAD::close_block();
+		
+		// model stats:
+#ifdef DEBUG
+		display_model_stats ( out );
+#endif
+		
+		// miscellaneous:
+		if ( !_pareto_front )
+		{
+			out << std::endl
+			<< NOMAD::open_block ( "miscellaneous" )
+			<< "mesh index                               : min="
+			<< NOMAD::Mesh::get_min_mesh_index() << ", max="
+			<< NOMAD::Mesh::get_max_mesh_index() << ", last="
+			<< NOMAD::Mesh::get_mesh_index() << std::endl;
 
-	out << "best feasible solution  : ";
-
-	if ( bf ) {
-	  out << "( ";
-	  bf->Point::display ( out , " " , -1 , -1 );
-	  out << " ) h=" << bf->get_h()
-	      << " f="  << bf->get_f() << std::endl;
+			if ( bimv ) 
+			{
+				out << "best infeasible solution (min. violation): ( ";
+				bimv->Point::display ( out , " " , -1 , -1 );
+				out << " ) h=" << bimv->get_h()
+				<< " f="  << bimv->get_f() << std::endl;
+			}
+			
+			out << "best feasible solution                   : ";
+			
+			if ( bf )
+			{
+				out << "( ";
+				bf->Point::display ( out , " " , -1 , -1 );
+				out << " ) h=" << bf->get_h()
+				<< " f="  << bf->get_f() << std::endl;
+			}
+			else
+				out << "no feasible solution has been found" << std::endl;
+			
+			
+			out.close_block();
+		}
 	}
+	
+	// 2. normal display:
+	// ------------------
 	else
-	  out << "no feasible solution has been found" << std::endl;
-      }
-    }
-  }
+	{
+		
+		// blackbox evaluations:
+		out << std::endl
+		<< "blackbox evaluations                     : " << _stats.get_bb_eval() << std::endl;
+		
+		// output stats:
+		if ( _stats.get_stat_sum().is_defined() )
+			out << "stat sum                                 : " << _stats.get_stat_sum() << std::endl;
+		if ( _stats.get_stat_avg().is_defined() )
+			out << "stat avg                                 : " << _stats.get_stat_avg() << std::endl;
+		
+		// Pareto front (multi-objective optimization):
+		if ( _pareto_front ) {
+			out << "number of MADS runs                      : " << _stats.get_mads_runs() << std::endl;
+			if ( _pareto_front->empty() )
+				out << "Pareto front                             : empty" << std::endl;
+			else
+				display_pareto_front();
+		}
+		
+		// single-objective optimization (display of best solutions):
+		else 
+		{
+			
+			if ( !bf && !bi )
+				out << "no solution" << std::endl;
+			else
+			{
+				if ( bimv ) 
+				{
+					out << "best infeasible solution (min. violation): ( ";
+					bimv->Point::display ( out , " " , -1 , -1 );
+					out << " ) h=" << bimv->get_h()
+					<< " f="  << bimv->get_f() << std::endl;
+				}
+				
+					out << "best feasible solution                   : ";
+				
+				if ( bf )
+				{
+					out << "( ";
+					bf->Point::display ( out , " " , -1 , -1 );
+					out << " ) h=" << bf->get_h()
+					<< " f="  << bf->get_f() << std::endl;
+				}
+				else
+					out << "no feasible solution has been found" << std::endl;
+									
+			}
+		}
+		out.close_block();
+	}
 }
 
 /*---------------------------------------------------------*/

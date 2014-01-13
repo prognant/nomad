@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -725,12 +725,12 @@ void NOMAD::Evaluator_Control::display_stats_point
 /*------------------------------------------*/
 /*  save the solution file (SOLUTION_FILE)  */
 /*------------------------------------------*/
-void NOMAD::Evaluator_Control::write_solution_file
-( const NOMAD::Eval_Point & x ) const
+void NOMAD::Evaluator_Control::write_solution_file ( const NOMAD::Eval_Point & x,
+													 bool display_bimv) const 
 {
   const std::string & sol_file = _p.get_solution_file();
-  if ( !sol_file.empty() && x.is_feasible ( _p.get_h_min() ) )
-    write_sol_or_his_file ( _p.get_problem_dir() + sol_file , x , true );
+  if ( !sol_file.empty() && ( x.is_feasible ( _p.get_h_min() ) || display_bimv ) )
+    write_sol_or_his_file ( _p.get_problem_dir() + sol_file , x , true , display_bimv );
 }
 
 /*----------------------------------------------*/
@@ -741,57 +741,61 @@ void NOMAD::Evaluator_Control::write_solution_file
 void NOMAD::Evaluator_Control::write_sol_or_his_file 
 ( const std::string       & file_name ,
   const NOMAD::Eval_Point & x         ,
-  bool                      is_sol      ) const
+  bool                      is_sol    ,
+  bool						display_bimv ) const
 {
-  // if is_sol == true: save the solution file
-  //              else: update the history file 
-  bool          failed = false;
-  std::ofstream fout;
-  
-  if ( is_sol )
-    fout.open ( file_name.c_str() );
-  else
-    fout.open ( file_name.c_str() , std::ios::app );
-
-  if ( !fout.fail() ) {
-
-    fout.setf      ( std::ios::fixed             );
-    fout.precision ( NOMAD::DISPLAY_PRECISION_BB );
-
-    // solution display:
-    if ( is_sol ) {
-      if ( _p.get_bb_input_include_seed() )
-	fout << _p.get_seed() << std::endl;
-      if ( _p.get_bb_input_include_tag() )
-	fout << x.get_tag() << std::endl;
-      x.Point::display ( fout , "\n" , -1 , -1 );
-      fout << std::endl;
-    }
-
-    // history display:
-    else {
-      x.Point::display ( fout , " " , -1 , -1 );
-      fout << " ";
-      x.get_bb_outputs().Point::display ( fout , " " , -1 , -1 );
-      fout << std::endl;
-    }
-
-    if ( fout.fail() )
-      failed = true;
-  }
-  else
-    failed = true;
-
-  fout.close();
-
-  if ( failed && _p.out().get_gen_dd() != NOMAD::NO_DISPLAY &&  _p.out().get_gen_dd() != NOMAD::MINIMAL_DISPLAY)
-    _p.out() << std::endl
-	     << "Warning (" << "Evaluator_Control.cpp" << ", " << __LINE__
-	     << "): could not "
-	     << ( is_sol ? "save the current solution" :
-		  "update the history" )
-	     << " in \'"
-	     << file_name << "\'" << std::endl << std::endl;
+	// if is_sol == true: save the solution file
+	//              else: update the history file 
+	bool          failed = false;
+	std::ofstream fout;
+	
+	if ( is_sol )
+		fout.open ( file_name.c_str() );
+	else
+		fout.open ( file_name.c_str() , std::ios::app );
+	
+	if ( !fout.fail() ) {
+		
+		fout.setf      ( std::ios::fixed             );
+		fout.precision ( NOMAD::DISPLAY_PRECISION_BB );
+		
+		// solution display:
+		if ( is_sol )
+		{
+			if ( _p.get_bb_input_include_seed() )
+				fout << _p.get_seed() << std::endl;
+			if ( _p.get_bb_input_include_tag() )
+				fout << x.get_tag() << std::endl;
+			x.Point::display ( fout , "\n" , -1 , -1 );
+			if (display_bimv)
+				fout << std::endl << "warning: best infeasible solution (min. violation)";
+			fout << std::endl;
+		}
+		
+		// history display:
+		else {
+			x.Point::display ( fout , " " , -1 , -1 );
+			fout << " ";
+			x.get_bb_outputs().Point::display ( fout , " " , -1 , -1 );
+			fout << std::endl;
+		}
+		
+		if ( fout.fail() )
+			failed = true;
+	}
+	else
+		failed = true;
+	
+	fout.close();
+	
+	if ( failed && _p.out().get_gen_dd() != NOMAD::NO_DISPLAY &&  _p.out().get_gen_dd() != NOMAD::MINIMAL_DISPLAY)
+		_p.out() << std::endl
+		<< "Warning (" << "Evaluator_Control.cpp" << ", " << __LINE__
+		<< "): could not "
+		<< ( is_sol ? "save the current solution" :
+			"update the history" )
+		<< " in \'"
+		<< file_name << "\'" << std::endl << std::endl;
 }
 
 /*---------------------------------------------------------*/
@@ -851,7 +855,7 @@ void NOMAD::Evaluator_Control::display_eval_result
 		one_eval_success >= success )
 	{
 		
-		// save the solution file:
+		// save the current solution in file:
 		write_solution_file ( x );
 		
 		bool ds_ok =	( cur_bbe > _last_stats_bbe ) &&
@@ -1023,7 +1027,8 @@ void NOMAD::Evaluator_Control::eval_point ( NOMAD::Eval_Point       & x         
 	
 	// blackbox or surrogate evaluations are allowed:
 	if ( ( x.get_eval_type() == NOMAD::TRUTH && max_bb_eval   != 0 ) ||
-		( x.get_eval_type() == NOMAD::SGTE  && max_sgte_eval != 0 )    ) {
+		( x.get_eval_type() == NOMAD::SGTE  && max_sgte_eval != 0 )    ) 
+	{
 		
 		NOMAD::Eval_Point * eval_x = &NOMAD::Cache::get_modifiable_point ( x );
 		
@@ -1075,7 +1080,8 @@ void NOMAD::Evaluator_Control::eval_point ( NOMAD::Eval_Point       & x         
 		}
 		
 		// insertion in cache even if is_eval_ok == false:
-		if ( !x.is_in_cache() ) {
+		if ( !x.is_in_cache() )
+		{
 			
 			int size_before , size_after;
 			
@@ -1102,18 +1108,21 @@ void NOMAD::Evaluator_Control::eval_point ( NOMAD::Eval_Point       & x         
 								pareto_front                                    );
 		
 		// count the bb evaluation:
-		if ( count_eval ) {
+		if ( count_eval )
+		{
 			if ( x.get_eval_type() == NOMAD::SGTE )
 				_stats.add_sgte_eval();
 			else
 			{
 				// current mads bbe evaluation
 				_stats.add_bb_eval();
+				
 			}
 		}
 		
 		// count the output stats (STAT_SUM and STAT_AVG):
-		if ( _p.check_stat_sum() || _p.check_stat_avg() ) {
+		if ( _p.check_stat_sum() || _p.check_stat_avg() ) 
+		{
 			
 			count_output_stats(x);
 			
@@ -2931,13 +2940,12 @@ void NOMAD::Evaluator_Control::eval_list_of_points
 /*------------------------------------------------------------------------------------*/
 /*  ordering of a list of points based on surrogate (1st) or model (2nd) evaluations  */
 /*------------------------------------------------------------------------------------*/
-void NOMAD::Evaluator_Control::ordering_lop
-( NOMAD::search_type              search             , // IN    : search type
- bool                          & stop               , // IN/OUT: stopping criterion
- NOMAD::stop_type              & stop_reason        , // OUT   : stopping reason
- NOMAD::Barrier                & true_barrier       , // IN/OUT: truth barrier
- NOMAD::Barrier                & sgte_barrier        // IN/OUT: surrogate barrier
- )
+void NOMAD::Evaluator_Control::ordering_lop ( NOMAD::search_type             search             , // IN    : search type
+											 bool                          & stop               , // IN/OUT: stopping criterion
+											 NOMAD::stop_type              & stop_reason        , // OUT   : stopping reason
+											 NOMAD::Barrier                & true_barrier       , // IN/OUT: truth barrier
+											 NOMAD::Barrier                & sgte_barrier        // IN/OUT: surrogate barrier
+											 )
 {
 	std::list<const NOMAD::Eval_Point *> * evaluated_pts     = new std::list<const NOMAD::Eval_Point *>;
 	
@@ -3342,7 +3350,7 @@ void NOMAD::Evaluator_Control::add_eval_point( NOMAD::Eval_Point  *& x          
 		if ( !signature )
 			throw NOMAD::Exception ( "Evaluator_Control.cpp" , __LINE__ ,
 									"Evaluator_Control::add_eval_point(): the point has no signature" );
-		
+	
 		// angle with last successful directions (feasible)
 		const NOMAD::Direction & feas_success_dir = signature->get_feas_success_dir();
 		if ( feas_success_dir.is_defined() &&
@@ -3354,7 +3362,7 @@ void NOMAD::Evaluator_Control::add_eval_point( NOMAD::Eval_Point  *& x          
 		if ( infeas_success_dir.is_defined() &&
 			x->get_poll_center_type() == NOMAD::INFEASIBLE  )
 			pep.set_angle_success_dir ( infeas_success_dir.get_angle ( *x->get_direction() ) );
-		
+				
 	}
 	
 	

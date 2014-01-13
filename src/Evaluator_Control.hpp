@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.0        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -143,15 +143,16 @@ namespace NOMAD {
     
     /// Save the solution file or update the history file.
     /**
-       \param file_name Name of the file -- \b IN.
-       \param x         Lattest solution -- \b IN.
-       \param is_sol    Flag equal to \c true if the file is
-                        a solution file; otherwise it is a
-			history file.
+       \param file_name		Name of the file -- \b IN.
+       \param x				Lattest solution -- \b IN.
+       \param is_sol		Flag equal to \c true if the file is
+							a solution file; otherwise it is a history file. -- \b IN.
+	   \param display_bimv	Display best infeasible (min. viol.) if \c true  -- \b IN.
     */
     void write_sol_or_his_file ( const std::string        & file_name ,
-				 const NOMAD::Eval_Point  & x         ,
-				 bool                       is_sol      ) const;
+								const NOMAD::Eval_Point  & x         ,
+								bool                       is_sol    ,
+								bool                       display_bimv=false) const;
 
     /// Display evaluation result.
     /**
@@ -500,9 +501,10 @@ namespace NOMAD {
 
     /// Update the solution file.
     /**
-       \param x The lattest solution -- \b IN.
+       \param x				The lattest solution									-- \b IN.
+	   \param display_bimv	Required to display least infeasible (default=false)	-- \b IN
     */
-    void write_solution_file ( const NOMAD::Eval_Point & x ) const;
+    void write_solution_file ( const NOMAD::Eval_Point & x , bool display_bimv=false) const;
     
     /// Update a barrier from another barrier.
     /**
