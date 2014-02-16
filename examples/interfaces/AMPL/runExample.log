@@ -1,5 +1,5 @@
 
-NOMAD - version 3.6.0 - www.gerad.ca/nomad
+NOMAD - version 3.6.1 - www.gerad.ca/nomad
 
 Copyright (C) 2001-2013 {
 	Mark A. Abramson     - The Boeing Company
@@ -63,6 +63,6 @@ MADS run {
 
 } end of run (max number of blackbox evaluations)
 
-blackbox evaluations    : 1000
-best infeasible solution: ( 0.848962364 2.324953675e-06 3.01413238e-06 2.850219607e-06 0.0001720577478 0.07897830494 0.03139281012 0.0110261865 ) h=0.05000000003 f=0.000719795225
-best feasible solution  : ( 0.8489658805 0 0 0 0.0001777410507 0.07896998888 0.03139625052 0.01103117205 ) h=0 f=0.0007197935108
+blackbox evaluations                     : 1000
+best infeasible solution (min. violation): ( 0.848962364 2.324953675e-06 3.01413238e-06 2.850219607e-06 0.0001720577478 0.07897830494 0.03139281012 0.0110261865 ) h=0.05000000003 f=0.000719795225
+best feasible solution                   : ( 0.8489658805 0 0 0 0.0001777410507 0.07896998888 0.03139625052 0.01103117205 ) h=0 f=0.0007197935108

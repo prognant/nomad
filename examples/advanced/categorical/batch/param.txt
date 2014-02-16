@@ -16,8 +16,8 @@ x0 ( 0 100 1 100 )
 display_stats bbe ( sol ) obj
 
 
-lower_bound * 0.0
-upper_bound ( 2 10000 2 10000 )
+lower_bound ( - 0.0 - 0.0 )
+upper_bound ( - 10000 - 10000 )
 
 # TMP_DIR /tmp
 

@@ -116,7 +116,7 @@ int main ( int argc , char ** argv ) {
       p.set_HAS_SGTE ( true );
 
     // p.set_DISPLAY_DEGREE ( FULL_DISPLAY );
-    // p.set_MAX_BB_EVAL ( 100 );
+    p.set_MAX_BB_EVAL ( 200 );
 
     p.set_DIMENSION (3);
 
@@ -126,6 +126,11 @@ int main ( int argc , char ** argv ) {
     bbot[2] = OBJ; // objective
     p.set_BB_OUTPUT_TYPE ( bbot );
 
+    // categorical variables:
+    p.set_BB_INPUT_TYPE ( 0 , CATEGORICAL );
+    p.set_BB_INPUT_TYPE ( 1 , CATEGORICAL );
+ 
+	// initial point	
     Point x0 ( 3 , 0 );
     x0[0] = 1;     // 1 asset
     x0[1] = 0;     // of type 0
@@ -134,24 +139,17 @@ int main ( int argc , char ** argv ) {
 
     Point lb ( 3 );
     Point ub ( 3 );
-    lb[0] = 1; ub[0] = 3;
-    lb[1] = 0; ub[1] = 2;
-    lb[2] = 0; ub[2] = 10000;
+	// Categorical variables 0 and 1 don't need bounds
+    lb[2] = 0; ub[2] = 10000;  
 
     p.set_LOWER_BOUND ( lb );
     p.set_UPPER_BOUND ( ub );
 
-    p.set_F_TARGET ( 0.0 );
-
     p.set_DISPLAY_STATS ( "bbe ( sol ) obj" );
-
-    // categorical variables:
-    p.set_BB_INPUT_TYPE ( 0 , CATEGORICAL );
-    p.set_BB_INPUT_TYPE ( 1 , CATEGORICAL );
 
     // extended poll trigger:
     p.set_EXTENDED_POLL_TRIGGER ( 10 , false );
-
+	  
     // parameters validation:
     p.check();
 
@@ -245,7 +243,8 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
   : Extended_Poll ( p    ) ,
     _s1           ( NULL ) ,
     _s2           ( NULL ) ,
-    _s3           ( NULL )   {
+    _s3           ( NULL ) 
+{
 
   // signature for 1 asset:
   // ----------------------
@@ -256,6 +255,7 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
   const Point & d0_1 = p.get_initial_mesh_size();
   const Point & lb_1 = p.get_lb();
   const Point & ub_1 = p.get_ub();
+		
 
   int halton_seed = p.get_halton_seed();
   
@@ -277,13 +277,15 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
     Point lb_2 (5);
     Point ub_2 (5);
 
-    for ( int i = 0 ; i < 5 ; ++i ) {
+	  // Categorical variables don't need bounds
+    for ( int i = 0 ; i < 5 ; ++i ) 
+	{
       bbit_2[i] = bbit_1[1+(i-1)%2];
       d0_2  [i] = d0_1  [1+(i-1)%2];
       lb_2  [i] = lb_1  [1+(i-1)%2];
       ub_2  [i] = ub_1  [1+(i-1)%2];
     }
-
+	  
     _s2 = new Signature ( 5                          ,
 			  bbit_2                     ,
 			  d0_2                       ,
@@ -302,8 +304,10 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
     Point d0_3 (7);
     Point lb_3 (7);
     Point ub_3 (7);
-
-    for ( int i = 0 ; i < 7 ; ++i ) {
+	  
+	// Categorical variables don't need bounds  
+	for ( int i = 0 ; i < 7 ; ++i ) 
+	{
       bbit_3[i] = bbit_1[1+(i-1)%2];
       d0_3  [i] = d0_1  [1+(i-1)%2];
       lb_3  [i] = lb_1  [1+(i-1)%2];

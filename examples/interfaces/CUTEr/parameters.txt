@@ -10,7 +10,7 @@ BB_EXE     bb.exe
 BB_OUTPUT_TYPE  OBJ
 MAX_BB_EVAL  100
 
-DIRECTION_TYPE  ortho 2n
+DIRECTION_TYPE  ortho n+1 
 
 #stats_file    ortho.stats TIME BBE OBJ
 #solution_file ortho.sol

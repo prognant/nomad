@@ -12,6 +12,6 @@ MADS run {
 
 } end of run (max number of blackbox evaluations)
 
-blackbox evaluations    : 100
-best infeasible solution: ( 0.55 1.8 2.6 -1.5 -3 ) h=0.6525 f=-3
-best feasible solution  : ( 1.65 1.8 1.95 -1.5 -3 ) h=0 f=-3
+blackbox evaluations                     : 100
+best infeasible solution (min. violation): ( 0.55 1.8 2.6 -1.5 -3 ) h=0.6525 f=-3
+best feasible solution                   : ( 1.65 1.8 1.95 -1.5 -3 ) h=0 f=-3

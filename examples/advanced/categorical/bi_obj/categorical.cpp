@@ -135,7 +135,10 @@ int main ( int argc , char ** argv ) {
     bbot[3] = OBJ; // objective
     p.set_BB_OUTPUT_TYPE ( bbot );
 
-  
+	  
+	// categorical variables:
+	p.set_BB_INPUT_TYPE ( 0 , CATEGORICAL );
+	p.set_BB_INPUT_TYPE ( 1 , CATEGORICAL );
 	  
     Point x0 ( 3 , 0 );
     x0[0] = 1;      // 1 asset
@@ -145,18 +148,11 @@ int main ( int argc , char ** argv ) {
 
     Point lb ( 3 );
     Point ub ( 3 );
-    lb[0] = 1; ub[0] = 3;
-    lb[1] = 0; ub[1] = 2;
+	 // Categorical variables 0 and 1 don't need bounds 
     lb[2] = 0; ub[2] = 10000;
 
     p.set_LOWER_BOUND ( lb );
     p.set_UPPER_BOUND ( ub );
-
-    //p.set_F_TARGET ( 0.0 );
-
-    // categorical variables:
-    p.set_BB_INPUT_TYPE ( 0 , CATEGORICAL );
-    p.set_BB_INPUT_TYPE ( 1 , CATEGORICAL );
 
     // extended poll trigger:
     // p.set_EXTENDED_POLL_TRIGGER ( 0.1 , true );
@@ -291,6 +287,7 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
     Point lb_2 (5);
     Point ub_2 (5);
 
+	  // Categorical variables don't need bounds
     for ( int i = 0 ; i < 5 ; ++i ) {
       bbit_2[i] = bbit_1[1+(i-1)%2];
       d0_2  [i] = d0_1  [1+(i-1)%2];
@@ -317,6 +314,7 @@ My_Extended_Poll::My_Extended_Poll ( Parameters & p )
     Point lb_3 (7);
     Point ub_3 (7);
 
+	  // Categorical variables don't need bounds
     for ( int i = 0 ; i < 7 ; ++i ) {
       bbit_3[i] = bbit_1[1+(i-1)%2];
       d0_3  [i] = d0_1  [1+(i-1)%2];

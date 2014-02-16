@@ -1,59 +1,59 @@
 Warning: {
-	Model use is disabled for direction type. Direction types ORTHO N+1 QUAD are changed to ORTHO N+1 NEG.
-	Warning: {
-		Model use is disabled for problem with categorical variables.
-	} 
+	Model use is disabled for problem with categorical variables.
+} 
 
-	multi-MADS run {
+multi-MADS run {
 
-		MADS run  1/30 ...... OK [bb eval= 60] [overall bb eval=   60] [# dominant pts=   5] [# new pts=   5] [f1=52.02241823 f2=52.95541823]
-		MADS run  2/30 ...... OK [bb eval= 66] [overall bb eval=  126] [# dominant pts=   5] [# new pts=   0] [f1=52.02241823 f2=51.05441823]
-		MADS run  3/30 ...... OK [bb eval= 57] [overall bb eval=  183] [# dominant pts=   6] [# new pts=   1] [f1=52.02241823 f2=51.56141823]
-		MADS run  4/30 ...... OK [bb eval= 49] [overall bb eval=  232] [# dominant pts=   6] [# new pts=   0] [f1=52.02241823 f2=51.70341823]
-		MADS run  5/30 ...... OK [bb eval=181] [overall bb eval=  413] [# dominant pts=   5] [# new pts=  -1] [f1=44.95823059 f2=43.96223059]
-		MADS run  6/30 ...... OK [bb eval=203] [overall bb eval=  616] [# dominant pts=   6] [# new pts=   1] [f1=44.90686591 f2=43.90786591]
-		MADS run  7/30 ...... OK [bb eval=138] [overall bb eval=  754] [# dominant pts=   7] [# new pts=   1] [f1=44.90641676 f2=43.90741676]
-		MADS run  8/30 ...... OK [bb eval=124] [overall bb eval=  878] [# dominant pts=   8] [# new pts=   1] [f1=44.90640745 f2=43.91240745]
-		MADS run  9/30 ...... OK [bb eval= 96] [overall bb eval=  974] [# dominant pts=   8] [# new pts=   0] [f1=44.90640744 f2=43.93840744]
-		MADS run 10/30 ...... OK [bb eval=192] [overall bb eval= 1166] [# dominant pts=   9] [# new pts=   1] [f1=44.90640744 f2=43.91540744]
-		MADS run 11/30 ...... OK [bb eval=192] [overall bb eval= 1358] [# dominant pts=   6] [# new pts=  -3] [f1=44.90640744 f2=43.91040744]
-		MADS run 12/30 ...... OK [bb eval=190] [overall bb eval= 1548] [# dominant pts=   8] [# new pts=   2] [f1=44.90640744 f2=43.93240744]
-		MADS run 13/30 ...... OK [bb eval=197] [overall bb eval= 1745] [# dominant pts=   6] [# new pts=  -2] [f1=44.88499061 f2=43.93099061]
-		MADS run 14/30 ...... OK [bb eval= 31] [overall bb eval= 1776] [# dominant pts=   9] [# new pts=   3] [f1=44.88499061 f2=43.97999061]
-		MADS run 15/30 ...... OK [bb eval=217] [overall bb eval= 1993] [# dominant pts=  10] [# new pts=   1] [f1=44.88499061 f2=44.02199061]
-		MADS run 16/30 ...... OK [bb eval=174] [overall bb eval= 2167] [# dominant pts=   9] [# new pts=  -1] [f1=44.88499061 f2=44.19499061]
-		MADS run 17/30 ...... OK [bb eval=172] [overall bb eval= 2339] [# dominant pts=   6] [# new pts=  -3] [f1=44.88499061 f2=44.27899061]
-		MADS run 18/30 ...... OK [bb eval=202] [overall bb eval= 2541] [# dominant pts=   5] [# new pts=  -1] [f1=44.88499061 f2=43.88699061]
-		MADS run 19/30 ...... OK [bb eval=164] [overall bb eval= 2705] [# dominant pts=   6] [# new pts=   1] [f1=44.88499061 f2=44.10999061]
-		MADS run 20/30 ...... OK [bb eval=180] [overall bb eval= 2885] [# dominant pts=   6] [# new pts=   0] [f1=44.88499061 f2=43.92499061]
-		MADS run 21/30 ...... OK [bb eval=169] [overall bb eval= 3054] [# dominant pts=   7] [# new pts=   1] [f1=44.88499061 f2=44.02699061]
-		MADS run 22/30 ...... OK [bb eval=183] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.91899061]
-		MADS run 23/30 ...... OK [bb eval=  0] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.91899061]
-		MADS run 24/30 ...... OK [bb eval=  0] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.91899061]
-		MADS run 25/30 ...... OK [bb eval=  0] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.91899061]
-		MADS run 26/30 ...... OK [bb eval=  0] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.91899061]
-		MADS run 27/30 ...... OK [bb eval=  0] [overall bb eval= 3237] [# dominant pts=   7] [# new pts=   0] [f1=44.88499061 f2=43.92499061]
-		MADS run 28/30 ...... OK [bb eval=155] [overall bb eval= 3392] [# dominant pts=   9] [# new pts=   2] [f1=44.88499061 f2=43.89099061]
-		MADS run 29/30 ...... OK [bb eval=178] [overall bb eval= 3570] [# dominant pts=   9] [# new pts=   0] [f1=44.88499061 f2=44.04299061]
-		MADS run 30/30 ...... OK [bb eval=  0] [overall bb eval= 3570] [# dominant pts=   9] [# new pts=   0] [f1=44.88499061 f2=44.02699061]
+	MADS run  1/30 ...... OK [bb eval= 60] [overall bb eval=   60] [# dominant pts=   5] [# new pts=   5] [f1=52.02241823 f2=52.95541823]
+	MADS run  2/30 ...... OK [bb eval= 66] [overall bb eval=  126] [# dominant pts=   5] [# new pts=   0] [f1=52.02241823 f2=51.05441823]
+	MADS run  3/30 ...... OK [bb eval= 57] [overall bb eval=  183] [# dominant pts=   6] [# new pts=   1] [f1=52.02241823 f2=51.56141823]
+	MADS run  4/30 ...... OK [bb eval= 49] [overall bb eval=  232] [# dominant pts=   6] [# new pts=   0] [f1=52.02241823 f2=51.70341823]
+	MADS run  5/30 ...... OK [bb eval=181] [overall bb eval=  413] [# dominant pts=   5] [# new pts=  -1] [f1=44.95823059 f2=43.96223059]
+	MADS run  6/30 ...... OK [bb eval=203] [overall bb eval=  616] [# dominant pts=   5] [# new pts=   0] [f1=44.90686591 f2=43.90786591]
+	MADS run  7/30 ...... OK [bb eval=138] [overall bb eval=  754] [# dominant pts=   8] [# new pts=   3] [f1=44.90641676 f2=43.90741676]
+	MADS run  8/30 ...... OK [bb eval=124] [overall bb eval=  878] [# dominant pts=   8] [# new pts=   0] [f1=44.90640745 f2=43.91240745]
+	MADS run  9/30 ...... OK [bb eval=180] [overall bb eval= 1058] [# dominant pts=   8] [# new pts=   0] [f1=44.90640744 f2=43.91440744]
+	MADS run 10/30 ...... OK [bb eval= 96] [overall bb eval= 1154] [# dominant pts=   8] [# new pts=   0] [f1=44.90640744 f2=43.91340744]
+	MADS run 11/30 ...... OK [bb eval=168] [overall bb eval= 1322] [# dominant pts=  11] [# new pts=   3] [f1=44.90640744 f2=43.97340744]
+	MADS run 12/30 ...... OK [bb eval=201] [overall bb eval= 1523] [# dominant pts=  10] [# new pts=  -1] [f1=44.89376891 f2=43.89876891]
+	MADS run 13/30 ...... OK [bb eval=204] [overall bb eval= 1727] [# dominant pts=  12] [# new pts=   2] [f1=44.88950881 f2=43.90550881]
+	MADS run 14/30 ...... OK [bb eval=202] [overall bb eval= 1929] [# dominant pts=  10] [# new pts=  -2] [f1=44.88548533 f2=43.90048533]
+	MADS run 15/30 ...... OK [bb eval=212] [overall bb eval= 2141] [# dominant pts=  10] [# new pts=   0] [f1=44.88519731 f2=43.88619731]
+	MADS run 16/30 ...... OK [bb eval=209] [overall bb eval= 2350] [# dominant pts=   9] [# new pts=  -1] [f1=44.88510307 f2=43.91210307]
+	MADS run 17/30 ...... OK [bb eval=203] [overall bb eval= 2553] [# dominant pts=   9] [# new pts=   0] [f1=44.88508265 f2=43.90208265]
+	MADS run 18/30 ...... OK [bb eval=239] [overall bb eval= 2792] [# dominant pts=   9] [# new pts=   0] [f1=44.88508168 f2=43.90108168]
+	MADS run 19/30 ...... OK [bb eval=222] [overall bb eval= 3014] [# dominant pts=   9] [# new pts=   0] [f1=44.8850816 f2=43.9070816]
+	MADS run 20/30 ...... OK [bb eval=207] [overall bb eval= 3221] [# dominant pts=   8] [# new pts=  -1] [f1=44.8850816 f2=43.9610816]
+	MADS run 21/30 ...... OK [bb eval=180] [overall bb eval= 3401] [# dominant pts=   6] [# new pts=  -2] [f1=44.8850816 f2=43.9010816]
+	MADS run 22/30 ...... OK [bb eval=174] [overall bb eval= 3575] [# dominant pts=  11] [# new pts=   5] [f1=44.8850816 f2=44.0440816]
+	MADS run 23/30 ...... OK [bb eval=176] [overall bb eval= 3751] [# dominant pts=   9] [# new pts=  -2] [f1=44.8850816 f2=43.9800816]
+	MADS run 24/30 ...... OK [bb eval=187] [overall bb eval= 3938] [# dominant pts=   8] [# new pts=  -1] [f1=44.8850816 f2=44.1020816]
+	MADS run 25/30 ...... OK [bb eval=166] [overall bb eval= 4104] [# dominant pts=  10] [# new pts=   2] [f1=44.8850816 f2=43.9460816]
+	MADS run 26/30 ...... OK [bb eval=176] [overall bb eval= 4280] [# dominant pts=  11] [# new pts=   1] [f1=44.8850816 f2=43.9870816]
+	MADS run 27/30 ...... OK [bb eval=  2] [overall bb eval= 4282] [# dominant pts=  11] [# new pts=   0] [f1=44.8850816 f2=43.9460816]
+	MADS run 28/30 ...... OK [bb eval=  0] [overall bb eval= 4282] [# dominant pts=  11] [# new pts=   0] [f1=44.8850816 f2=43.9870816]
+	MADS run 29/30 ...... OK [bb eval=  0] [overall bb eval= 4282] [# dominant pts=  11] [# new pts=   0] [f1=44.8850816 f2=43.9460816]
+	MADS run 30/30 ...... OK [bb eval=  0] [overall bb eval= 4282] [# dominant pts=  11] [# new pts=   0] [f1=44.8850816 f2=43.9870816]
 
-	} end of run (max number of MADS runs)
+} end of run (max number of MADS runs)
 
 
-	blackbox evaluations    : 3570
-	number of MADS runs     : 30
+blackbox evaluations                     : 4282
+number of MADS runs                      : 30
 
-	Pareto front {
+Pareto front {
 
-		44.8849906071 45.7059906071 
-		44.8849906071 44.5919906071 
-		44.8849906071 44.3889906071 
-		44.8849906071 44.3849906071 
-		44.8849906071 44.1099906071 
-		44.8849906071 44.0649906071 
-		44.8849906071 44.0509906071 
-		44.8849906071 43.8909906071 
-		44.8849906071 43.8869906071 
-	} 
+	44.8849906075 45.5549906075 
+	44.8850816013 45.5000816013 
+	44.8850816013 45.2800816013 
+	44.8850816013 44.2430816013 
+	44.8850816013 43.9800816013 
+	44.8850816013 43.9260816013 
+	44.8850816013 43.9020816013 
+	44.8850816013 43.9010816013 
+	44.8850816075 43.8900816075 
+	44.8850816076 43.8890816076 
+	44.8851973070 43.8861973070 
+} 
 
-	number of Pareto points: 9
+number of Pareto points: 11

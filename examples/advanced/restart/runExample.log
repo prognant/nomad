@@ -12,8 +12,8 @@ MADS run {
 
 } end of run (terminated by the user inside Evaluator::update_iteration())
 
-blackbox evaluations    : 9
-best feasible solution  : ( 4.4 0 0 0 0 ) h=0 f=0
+blackbox evaluations                     : 9
+best feasible solution                   : ( 4.4 0 0 0 0 ) h=0 f=0
 } 
 
 MADS run #1 {
@@ -27,8 +27,8 @@ MADS run {
 
 } end of run (terminated by the user inside Evaluator::update_iteration())
 
-blackbox evaluations    : 15
-best feasible solution  : ( 4.4 0 0 0 0 ) h=0 f=0
+blackbox evaluations                     : 15
+best feasible solution                   : ( 4.4 0 0 0 0 ) h=0 f=0
 } 
 
 MADS run #2 {
@@ -43,8 +43,8 @@ MADS run {
 
 } end of run (terminated by the user inside Evaluator::update_iteration())
 
-blackbox evaluations    : 23
-best feasible solution  : ( 4.5375 -0.15 0.4875 0.75 -1.5 ) h=0 f=-1.5
+blackbox evaluations                     : 23
+best feasible solution                   : ( 4.5375 -0.15 0.4875 0.75 -1.5 ) h=0 f=-1.5
 } 
 
 MADS run #3 {
@@ -59,8 +59,8 @@ MADS run {
 
 } end of run (terminated by the user inside Evaluator::update_iteration())
 
-blackbox evaluations    : 38
-best feasible solution  : ( 4.125 -0.975 0.325 0.75 -2.25 ) h=0 f=-2.25
+blackbox evaluations                     : 38
+best feasible solution                   : ( 4.125 -0.975 0.325 0.75 -2.25 ) h=0 f=-2.25
 } 
 
 MADS run #4 {
@@ -74,6 +74,6 @@ MADS run {
 
 } end of run (terminated by the user inside Evaluator::update_iteration())
 
-blackbox evaluations    : 44
-best feasible solution  : ( 3.575 -0.975 0.325 0.75 -2.25 ) h=0 f=-2.25
+blackbox evaluations                     : 44
+best feasible solution                   : ( 3.575 -0.975 0.325 0.75 -2.25 ) h=0 f=-2.25
 } 
