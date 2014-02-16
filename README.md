@@ -19,11 +19,11 @@ Copyright (C) 2001-2013
 
 Contact information:
 
-  Ecole Polytechnique de Montreal - GERAD
-  C.P. 6079, Succ. Centre-ville, Montreal (Quebec) H3C 3A7 Canada
-  e-mail: nomad@gerad.ca
-  phone : 1-514-340-6053 #6928
-  fax   : 1-514-340-5665
+    Ecole Polytechnique de Montreal - GERAD
+    C.P. 6079, Succ. Centre-ville, Montreal (Quebec) H3C 3A7 Canada
+    e-mail: nomad@gerad.ca
+    phone : 1-514-340-6053 #6928
+    fax   : 1-514-340-5665
 
 ## LICENCE
 
