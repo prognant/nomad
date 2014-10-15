@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -99,7 +99,8 @@ namespace NOMAD {
        \c operator \c < and have to be often changed.
     */
     mutable NOMAD::Direction _infeas_success_dir;
-	  	  
+	  
+	  
 	// Direction group index
 	  int _dir_group_index;
 	  
@@ -272,13 +273,13 @@ namespace NOMAD {
        \param dir The direction -- \b IN.
     */
     void set_infeas_success_dir ( const NOMAD::Direction & dir );
-
+	  
     /// Reset the feasible successful direction.
     void reset_feas_success_dir ( void ) const { _feas_success_dir.clear(); }
 
     /// Reset the infeasible successful direction.
     void reset_infeas_success_dir ( void ) const { _infeas_success_dir.clear(); }
-
+	  
     /// Scaling.
     /**
        Performed before an evaluation.
@@ -447,7 +448,7 @@ namespace NOMAD {
        \param poll_center       Poll center                             -- \b IN.
        \param mesh_index        Mesh index ell                          -- \b IN.
     */
-    void get_directions ( std::list<NOMAD::Direction> & dirs  ,
+    void get_directions ( std::list<NOMAD::Direction> & dirs              ,
 			  NOMAD::poll_type              poll              ,
 			  const NOMAD::Point          & poll_center       ,
 			  int                           mesh_index          );
@@ -460,9 +461,9 @@ namespace NOMAD {
        \param mesh_index   Mesh index ell -- \b IN.
        \param halton_index Halton index   -- \b IN.
     */
-    void get_one_direction ( NOMAD::Direction & dir ,
-			     int                mesh_index		,
-			     int                halton_index	) const;
+    void get_one_direction ( NOMAD::Direction & dir          ,
+			     int                mesh_index   ,
+			     int                halton_index   ) const;
       
 	  
     /// Comparison operator \c < .

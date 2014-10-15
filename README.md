@@ -4,7 +4,7 @@ Original Documentation can be found [here](http://www.gerad.ca/nomad/Project/Hom
 
 ## ABOUT
 
-NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - V. 3.6.1 -  2013/05
+NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - V. 3.6.2 -  10/2014
 
 Copyright (C) 2001-2013
 

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -167,8 +167,11 @@ void NOMAD::Parameters::init ( void )
 	_multi_formulation     = NOMAD::UNDEFINED_FORMULATION;
 	_multi_f_bounds.reset();
 	
-	// model disabled 
+	// model is not disabled 
 	_disable_models=false;
+	
+	// sort is not disabled
+	_disable_eval_sort=false;
 	
 	
 	// model search parameters:
@@ -207,10 +210,12 @@ void NOMAD::Parameters::init ( void )
 	_opp_CS_is_defined          = false;
 	
 	// opportunistic strategy:
-	_opportunistic_eval           = true;
-	_opportunistic_min_nb_success = -1;
-	_opportunistic_min_eval       = -1;
-	_opportunistic_lucky_eval     = false;
+	_bb_max_block_size				= 1;
+	_eval_points_as_block           = false;
+	_opportunistic_eval				= true;
+	_opportunistic_min_nb_success	= -1;
+	_opportunistic_min_eval			= -1;
+	_opportunistic_lucky_eval		= false;
 	_opportunistic_min_f_imprvmt.clear();
 	
 	// display:
@@ -1020,7 +1025,7 @@ void NOMAD::Parameters::read ( const std::string & param_file )
 	// ------------
 	_problem_dir.clear();
 	size_t k = param_file.find_last_of ( NOMAD::DIR_SEP );
-	if ( k >= 0 && k < param_file.size() )
+	if ( k == 0 && k < param_file.size() )
 		_problem_dir = param_file.substr (0,k) + NOMAD::DIR_SEP;
 	else
 		_problem_dir = std::string(".") + NOMAD::DIR_SEP;
@@ -1397,14 +1402,12 @@ void NOMAD::Parameters::read ( const NOMAD::Parameter_Entries & entries )
 			std::string       smt = *(pe->get_values().begin());
 			NOMAD::toupper(smt);
 			if ( smt == "MODELS" )
-			{
 				set_DISABLE_MODELS();
-			}
-			else {
+			else if ( smt == "EVAL_SORT" )
+				set_DISABLE_EVAL_SORT();
+			else 
 				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
 										 "Invalid parameter: DISABLE MODELS. Only MODELS argument is accepted!" );
-
-			}
 
 			
 			pe->set_has_been_interpreted();
@@ -1445,8 +1448,8 @@ void NOMAD::Parameters::read ( const NOMAD::Parameter_Entries & entries )
 				
 				if ( !NOMAD::string_to_model_type ( smt , mt ) )
 					throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
-											 "invalid parameter: MODEL_EVAL_SORT" );
-				
+											 "invalid parameter: MODEL_SEARCH" );
+ 				
 				set_MODEL_SEARCH ( i_model_search , mt );
 			}
 			
@@ -1811,6 +1814,25 @@ void NOMAD::Parameters::read ( const NOMAD::Parameter_Entries & entries )
 	// opportunistic strategy:
 	// -----------------------
 	{
+		
+		// BB_MAX_BLOCK_SIZE
+		pe = entries.find ( "BB_MAX_BLOCK_SIZE" );
+		if ( pe ) {
+			if ( !pe->is_unique() )
+				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+										 "invalid parameter: BB_MAX_BLOCK_SIZE not unique" );
+			
+			it = pe->get_values().begin();
+			
+			if ( !NOMAD::atoi (*it++ , i) || i <= 0 )
+				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+										 "invalid parameter: BB_MAX_BLOCK_SIZE" );
+			set_BB_MAX_BLOCK_SIZE (i);
+			
+			pe->set_has_been_interpreted();
+		}
+		
+		
 		// OPPORTUNISTIC_EVAL:
 		pe = entries.find ( "OPPORTUNISTIC_EVAL" );
 		if ( pe ) {
@@ -3690,7 +3712,11 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 				{
 
 					if (_lb[i].is_defined() && _ub[i].is_defined())
+					{
 						set_INITIAL_MESH_SIZE ( i , 0.1 , true );
+						if ( _lb[i] == _ub[i] )
+						 	set_INITIAL_MESH_SIZE (i, 0.1 ,false);
+					}
 					else if ( _lb[i].is_defined() && use_x0 && (*_x0s[0])[i].is_defined() && _lb[i]!=(*_x0s[0])[i])
 					{
 						_initial_mesh_size[i] = (*_x0s[0])[i]-_lb[i];   // Case x0 < lb tested elsewhere
@@ -3701,17 +3727,19 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 					}
 					else 
 					{
-						if ( use_x0 && (*_x0s[0])[i].is_defined() && (*_x0s[0])[i].abs() > 1.0 )
-							_initial_mesh_size[i] = (*_x0s[0])[i].abs();
+						if ( use_x0 && (*_x0s[0])[i].is_defined() && (*_x0s[0])[i].abs() > NOMAD::Double::get_epsilon()*10.0 )
+							_initial_mesh_size[i] = (*_x0s[0])[i].abs()/10.0;
 						else
-							_initial_mesh_size[i] = 1.0;						
+						{
+							_initial_mesh_size[i] = 1.0;
 						
-						if (_initial_mesh_size[i] == 1.0 && _out.get_gen_dd()>=NOMAD::NORMAL_DISPLAY && !_warning_has_been_displayed)
-							_out << NOMAD::open_block("Warning:") 
-							<< "Initial mesh size for variable " << i << " has been arbitrarily fixed to 1." << std::endl
-							<< " In the absence of bounds and initial values different than zero," << std::endl
-							<< " it is recommended to explicitely provide this parameter." << std::endl
-							<< NOMAD::close_block();
+							if (_out.get_gen_dd()>=NOMAD::NORMAL_DISPLAY && !_warning_has_been_displayed)
+								_out << NOMAD::open_block("Warning:") 
+								<< "Initial mesh size for variable " << i << " has been arbitrarily fixed to 1." << std::endl
+								<< " In the absence of bounds and initial values different than zero," << std::endl
+								<< " it is recommended to explicitely provide this parameter." << std::endl
+								<< NOMAD::close_block();
+						}
 					}		
 				}
 				
@@ -3744,7 +3772,6 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 				else 
 				{
 					
-					// default value for initial mesh size
 					// (r0.1 if there are bounds + rounding to nearest integer not zero, 1.0 otherwise):
 					if ( !_lb[i].is_defined() || !_ub[i].is_defined() )
 						_initial_mesh_size[i] = 1.0;
@@ -3962,25 +3989,31 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	
 	size_t k;
 	
-	// _STAT_SUM_ and _STAT_AVG_ checks (each one have to be unique):
-	_index_stat_sum = _index_stat_avg = -1;
-	for ( k = 0 ; k < m ; ++k ) {
-		if ( _bb_output_type[k] == NOMAD::STAT_SUM ) {
-			if ( _index_stat_sum >= 0 ) {
+	_index_cnt_eval = _index_stat_sum = _index_stat_avg = -1;
+	for ( k = 0 ; k < m ; ++k )
+	{
+		if ( _bb_output_type[k] == NOMAD::STAT_SUM )
+		{
+			if ( _index_stat_sum >= 0 )
+			{
 				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
 										 "invalid parameter: BB_EXE: more than one STAT_SUM output" );
 			}
 			_index_stat_sum = static_cast<int>(k);
 		}
-		else if ( _bb_output_type[k] == NOMAD::STAT_AVG ) {
-			if ( _index_stat_avg >= 0 ) {
+		else if ( _bb_output_type[k] == NOMAD::STAT_AVG )
+		{
+			if ( _index_stat_avg >= 0 )
+			{
 				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
 										 "invalid parameter: BB_EXE: more than one STAT_AVG output" );
 			}
 			_index_stat_avg = static_cast<int>(k);
 		}
-		else if ( _bb_output_type[k] == NOMAD::CNT_EVAL ) {
-			if ( _index_cnt_eval >= 0 ) {
+		else if ( _bb_output_type[k] == NOMAD::CNT_EVAL )
+		{
+			if ( _index_cnt_eval >= 0 )
+			{
 				throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
 										 "invalid parameter: BB_EXE: more than one CNT_EVAL output" );
 			}
@@ -4110,12 +4143,12 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 				
 				if (has_direction_type(NOMAD::ORTHO_NP1_QUAD))
 				{	
-					_out << NOMAD::open_block("Warning:") 
+					_out << NOMAD::open_block("Warning:")
 					<< "Model use is disabled for direction type. Direction types ORTHO N+1 QUAD are changed to ORTHO N+1 NEG." << std::endl			
 					<< NOMAD::close_block();
 				}
 			}
-			set_DIRECTION_TYPE_NO_MODEL();    
+			set_DIRECTION_TYPE_NO_MODEL();
 
 		}
 				
@@ -4152,6 +4185,7 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 			}
 		}
 		
+	
 		// disable PEB constraints when categorical variables are present
 		if ( has_categorical && _barrier_type == NOMAD::PEB_P)
 		{
@@ -4172,7 +4206,7 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 		set_DIRECTION_TYPE_NO_MODEL(); 
 		if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
 			_out << NOMAD::open_block("Warning:") 
-			<< "Model use is disabled in parallel mode." << std::endl
+			<< "Model use is disabled in parallel mode (MPI)." << std::endl
 			<< NOMAD::close_block();
 		
 		
@@ -4181,7 +4215,7 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 			set_ASYNCHRONOUS(false);
 			if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
 				_out << NOMAD::open_block("Warning:") 
-				<< "Asynchronous mode is disabled in parallel mode when dynamic directions (ortho n+1) are used." << std::endl
+				<< "Asynchronous mode is disabled in parallel mode (MPI) when dynamic directions (ortho n+1) are used." << std::endl
 				<< NOMAD::close_block();
 		}
 #endif
@@ -4215,6 +4249,24 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 			throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
 									 "invalid parameter: MODEL_SEARCH_MAX_TRIAL_PTS (must be >= 1)" );
 	}
+	
+	/*----------------------------*/
+	/*        EVAL SORT           */
+	/*----------------------------*/
+	if (_disable_eval_sort)
+	{
+		
+		_model_params.eval_sort = NOMAD::NO_MODEL;
+		_sgte_eval_sort         = false;
+		NOMAD::Priority_Eval_Point::set_lexicographic_order(true);
+		if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed)
+			_out << NOMAD::open_block("Warning:") 
+			<< "Eval sort is forcefully disabled (using models, surrogates, user eval priority, etc.). Only lexicographic order is used." << std::endl
+			<< NOMAD::close_block();
+		
+	}
+	else
+		NOMAD::Priority_Eval_Point::set_lexicographic_order(false);
 	
 	
 	/*----------------------------*/
@@ -4394,6 +4446,22 @@ void NOMAD::Parameters::check ( bool remove_history_file  ,
 	if ( !_opp_CS_is_defined )
 		_opportunistic_cache_search = false;
 	
+	if (_bb_max_block_size<=0)
+		throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+								 "Parameters::check(): invalid block size for list evaluation (>0)" );
+	
+	if (_out.get_gen_dd()>NOMAD::MINIMAL_DISPLAY && !_warning_has_been_displayed && _bb_max_block_size > 1 && (_max_bb_eval>0 || _max_sim_bb_eval>0 || _max_eval>0))
+		_out << NOMAD::open_block("Warning:") 
+		<< "The maximum number of evaluations may be exceeded when BB_MAX_BLOCK_SIZE>1." << std::endl
+		<< NOMAD::close_block();
+	
+	
+#ifdef USE_MPI
+	if (_bb_max_block_size >1)
+		throw Invalid_Parameter ( "Parameters.cpp" , __LINE__ ,
+								 "Parameters::check(): List evaluation by block of size > 1 are not allowed when using MPI." );
+#endif		
+		
 	/*----------------------------*/
 	/*         MULTI-MADS         */
 	/*----------------------------*/
@@ -5622,6 +5690,16 @@ int NOMAD::Parameters::get_opportunistic_min_eval ( void ) const
 	return _opportunistic_min_eval;
 }
 
+// get_bb_max_block_size
+int NOMAD::Parameters::get_bb_max_block_size ( void ) const
+{
+	if ( _to_be_checked )
+		throw Bad_Access ( "Parameters.cpp" , __LINE__ ,
+						  "Parameters::get_bb_max_block_size(), Parameters::check() must be invoked" );
+	return _bb_max_block_size;
+}
+
+
 // get_opportunistic_min_f_imprvmt
 const NOMAD::Double & NOMAD::Parameters::get_opportunistic_min_f_imprvmt ( void ) const
 {
@@ -5815,6 +5893,12 @@ void NOMAD::Parameters::set_CACHE_SEARCH ( bool s )
 void NOMAD::Parameters::set_DISABLE_MODELS ( void )
 {
 	_disable_models=true;	
+}
+
+// Disable use of models
+void NOMAD::Parameters::set_DISABLE_EVAL_SORT ( void )
+{
+	_disable_eval_sort=true;	
 }
 
 // set all the models parameters:
@@ -6354,7 +6438,6 @@ void NOMAD::Parameters::reset_PEB_changes ( void ) const
 			_bb_output_type[k] = NOMAD::PEB_P;
 }
 
-
 // change PEB to PB constraints
 void NOMAD::Parameters::change_PEB_to_PB ( void )
 {
@@ -6628,7 +6711,7 @@ void NOMAD::Parameters::set_DISPLAY_ALL_EVAL ( bool dae )
 // set_DISPLAY_STATS (1/2):
 void NOMAD::Parameters::set_DISPLAY_STATS ( const std::list<std::string> & ls )
 {
-	_display_stats.clear();   
+	_display_stats.clear();
 	_display_stats = ls;
 }
 
@@ -6802,6 +6885,11 @@ void NOMAD::Parameters::set_SEED ( int t )
 {
 	_to_be_checked = true;
 	_seed          = ( t < 0 ) ? NOMAD::get_pid() : t;
+    if ( t < 0 && _out.get_gen_dd()>=NOMAD::NORMAL_DISPLAY && !_warning_has_been_displayed)
+        _out << NOMAD::open_block("Warning:")
+        << "Seed should be in the interval [0;UINT32_max]. The seed is set to the process id!" << std::endl
+        << NOMAD::close_block();
+    
 }
 
 // set_MAX_EVAL:
@@ -7215,6 +7303,17 @@ void NOMAD::Parameters::set_MULTI_FORMULATION ( NOMAD::multi_formulation_type mf
 	_multi_formulation = mft;
 }
 
+void NOMAD::Parameters::set_BB_MAX_BLOCK_SIZE ( int max_block_size )
+{
+	_to_be_checked = true;
+	_bb_max_block_size = max_block_size;
+	
+	_eval_points_as_block=true;
+	
+}
+
+
+
 // set_OPPORTUNISTIC_LH:
 void NOMAD::Parameters::set_OPPORTUNISTIC_LH ( bool opp )
 {
@@ -7411,11 +7510,11 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
 	bool   chk         = false;
 	bool   display_all = false;
 	
-	// if ( NOMAD::string_find ( "ALL PARAMS PARAMETERS EVERYTHING NOMAD" , param_names ) )
-	if ( NOMAD::string_match ( "ALL", param_names) ||  NOMAD::string_match( "PARAMS", param_names ) || 
+	if ( NOMAD::string_match ( "ALL", param_names) ||  NOMAD::string_match( "PARAMS", param_names ) ||
 		 NOMAD::string_match ( "PARAMETER", param_names) || NOMAD::string_match ( "PARAM", param_names) ||
 		 NOMAD::string_match ( "NOMAD" , param_names ) || NOMAD::string_match ( "EVERYTHING", param_names) )
 			display_all = true;
+	
 	
 	const char registered_key_basic[]="2N ANGLES AVG BARRIER BASIC BASIC BB_EXE BB_INPUT_TYPE BB_OUTPUT_TYPE BI-MADS BI-OBJECTIVES BIMADS \
 	BINARY BIOBJECTIVES BLACK-BOXES	BLACKBOXES BOUNDS CACHE BBEVAL CACHE_FILE CNT_EVAL CONSTRAINTS CONTINUOUS COUNT DEBUG DELTA_0 DIMENSION \
@@ -7427,8 +7526,8 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
 	
 	const char registered_key_advanced[]="ADD_SEED_TO_FILE_NAMES ADVANCED ASYNCHRONOUS BB_INPUT_INCLUDE_SEED BB_INPUT_INCLUDE_TAG \
 	BB_REDIRECTION BBEVAL BI-MADS BI-OBJECTIVES BIMADS BIOBJECTIVES BLACK-BOXES BLACKBOXES BLOCKS BOUNDS CACHE CACHE_FILE CACHE_SAVE_PERIOD \
-	CACHE_SEARCH CATEGORICAL CLOSED_BRACES CONSTRAINTS CYCLIC DELTA DELTA^P DETERMINISTIC DIRECTIONS DISABLE DISABLE_MODEL DISABLE_MODELS \
-	DISPLAY ELL ELL_0 EVALUATIONS EXECUTABLE EXTENDED_POLL EXTENDED_POLL_DISABLED EXTENDED_POLL_ENABLED EXTENDED_POLL_TRIGGER FEASIBILITY \
+	CACHE_SEARCH CATEGORICAL CLOSED_BRACES CONSTRAINTS CYCLIC DELTA DELTA^P DETERMINISTIC DIRECTIONS DISABLE DISABLE_EVAL_SORT DISABLE_MODEL DISABLE_MODELS \
+	DISPLAY ELL ELL_0 BB_MAX_BLOCK_SIZE EVALUATIONS EXECUTABLE EXTENDED_POLL EXTENDED_POLL_DISABLED EXTENDED_POLL_ENABLED EXTENDED_POLL_TRIGGER FEASIBILITY \
 	FILES FILTER FIXED_VARIABLE FROBENIUS GLOBAL GROUPS H_MAX_0 H_MIN H_NORM HALTON_SEED HAS_SGTE HMAX HMAX_0 HMIN INDENTATION INF_STR \
 	INFINITY INITIAL_MESH_INDEX INTERPOLATION ITERATIONS L_0 L_INF L0 L1 L2 LATIN-HYPERCUBE LB LIBRARY LINF LT-MADS LTMADS MADS \
 	MAX_CACHE_MEMORY MAX_CONSECUTIVE_FAILED_ITERATIONS MAX_EVAL MAX_ITERATIONS MAX_MESH_INDEX MAX_SGTE_EVAL MAX_SIM_BB_EVAL MAXIMUM \
@@ -7731,6 +7830,7 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
 		<< "    the following keywords:"                              << std::endl
 		<< "      BBE       : blackbox evaluations"                   << std::endl
 		<< "      BBO       : blackbox outputs"                       << std::endl
+		<< "      BLK_EVA   : number of blocks of evaluations"        << std::endl
 		<< "      EVAL      : evaluations (includes cache hits)"      << std::endl
 		<< "      MESH_INDEX: mesh index"                             << std::endl
 		<< "      MESH_SIZE : mesh size delta_k^m"                    << std::endl
@@ -8163,16 +8263,17 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
     }
 	
 	
-	// DISABLE MODELS
+	// DISABLE MODELS / EVAL_SORT 
 	//-----------
 	if ( display_all || NOMAD::string_find ( "MODEL DISABLE MODELS DISABLE_MODELS \
 											MODEL_EVAL_SORT ADVANCED \
+											EVAL_SORT \
                                             ORTHO N+1 QUAD QUADRATIC MODEL_SEARCH TGP " ,
 											param_names ) ) {
 		_out << std::endl
-		<< NOMAD::open_block ( "DISABLE (advanced)" )                            << std::endl
+		<< NOMAD::open_block ( "DISABLE (advanced)" )                         << std::endl
 		<< ". this parameter is used to forcefully disable a feature."        << std::endl
-		<< ". argument: MODELS"                                               << std::endl
+		<< ". argument: MODELS or EVAL_SORT"                                  << std::endl
 		<< ". # DISABLE MODELS is equivalent to set: "                        << std::endl
 		<< "          MODEL_EVAL_SORT no        "                             << std::endl
 		<< "          MODEL_SEARCH no           "                             << std::endl
@@ -8180,7 +8281,36 @@ void NOMAD::Parameters::help ( const std::list<std::string> & pnames,bool develo
 		<< "  # WARNING: extra settings of MODEL_EVAL_SORT,"                  << std::endl
 		<< "             MODEL_SEARCH and DIRECTION_TYPE ORTHO N+1 QUAD"      << std::endl
 		<< "             will be ignored "                                    << std::endl
+		<< ". # DISABLE EVAL_SORT: ordering by lexicographic order only. "    << std::endl
+		<< "  # WARNING: setting of MODEL_EVAL_SORT,"						  << std::endl
+		<< "             SURROGATE_EVAL_SORT and user priority 			"	  << std::endl
+		<< "             will be ignored"									  << std::endl
 		<< ". default: no default"                                            << std::endl
+		
+		<< NOMAD::close_block();
+		chk = true;
+	}
+	
+	// BB_MAX_BLOCK_SIZE
+	//-----------
+	if ( display_all || NOMAD::string_find ( "EVAL LIST MAX BLOCK SIZE BB BLACKBOX \
+											BLACK-BOX OPPORTUNIST OPPORTUNISTIC PARALLEL",
+											param_names ) ) {
+		_out << std::endl
+		<< NOMAD::open_block ( "BB_MAX_BLOCK_SIZE (advanced)" )					<< std::endl
+		<< ". maximum size of a block of evaluations send to the blackbox"		<< std::endl
+		<< " executable at once. Blackbox executable can manage parallel"		<< std::endl
+		<< " evaluations on its own. Opportunistic strategies may apply after"	<< std::endl
+		<< " each block of evaluations."										<< std::endl
+		<< " Depending on the algorithm phase, the blackbox executable will"	<< std::endl	
+		<< " receive at most BB_MAX_BLOCK_SIZE points to evaluate."				<< std::endl
+		<< " When this parameter is greater than one, the number of evaluations"<< std::endl
+		<< " may exceed the MAX_BB_EVAL stopping criterion."					<< std::endl	
+		<< ". argument: integer > 0"											<< std::endl
+		<< ". example: BB_MAX_BLOCK_SIZE 3,"									<< std::endl
+		<< "             The blackbox executable receives blocks of"			<< std::endl
+		<< "			 at most 3 points for evaluation."						<< std::endl
+		<< ". default: 1"														<< std::endl
 		<< NOMAD::close_block();
 		chk = true;
 	}

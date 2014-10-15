@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -276,7 +276,7 @@ void NOMAD::Quad_Model_Search::search ( NOMAD::Mads              & mads         
 				_one_search_stats.add_not_enough_pts();
 			else 
 			{
-				
+
 #ifdef DEBUG
 				out << std::endl;
 				model.display_Y ( out , "unscaled interpolation set Y" );
@@ -538,31 +538,35 @@ void NOMAD::Quad_Model_Search::create_trial_point
 			<< x << " )" << std::endl;
 	}
 
-	 
-	// Round for integer and binary variables:	
+	
+	// Round for integer and binary variables:
+	bool has_integer=false;
+	bool has_binary=false;
 	for (int i=0;i<n;i++)
 	{
 		if ( _p.get_bb_input_type()[i] == NOMAD::INTEGER )
 		{
+			has_integer=true;
 			if ( x[i] >= 0.0 )
 				x[i] = x[i].NOMAD::Double::ceil();
 			else
 				x[i] = x[i].NOMAD::Double::floor();
-			if ( display_degree == NOMAD::FULL_DISPLAY )
-				out << "candidate (after rounding integer) : ( "
-				<< x << " )" << std::endl;
 		}
 		// binary variables: 
 		else if ( _p.get_bb_input_type()[i] == NOMAD::BINARY ) 
 		{
+			has_binary=true;
 			if ( x[i]!= 0.0 )
 				x[i] = 1.0;
-			if ( display_degree == NOMAD::FULL_DISPLAY )
-				out << "candidate (after rounding binary) : ( "
-				<< x << " )" << std::endl;
 		}
 	}
+	if ( has_integer && display_degree == NOMAD::FULL_DISPLAY )
+		out << "candidate (after rounding integer) : ( "
+		<< x << " )" << std::endl;
 	
+	if ( has_binary && display_degree == NOMAD::FULL_DISPLAY )
+		out << "candidate (after rounding binary) : ( "
+		<< x << " )" << std::endl;
 	
 	
 	// compare x and center:
@@ -719,9 +723,8 @@ bool NOMAD::Quad_Model_Search::optimize_model
 	// blackbox outputs:
 	model_param.set_BB_OUTPUT_TYPE ( _p.get_bb_output_type() );
 	
-	// blackbox inputs:
-	// Use defaults: all variables are treated as continuous (integer and binary. Categoricals disable models anyway).
-		
+	// Default: all variables are treated as continuous
+	
 	// barrier parameters:
 	model_param.set_H_MIN  ( _p.get_h_min () );
 	model_param.set_H_NORM ( _p.get_h_norm() );
@@ -790,14 +793,8 @@ bool NOMAD::Quad_Model_Search::optimize_model
 	else
 		model_param.set_MAX_BB_EVAL ( 50000 );
 	
-	// min mesh size:
-	// model_param.set_MAX_MESH_INDEX ( 30 );
-	// model_param.set_MIN_MESH_SIZE ( NOMAD::Double ( 1e-8 ) , false );
 	
 	model_param.set_SNAP_TO_BOUNDS ( true );
-	// model_param.set_SNAP_TO_BOUNDS ( false );
-	// model_param.set_LH_SEARCH ( n*100 , n*10 );
-	// model_param.set_OPPORTUNISTIC_LH ( true );
 	
 	// disable user calls:
 	model_param.set_USER_CALLS_ENABLED ( false );
@@ -809,7 +806,7 @@ bool NOMAD::Quad_Model_Search::optimize_model
 							flag_reset_barriers ,
 							flag_p1_active        );
 	
-	NOMAD::Mads::set_flag_check_bimads  (false  );		
+	NOMAD::Mads::set_flag_check_bimads   ( false );		
 	NOMAD::Mads::set_flag_reset_mesh     ( true  );
 	NOMAD::Mads::set_flag_reset_barriers ( true  );
 	NOMAD::Mads::set_flag_p1_active      ( false );
@@ -874,16 +871,27 @@ bool NOMAD::Quad_Model_Search::optimize_model
 			
 			// model evaluator creation:
 			NOMAD::Evaluator *ev;
-			if (model_param.get_bb_nb_outputs()==2)
-				ev =new NOMAD::Multi_Obj_Quad_Model_Evaluator( model_param , model );
-			else
-				ev=new NOMAD::Single_Obj_Quad_Model_Evaluator(model_param, model);
 			
+			if ( model_param.get_nb_obj() ==2 )
+				ev =new NOMAD::Multi_Obj_Quad_Model_Evaluator ( model_param , model );
+			else 
+				ev=new NOMAD::Single_Obj_Quad_Model_Evaluator ( model_param , model );
+				
 			// algorithm creation and execution:
 			NOMAD::Mads    mads ( model_param , ev );
+
+			NOMAD::Phase_One_Evaluator * p1ev=NULL;
+			if ( model_param.get_nb_obj() >= 2 && ! flag_check_bimads )
+			{
+				p1ev   = new NOMAD::Phase_One_Evaluator ( model_param , *ev );
+				mads.get_evaluator_control().set_evaluator ( p1ev );
+			}
+			
 			NOMAD::stop_type st = mads.run();
 			
 			delete ev;
+			if (p1ev)
+				delete p1ev;
 			
 			// check the stopping criterion:
 			if ( st == NOMAD::CTRL_C || st == NOMAD::MAX_CACHE_MEMORY_REACHED ) {

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -60,6 +60,7 @@ namespace NOMAD {
 		NOMAD::Double _h_model;            ///< Feasibility model value.
 		NOMAD::Double _angle_success_dir;  ///< Angle with last successful direction.
 		NOMAD::Double _angle_simplex_grad; ///< Angle with simplex gradient.
+		static bool	  _lexicographic_order; ///< Use lexicographic order for comparison 
 		
 		/// Affectation operator.
 		/**
@@ -108,7 +109,7 @@ namespace NOMAD {
 		explicit Priority_Eval_Point ( const NOMAD::Eval_Point * x     ,
 									  const NOMAD::Double     & h_min   )
 		: NOMAD::Set_Element<NOMAD::Eval_Point> ( x     ) ,
-		_h_min                                ( h_min )  {}
+		_h_min									( h_min )  {}
 		
 		/// Copy constructor.
 		/**
@@ -122,7 +123,7 @@ namespace NOMAD {
 		_f_model                              ( pep._f_model            ) ,
 		_h_model                              ( pep._h_model            ) ,
 		_angle_success_dir                    ( pep._angle_success_dir  ) ,
-		_angle_simplex_grad                   ( pep._angle_simplex_grad )   {}
+		_angle_simplex_grad                   ( pep._angle_simplex_grad ) {}
 		
 		/// Destructor.
 		virtual ~Priority_Eval_Point ( void ) {}
@@ -145,7 +146,7 @@ namespace NOMAD {
 											NOMAD::Double & f_model            ,
 											NOMAD::Double & h_model            ,
 											NOMAD::Double & angle_success_dir  ,
-											NOMAD::Double & angle_simplex_grad   ) const
+											NOMAD::Double & angle_simplex_grad  ) const
 		{
 			f_sgte             = _f_sgte;
 			h_sgte             = _h_sgte;
@@ -213,6 +214,12 @@ namespace NOMAD {
 		 \param h The feasibility model value -- \b IN.
 		 */
 		void set_h_model ( const NOMAD::Double & h ) { _h_model = h; }
+		
+		/// Set the lexicographic order for sorting.
+		/**
+		 */
+		static void set_lexicographic_order ( bool order ) { _lexicographic_order = order; }
+		
 		
 	};
 }

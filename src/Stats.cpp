@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -51,6 +51,7 @@ NOMAD::Stats & NOMAD::Stats::operator = ( const NOMAD::Stats & s )
   _sim_bb_eval       = s._sim_bb_eval;
   _sgte_eval         = s._sgte_eval;
   _bb_eval           = s._bb_eval;
+  _block_eval         = s._block_eval;	
   _failed_eval       = s._failed_eval;
   _cache_hits        = s._cache_hits;
   _interrupted_eval  = s._interrupted_eval;
@@ -107,6 +108,7 @@ void NOMAD::Stats::reset ( void )
     _sim_bb_eval       =
     _sgte_eval         =
     _bb_eval           =
+	_block_eval         =
     _failed_eval       =
     _cache_hits        =
     _interrupted_eval  =
@@ -167,6 +169,7 @@ void NOMAD::Stats::update ( const NOMAD::Stats & s , bool for_search )
   _sim_bb_eval       += s._sim_bb_eval;
   _sgte_eval         += s._sgte_eval;
   _bb_eval           += s._bb_eval;
+  _block_eval        += s._block_eval;	
   _failed_eval       += s._failed_eval;
   _cache_hits        += s._cache_hits;
   _interrupted_eval  += s._interrupted_eval;
@@ -256,6 +259,9 @@ void NOMAD::Stats::display ( const NOMAD::Display & out ) const
     out << "bb evaluations (with sgte cost) : " << get_bb_eval();
   else
     out << "blackbox evaluations            : " << _bb_eval;
+  out << std::endl;
+  if ( _block_eval > 0)
+	  out << "Block of evaluations            : " << _block_eval;
   if ( _p1_bbe > 0 )
     out << " (phase one: " << _p1_bbe << ")";
   out << std::endl;

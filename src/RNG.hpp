@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2010  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -43,6 +43,7 @@
 #define __RNG__
 
 #include "defines.hpp"
+#include "Exception.hpp"
 
 using namespace std;
 
@@ -63,7 +64,7 @@ namespace NOMAD {
 		 /param s The seed -- \b IN.
 		 /return A boolean if the seed is acceptable, that is in [0,UINT32_MAX].
 		 */
-		static bool set_seed(unsigned long s);
+		static bool set_seed(int s);
 		
 		/// Get a random integer as uint32
 		/** This function serves to obtain a random number \c 

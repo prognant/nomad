@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -61,7 +61,7 @@ namespace NOMAD {
 
     NOMAD::direction_type _type;   ///< Type of direction.
     mutable int           _index;  ///< Direction index (used only for display).
-	int					  _dir_group_index ; ///< Index a the group of direction	
+	size_t					  _dir_group_index ; ///< Index a the group of direction
 
   public:
 
@@ -168,7 +168,7 @@ namespace NOMAD {
 	  /**
        \return The direction group index.
 	   */
-	  int get_dir_group_index ( void ) const { return _dir_group_index; }
+	  size_t get_dir_group_index ( void ) const { return _dir_group_index; }
 	  
 	  
     /// Check if the direction is a MADS direction.

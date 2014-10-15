@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonsmooth Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2010  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -47,15 +47,17 @@ uint32_t NOMAD::RNG::y = 362436069;
 uint32_t NOMAD::RNG::z = 521288629; 
 
 
-bool NOMAD::RNG::set_seed(unsigned long s)
+bool NOMAD::RNG::set_seed(int s)
 {
-	if(s<=UINT32_MAX)
-	{
-		x=s;
+    x=static_cast<uint32_t>(s);
+	if(x<=UINT32_MAX && s>=0)
 		return true;
-	}
-	else 
+	else
+    {
+        throw NOMAD::Exception ( "RNG.cpp" , __LINE__ ,
+                                "NOMAD::RNG::set_seed(): invalid seed. Seed should be in [0,UINT32_MAX]" );
 		return false;
+    }
 }
 
 uint32_t NOMAD::RNG::rand ( void )

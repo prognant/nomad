@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -267,7 +267,7 @@ namespace NOMAD {
 	       mesh size Delta^m_min
 	       (stopping criterion MIN_MESH_SIZE).
     */
-    bool get_delta_m ( NOMAD::Point & delta_m                        ,
+    virtual bool get_delta_m ( NOMAD::Point & delta_m                        ,
 		       int            mesh_index = Mesh::_mesh_index   ) const;
 
     /// Access to the mesh size parameter Delta^m_k.
@@ -303,7 +303,7 @@ namespace NOMAD {
 	       poll size Delta^p_min
 	       (stopping criterion MIN_POLL_SIZE).
     */
-    bool get_delta_p ( NOMAD::Point & delta_p                        ,
+    virtual bool get_delta_p ( NOMAD::Point & delta_p                        ,
 		       int            mesh_index = Mesh::_mesh_index   ) const;
     
     /// Access to the poll size parameter Delta^p_k.

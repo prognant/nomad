@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -197,12 +197,12 @@ void NOMAD::Directions::compute_binary_directions
 /*---------------------------------------------------------*/
 /*            get the directions for a given mesh          */
 /*---------------------------------------------------------*/
-void NOMAD::Directions::compute ( std::list<NOMAD::Direction> & dirs,
-				  NOMAD::poll_type              poll				,
-				  const NOMAD::Point          & poll_center			,
-				  int                           mesh_index			,
-				  int                           halton_index		,
-				  const NOMAD::Direction      & feas_success_dir	,
+void NOMAD::Directions::compute ( std::list<NOMAD::Direction> & dirs               ,
+				  NOMAD::poll_type              poll               ,
+				  const NOMAD::Point          & poll_center        ,
+				  int                           mesh_index         ,
+				  int                           halton_index       ,
+				  const NOMAD::Direction      & feas_success_dir   ,
 				  const NOMAD::Direction      & infeas_success_dir   )
 {
 	
@@ -267,7 +267,8 @@ void NOMAD::Directions::compute ( std::list<NOMAD::Direction> & dirs,
 			if ( compute_halton_dir ( halton_index ,
 									 mesh_index   ,
 									 alpha_t_l    ,
-									 halton_dir     ) ) {
+									 halton_dir     ) ) 
+			{
 				
 #ifdef DEBUG
 				_out << std::endl
@@ -313,7 +314,8 @@ void NOMAD::Directions::compute ( std::list<NOMAD::Direction> & dirs,
 				
 				// Ortho-MADS 1 or Ortho-MADS 2:
 				// -----------------------------
-				else {
+				else
+				{
 					dirs.push_back ( halton_dir );
 					if ( *it == NOMAD::ORTHO_2 )
 						dirs.push_back ( -halton_dir );
@@ -709,7 +711,8 @@ bool NOMAD::Directions::compute_halton_dir ( int                halton_index ,
   NOMAD::Double d , norm = 0.0;
   NOMAD::Point  b ( _nc );
 
-  for ( i = 0 ; i < _nc ; ++i ) {
+  for ( i = 0 ; i < _nc ; ++i ) 
+  {
     d = Directions::get_phi ( halton_index , _primes[i] );
     b[i] = 2*d - 1.0;
     norm += b[i].pow2();

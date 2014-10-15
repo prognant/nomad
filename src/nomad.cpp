@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1      */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2      */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -49,7 +49,8 @@ int main ( int argc , char ** argv )
 	
   // display:
   NOMAD::Display out ( std::cout );
-  out.precision ( NOMAD::DISPLAY_PRECISION_STD );
+	out.precision ( NOMAD::DISPLAY_PRECISION_STD );
+	
 
   std::string error;
   {

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version (3.5.1).7.2        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version (3.6.2.beta)*/
 /*                                                                                     */
 /*  Copyright (C) 2001-2012 Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -49,12 +49,12 @@ NOMAD::Quad_Model_Evaluator::Quad_Model_Evaluator
 ( const NOMAD::Parameters & p     ,
   const NOMAD::Quad_Model & model   )
   :  
-	_n               ( model.get_n()         ) ,
-    _nm1             ( _n-1                  ) , 
-    _m               ( p.get_bb_nb_outputs() ) ,
-    _x               ( NULL                  ) ,
-    _alpha           ( NULL                  ) ,
-    _model_ready     ( model.check()         )
+	_n					( model.get_n()         ) ,
+    _nm1				( _n-1                  ) , 
+    _m					( p.get_bb_nb_outputs() ) ,
+    _x					( NULL                  ) ,
+    _alpha				( NULL                  ) ,
+    _model_ready		( model.check()         )
 {
 	if ( _model_ready )
 	{
@@ -116,7 +116,8 @@ NOMAD::Quad_Model_Evaluator::Quad_Model_Evaluator
 /*-----------------------------*/
 NOMAD::Quad_Model_Evaluator::~Quad_Model_Evaluator ( void )
 {
-  if ( _model_ready ) {
+  if ( _model_ready ) 
+  {
     for ( int i = 0 ; i < _m ; ++i )
       if ( _alpha[i] )
 	delete [] _alpha[i];
@@ -148,11 +149,13 @@ bool NOMAD::Quad_Model_Evaluator::eval_x
 	for ( i = 0 ; i < _n ; ++i )
 		_x[i] = x[i].value() / 1000.0;
 	
-	for ( int oi = 0 ; oi < _m ; ++oi ) {
+	for ( int oi = 0 ; oi < _m ; ++oi )
+	{
 		
 		alpha = _alpha[oi];
 		
-		if ( alpha ) {
+		if ( alpha )
+		{
 			
 			z = alpha[0];
 			p = _x;

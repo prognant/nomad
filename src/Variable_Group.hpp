@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -169,7 +169,7 @@ namespace NOMAD {
        \param feas_success_dir   Feasible success direction              -- \b IN.
        \param infeas_success_dir Infeasible success direction            -- \b IN.
     */
-    void get_directions  ( std::list<NOMAD::Direction> & dirs   ,
+    void get_directions  ( std::list<NOMAD::Direction> & dirs               ,
 			   NOMAD::poll_type              poll               ,
 			   const NOMAD::Point          & poll_center        ,
 			   int                           mesh_index         ,
@@ -184,9 +184,9 @@ namespace NOMAD {
        \param mesh_index   Mesh index ell            -- \b IN.
        \param halton_index Halton index; must be > 0 -- \b IN.
     */
-    bool get_one_direction ( NOMAD::Direction & dir ,
-			     int                mesh_index		,
-			     int                halton_index	) 
+    bool get_one_direction ( NOMAD::Direction & dir          ,
+			     int                mesh_index   ,
+			     int                halton_index   ) 
     {
       return _directions->compute_one_direction ( dir , mesh_index , halton_index );
     }

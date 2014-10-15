@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -148,6 +148,17 @@ std::string NOMAD::itos ( int i )
   oss << i;
   return oss.str();
 }
+
+/*-----------------------------------------------------------------*/
+/*                         NOMAD::itos                             */
+/*-----------------------------------------------------------------*/
+std::string NOMAD::itos ( size_t i )
+{
+    std::ostringstream oss;
+    oss << i;
+    return oss.str();
+}
+
 
 /*-----------------------------------------------------------------*/
 /*                         NOMAD::toupper - 1/2                    */
@@ -801,20 +812,20 @@ bool NOMAD::string_to_index_range ( const std::string & s           ,
 
 
 int NOMAD::get_rank(double ** M,
-					int m,
-					int n)
+					size_t m,
+					size_t n)
 {
 	double  * W = new double  [n];
 	double ** V = new double *[n];
-	for (int i = 0 ; i < n ; ++i )
+	for (size_t i = 0 ; i < n ; ++i )
 	{
 		V[i]=new double [n];
 	}
 	
 	std::string error_msg;
-	NOMAD::SVD_decomposition ( error_msg , M , W , V , m , n );
+	NOMAD::SVD_decomposition ( error_msg , M , W , V , static_cast<int>(m) , static_cast<int>(n) );
 
-	for (int i=0;i<n;++i)
+	for (size_t i=0;i<n;++i)
 		delete [] V[i];
 	delete [] V;
 
@@ -826,7 +837,7 @@ int NOMAD::get_rank(double ** M,
 	}
 	
 	int rank=0;
-	for (int i=0;i<n;i++)
+	for (size_t i=0;i<n;i++)
 	{
 		if (fabs(W[i])>NOMAD::SVD_EPS)
 			rank++;

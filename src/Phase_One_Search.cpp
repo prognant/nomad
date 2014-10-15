@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -129,7 +129,7 @@ void NOMAD::Phase_One_Search::search ( NOMAD::Mads              & mads          
 	_p.set_SOLUTION_FILE    ( ""                         );
 	_p.reset_stats_file();
 	
-	// DISPLAY_STATS  and STATS_FILE 
+	// DISPLAY_STATS  and STATS_FILE
 	{
 		std::list<std::string>                 ds    = old_ds;
 		std::list<std::string>                 sf    = old_stats_file;
@@ -139,7 +139,6 @@ void NOMAD::Phase_One_Search::search ( NOMAD::Mads              & mads          
 		_p.set_STATS_FILE ( old_stats_file_name , sf );
 		
 	} 
-
 
 	_p.check ( false ,    // remove_history_file  = false
 			   true ,    // remove_solution_file = true
@@ -317,7 +316,7 @@ void NOMAD::Phase_One_Search::search ( NOMAD::Mads              & mads          
 		
 		// display_stats
 		if (display_degree > NOMAD::NO_DISPLAY)
-			ev_control.display_stats(false, out, old_ds , bf , true , NULL );  
+			ev_control.display_stats(false, out, old_ds , bf , true , NULL );
 	}
 	
 	if ( display_degree == NOMAD::FULL_DISPLAY )

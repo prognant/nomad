@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -269,6 +269,15 @@ namespace NOMAD {
   */
   std::string itos ( int i );
 
+    
+    /// Transform a unsigned long (size_t) into a string.
+    /**
+     \param i The unsigned long -- \b IN.
+     \return  The string.
+     */
+    std::string itos ( size_t i );
+
+    
   /// Put a string into upper cases.
   /**
      \param s The string -- \b IN/OUT.
@@ -353,8 +362,8 @@ namespace NOMAD {
      \return The rank>0 if the decomposition worked else 0.
 	 */	
 	int get_rank(double **M,
-				 int m,
-				 int n);
+				 size_t m,
+				 size_t n);
 	
 	
 }

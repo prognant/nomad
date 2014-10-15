@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -184,6 +184,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	
 	// current number of blackbox evaluations:
 	int  bbe             = stats.get_bb_eval();
+	int  blk_eva		 = stats.get_block_eval();	
 	int  sgte_eval       = stats.get_sgte_eval();
 	int  mads_iterations = stats.get_iterations();
 	bool has_sgte        = _p.has_sgte();
@@ -191,7 +192,8 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	// displays:
 	if ( display_degree == NOMAD::FULL_DISPLAY ) {
 		out << "        it = " << mads_iterations << std::endl
-		<< "       bbe = " << bbe << std::endl;
+		<< "       bbe = " << bbe << std::endl
+		<< "   blk_eva = " << blk_eva << std::endl;
 		if ( has_sgte )
 			out << " sgte_eval = " << sgte_eval << std::endl;
 		out << "mesh_index = " << mesh_index << std::endl
@@ -247,7 +249,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	const std::string              old_his_file = _p.get_history_file();
 	bool                                old_uce = _p.get_user_calls_enabled();
 	bool                                old_epe = _p.get_extended_poll_enabled();
-	const std::vector<NOMAD::bb_output_type> old_bbot = _p.get_bb_output_type();  
+	const std::vector<NOMAD::bb_output_type> old_bbot = _p.get_bb_output_type();
 
 	
 	
@@ -294,17 +296,20 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	// DISPLAY_STATS:
 	{
 		if ( has_sgte )
-			_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (VNS--surrogate)" );  
+			_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (VNS--surrogate)" );
  		else 
 		{
 			std::list<std::string>                 ds    = old_ds;
 			std::list<std::string>::iterator       it    = ds.begin();
 			std::list<std::string>::const_iterator end   = ds.end();
 			std::string                            s_bbe = NOMAD::itos(bbe) + "+";
+			std::string                            s_blk = NOMAD::itos(blk_eva) + "+";
 			while ( it != end )
 			{
 				if ( *it == "BBE" )
 					ds.insert ( it , s_bbe );
+				if ( *it == "BLK_EVA" )
+					ds.insert ( it , s_blk );
 				++it;
 			}
 			ds.push_back ( " (VNS)" );
@@ -314,18 +319,21 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 
 	// STATS_FILE:
 	{
-		std::list<std::string>                 sf    = old_stats_file;
-		std::list<std::string>::iterator       it    = sf.begin();
-		std::list<std::string>::const_iterator end   = sf.end();
-		std::string                            s_bbe = NOMAD::itos(bbe) + "+";
+		std::list<std::string>                 sf		= old_stats_file;
+		std::list<std::string>::iterator       it		= sf.begin();
+		std::list<std::string>::const_iterator end		= sf.end();
+		std::string                            s_bbe	= NOMAD::itos(bbe) + "+";
+		std::string                            s_blk	= NOMAD::itos(blk_eva) + "+";
 		while ( it != end )
 		{
 			if ( *it == "BBE" )
 				sf.insert ( it , s_bbe );
+			if ( *it == "BLK_EVA" )
+				sf.insert ( it , s_blk );
 			++it;
 		}
 		sf.push_back ( " (VNS)" );
-		_p.set_STATS_FILE ( old_stats_file_name , sf );  
+		_p.set_STATS_FILE ( old_stats_file_name , sf );
 	}
 	
 	
@@ -466,7 +474,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 	_p.set_MAX_TIME                   ( old_max_time                         );
 	_p.set_SGTE_EVAL_SORT             ( old_ses                              );
 	_p.set_OPT_ONLY_SGTE              ( opt_only_sgte                        );
-	_p.set_BB_OUTPUT_TYPE			  ( old_bbot							 ); 
+	_p.set_BB_OUTPUT_TYPE			  ( old_bbot							 );
 
 	
 	
@@ -596,6 +604,7 @@ void NOMAD::VNS_Search::search ( NOMAD::Mads              & mads           ,
 			new_infeas_inc = bi;
 			// check the PEB constraints: if we have a new best infeasible
 			// incumbent from another infeasible incumbent
+			// ( active_barrier.check_PEB_constraints() ):
 			if ( _p.get_barrier_type() == NOMAD::PEB_P ) 
 				( ( _p.get_opt_only_sgte() ) ? sgte_barrier : true_barrier ).check_PEB_constraints ( *new_infeas_inc , display_degree==NOMAD::FULL_DISPLAY );
 		}		

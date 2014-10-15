@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -528,6 +528,8 @@ void NOMAD::Extended_Poll::set_descent_parameters
 		descent_p.set_STOP_IF_FEASIBLE ( _p.get_stop_if_feasible() );
 		descent_p.set_MODEL_EVAL_SORT ( _p.get_model_eval_sort());
 		descent_p.set_MODEL_SEARCH (_p.has_model_search());
+		
+		
 	}
 	
 	descent_p.set_DIRECTION_TYPE    ( _p.get_direction_types()    );
@@ -586,6 +588,10 @@ void NOMAD::Extended_Poll::set_descent_parameters
 	descent_p.set_OPPORTUNISTIC_MIN_F_IMPRVMT  ( _p.get_opportunistic_min_f_imprvmt()  );
 	descent_p.set_OPPORTUNISTIC_MIN_NB_SUCCESS ( _p.get_opportunistic_min_nb_success() );
 	
+	if (_p.eval_points_as_block())
+		descent_p.set_BB_MAX_BLOCK_SIZE(	_p.get_bb_max_block_size()		);
+
+	
 	descent_p.set_CACHE_FILE        ( _p.get_cache_file()        );
 	descent_p.set_SGTE_CACHE_FILE   ( _p.get_sgte_cache_file()   );
 	descent_p.set_CACHE_SAVE_PERIOD ( _p.get_cache_save_period() );
@@ -600,8 +606,9 @@ void NOMAD::Extended_Poll::set_descent_parameters
 	else
 		descent_p.set_DISPLAY_DEGREE ( _p.out().get_poll_dd());
 	
+	// Stats style modified
 	if ( has_sgte )
-		descent_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );    
+		descent_p.set_DISPLAY_STATS ( NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );
 	else 
 	{
 		std::list<std::string> ds = _p.get_display_stats();
@@ -620,7 +627,7 @@ void NOMAD::Extended_Poll::set_descent_parameters
 	
 	// STATS_FILE:
 	if ( has_sgte )
-		descent_p.set_STATS_FILE ( _p.get_stats_file_name() , NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );    
+		descent_p.set_STATS_FILE ( _p.get_stats_file_name() , NOMAD::itos(sgte_eval) + "+SGTE OBJ (ExtendedPoll---surrogate)" );   
 	else 		
 	{
 		std::list<std::string>                 sf    = _p.get_stats_file();
@@ -634,7 +641,7 @@ void NOMAD::Extended_Poll::set_descent_parameters
 			++it;
 		}
 		sf.push_back ( " (ExtendedPoll)" );
-		descent_p.set_STATS_FILE ( _p.get_stats_file_name() , sf ); 
+		descent_p.set_STATS_FILE ( _p.get_stats_file_name() , sf );  
 	}
 	
 	// Mesh:
@@ -645,6 +652,7 @@ void NOMAD::Extended_Poll::set_descent_parameters
 		int ell = NOMAD::Mesh::get_mesh_index();
 		descent_p.set_INITIAL_MESH_INDEX ( ell );
 		descent_p.set_MAX_MESH_INDEX     ( ell );
+		
 		descent_p.set_INITIAL_MESH_SIZE ( mesh.get_initial_mesh_size() , false );
 		
 				

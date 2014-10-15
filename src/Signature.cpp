@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -66,7 +66,7 @@ NOMAD::Signature::Signature
   const NOMAD::Point                                    & scaling            ,
   const NOMAD::Point                                    & fixed_variables    ,
   const std::vector<bool>                               & periodic_variables ,
-  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp>		& var_groups		 ,   
+  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups               ,   
   const NOMAD::Display                                  & out )
   :  _mesh ( NULL  ) ,
      _std  ( false ) ,
@@ -270,7 +270,7 @@ void NOMAD::Signature::init
   const NOMAD::Point                      & scaling            ,
   const NOMAD::Point                      & fixed_variables    ,
   const std::vector<bool>                 & periodic_variables ,
-  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups )  
+  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups )
 {
 	// reset directions:
 	_feas_success_dir.clear();
@@ -391,16 +391,18 @@ void NOMAD::Signature::init
 	
 	// variable groups:
 	reset_var_groups();
-		
+	
 	std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp>::iterator
     end = var_groups.end() , it;
 	bool mod=false;
 	for ( it = var_groups.begin() ; it != end ; ++it )
 	{
-				
+		
+		
 		if ( !(*it)->check ( _fixed_variables , input_types , NULL, mod ) )
 			throw NOMAD::Signature::Signature_Error ( "Signature.cpp" , __LINE__ , *this ,
 													 "NOMAD::Signature::init(): incompatible variable group" );
+			
 	}
 	
 	if (mod)
@@ -419,7 +421,6 @@ void NOMAD::Signature::init
 	for ( it = var_groups.begin() ; it != end ; ++it )
 		_var_groups.push_back( new NOMAD::Variable_Group (**it) );
 
-	
 	// mesh:
 	if ( initial_mesh_size.size() != n                             ||
 		(min_mesh_size.is_defined() && min_mesh_size.size() != n) ||
@@ -470,7 +471,7 @@ void NOMAD::Signature::reset
   const NOMAD::Point                      & scaling                  ,
   const NOMAD::Point                      & fixed_variables          ,
   const std::vector<bool>                 & periodic_variables       ,
-  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups   )  
+  std::set<NOMAD::Variable_Group*,NOMAD::VG_Comp> & var_groups   )
 {
   reset_var_groups();
   init ( n                  ,
@@ -516,7 +517,7 @@ bool NOMAD::Signature::is_compatible ( const NOMAD::Point & x ) const
 /*-----------------------------------------------------*/
 void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs              ,
 					NOMAD::poll_type              poll              ,
-					const NOMAD::Point          & poll_center       ,    
+					const NOMAD::Point          & poll_center       ,
 					int                           mesh_index          )
 {
 	
@@ -532,6 +533,7 @@ void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs      
 	NOMAD::Point delta_p (n);
 	_mesh->get_delta_m ( delta_m , mesh_index );
 	_mesh->get_delta_p ( delta_p , mesh_index );
+	
 	
 	
 	// Reset dir_group_index.
@@ -582,9 +584,10 @@ void NOMAD::Signature::get_directions ( std::list<NOMAD::Direction> & dirs      
 					else
 						(*pd)[*it_vi] =  (*pd)[*it_vi].round();
 				}
-				
+
 				// binary variables: 
-				else if ( _input_types[*it_vi] == NOMAD::BINARY )  {
+				else if ( _input_types[*it_vi] == NOMAD::BINARY ) 
+				{
 					if ( (*pd)[*it_vi] != 0.0 )
 						(*pd)[*it_vi] = 1.0;
 				}
@@ -903,8 +906,8 @@ bool NOMAD::Signature::operator < ( const NOMAD::Signature & s ) const
 
   // dimension:
   // ----------
-  int  n = _lb.size();
-  int sn = s._lb.size();
+  int  n = static_cast<int>(_lb.size());
+  int sn = static_cast<int>(s._lb.size());
   
   if ( n < sn )
     return true;
@@ -913,8 +916,8 @@ bool NOMAD::Signature::operator < ( const NOMAD::Signature & s ) const
 
   // variable groups:
   // ----------------
-  int nvg1 = _var_groups.size();
-  int nvg2 = s._var_groups.size();
+  size_t nvg1 = _var_groups.size();
+  size_t nvg2 = s._var_groups.size();
   if ( nvg1 != nvg2 )
     return (nvg1 < nvg2);
 

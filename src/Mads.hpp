@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -74,7 +74,8 @@ namespace NOMAD {
 		NOMAD::Evaluator_Control _ev_control_for_sorting;    ///< Evaluator control.
 		NOMAD::Barrier           _true_barrier;  ///< Barrier for true function evaluations.
 		NOMAD::Barrier           _sgte_barrier;  ///< Barrier for surrogate evaluations.
-				
+		
+		
 		/// Pareto front for multi-objective optimization.
 		NOMAD::Pareto_Front  * _pareto_front;
 		
@@ -165,7 +166,7 @@ namespace NOMAD {
 		 \param  sorting       If true than the points are for sorting           -- \b IN.
 		 */
 		void set_poll_trial_points (  std::list<NOMAD::Direction> & dirs,
-									int                           offset,
+									size_t                           offset,
 									const NOMAD::Eval_Point     &  poll_center,
 									bool					    	& stop, 
 									NOMAD::stop_type				&stop_reason,
@@ -182,7 +183,7 @@ namespace NOMAD {
 		bool optimize_quad_model ( const NOMAD::Eval_Point         & poll_center ,
 								  const std::list<NOMAD::Direction> & dirs    ,
 								  NOMAD::Point                    & prospect_point    )  ;
-		
+				
 		/// Sets the poll directions from signature, poll center and mesh size
 		/**   
 		 \param dirs			List of directions for the poll			          -- \b OUT.
@@ -194,7 +195,7 @@ namespace NOMAD {
 		 */	  	  
 		void set_poll_directions ( std::list<NOMAD::Direction> & dirs        ,
 								  NOMAD::poll_type              i_pc        ,
-								  int                           offset      ,
+								  size_t                        offset      ,
 								  const NOMAD::Eval_Point     & poll_center ,
 								  bool                        & stop        , 
 								  NOMAD::stop_type            & stop_reason   );

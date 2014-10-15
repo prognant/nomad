@@ -1,6 +1,6 @@
 
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version (3.5.1).7.2        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version (3.6.2.beta)*/
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -60,10 +60,11 @@ namespace NOMAD {
 		 \param model Model      -- \b IN.
 		 */
 		Single_Obj_Quad_Model_Evaluator ( const NOMAD::Parameters & p     ,
-										 const NOMAD::Quad_Model & model   ) : NOMAD::Quad_Model_Evaluator(p,model),NOMAD::Evaluator(p){;}
+										 const NOMAD::Quad_Model & model   ) : NOMAD::Quad_Model_Evaluator(p,model),NOMAD::Evaluator(p){_is_model_evaluator=true;}
 		
 		/// Destructor.
 		virtual ~Single_Obj_Quad_Model_Evaluator ( void ){;}
+		
 		
 		///  Evaluate the blackboxes quad model at a given trial point
 		/**
@@ -75,6 +76,7 @@ namespace NOMAD {
 							 const NOMAD::Double & h_max      ,
 							 bool                & count_eval   ) const {return Quad_Model_Evaluator::eval_x(x,h_max,count_eval);}
 		
+				
 		
 	};
 }

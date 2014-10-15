@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------*/
-/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.1        */
+/*  NOMAD - Nonlinear Optimization by Mesh Adaptive Direct search - version 3.6.2        */
 /*                                                                                     */
 /*  Copyright (C) 2001-2012  Mark Abramson        - the Boeing Company, Seattle        */
 /*                           Charles Audet        - Ecole Polytechnique, Montreal      */
@@ -146,8 +146,8 @@ namespace NOMAD {
        \param file_name		Name of the file -- \b IN.
        \param x				Lattest solution -- \b IN.
        \param is_sol		Flag equal to \c true if the file is
-							a solution file; otherwise it is a history file. -- \b IN.
-	   \param display_bimv	Display best infeasible (min. viol.) if \c true  -- \b IN.
+							a solution file; otherwise it is a history file.
+	   \param display_bimv	Display best infeasible (min. viol.) if \c true
     */
     void write_sol_or_his_file ( const std::string        & file_name ,
 								const NOMAD::Eval_Point  & x         ,
@@ -287,6 +287,32 @@ namespace NOMAD {
 		      bool                    & stop         ,
 		      NOMAD::stop_type        & stop_reason  ,
 		      const NOMAD::Double     & h_max          );
+	  
+	  
+	  
+	  /// Evaluate points.     
+	  /*
+	   \param list_x			The list of points						-- \b IN/OUT.
+	   \param true_barrier		Barrier for true evaluations			-- \b IN/OUT.
+	   \param sgte_barrier		Barrier for surrogate evaluations		-- \b IN/OUT.
+	   \param pareto_front		A pointer to the Pareto front			-- \b IN/OUT
+	   (may be \c NULL).
+	   \param list_count_eval	A list of bool for counted evaluations	-- \b OUT.
+	   \param stop				Stop flag								-- \b IN/OUT.
+	   \param stop_reason		Stop reason								-- \b OUT.
+	   \param h_max				Maximal feasibility value				-- \b IN.
+	   */
+	  void eval_points ( std::list<NOMAD::Eval_Point *>	& list_x            ,
+						NOMAD::Barrier					& true_barrier ,
+						NOMAD::Barrier					& sgte_barrier ,
+						NOMAD::Pareto_Front				* pareto_front ,
+						std::list<bool>					& list_count_eval   ,
+						bool							& stop         ,
+						NOMAD::stop_type				& stop_reason  ,
+						const NOMAD::Double				& h_max          );
+	  
+	  
+	  
     
     /// Check if a search is opportunistic or not.
     /**
@@ -371,6 +397,7 @@ namespace NOMAD {
       const NOMAD::Eval_Point             *& new_infeas_inc ,
       NOMAD::success_type                  & success        ,
       std::list<const NOMAD::Eval_Point *> & evaluated_pts    );
+		
 
 #ifdef MODEL_STATS
     /// Display stats on an evaluation for which a model has been used.
