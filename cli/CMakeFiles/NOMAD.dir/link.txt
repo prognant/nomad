@@ -1,1 +1,0 @@
-/usr/bin/c++    -DUSE_TGP -Wall    CMakeFiles/NOMAD.dir/nomad.cpp.o  -o NOMAD  -L/home/pierre/git/nomad/libnomad -rdynamic ../libnomad/libnomad.so -Wl,-rpath,/home/pierre/git/nomad/libnomad 
