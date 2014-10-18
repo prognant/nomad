@@ -53,25 +53,27 @@
 /*------------------------------*/
 extern "C"
 {
-  unsigned long   three2lstate   ( int           * state );
-  void          * newRNGstate    ( unsigned long   s     );
-  void            deleteRNGstate ( void          * seed  );
-  unsigned int *  GetImprovRank  ( int, int, double **, int, int, double * );
+    unsigned long   three2lstate(int            *state);
+    void           *newRNGstate(unsigned long   s);
+    void            deleteRNGstate(void           *seed);
+    unsigned int   *GetImprovRank(int, int, double **, int, int, double *);
 }
 
-namespace NOMAD {
+namespace NOMAD
+{
 
 
-  /// TGP models for one output.
-  class TGP_Output_Model : private NOMAD::Uncopyable {
+/// TGP models for one output.
+class TGP_Output_Model : private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
-    const NOMAD::Display & _out; ///< Display.
+    const NOMAD::Display &_out;  ///< Display.
 
     int           _p;            ///< Number of interpolation points.
 
-    double      * _Z;            ///< Output vector (size = \c p).
+    double       *_Z;            ///< Output vector (size = \c p).
 
     double        _Z_scaling[2]; ///< To scale/unscale \c Z.
     bool          _Z_is_scaled;  ///< If \c Z is scaled or not.
@@ -81,11 +83,11 @@ namespace NOMAD {
 
     bool          _is_fixed;     ///< Only one output value saved in \c bin_values[0].
 
-    void        * _tgp_state;    ///< RNG (random number generator).
+    void         *_tgp_state;    ///< RNG (random number generator).
 
-    Model       * _tgp_model;    ///< The TGP model.
+    Model        *_tgp_model;    ///< The TGP model.
 
-    Temper      * _tgp_its;      ///< Importance tempering object.
+    Temper       *_tgp_its;      ///< Importance tempering object.
 
     static double _ditemps[7];   ///< Importance tempering parameters.
 
@@ -96,29 +98,29 @@ namespace NOMAD {
        \param ZZ   Output vector  -- \b IN/OUT.
        \param nout Size of output -- \b IN.
     */
-    void treat_binary_output ( double * ZZ , int nout ) const;
+    void treat_binary_output(double *ZZ , int nout) const;
 
     /// Scale member \c _Z.
-    void scale_Z ( void );
+    void scale_Z(void);
 
     /// Unscale member \c _Z.
-    void unscale_Z ( void );
+    void unscale_Z(void);
 
     /// Scale an output \c Z.
     /**
        \param Z Output to scale -- \b IN/OUT.
        \param n Size of output  -- \b IN.
     */
-    void scale_Z ( double * Z , int n ) const;
+    void scale_Z(double *Z , int n) const;
 
     /// Unscale an output \c Z.
     /**
        \param Z Output to unscale -- \b IN/OUT.
        \param n Size of output    -- \b IN.
     */
-    void unscale_Z ( double * Z , int n ) const;
+    void unscale_Z(double *Z , int n) const;
 
-  public:
+public:
 
     /// Constructor.
     /**
@@ -128,25 +130,28 @@ namespace NOMAD {
        \param out       Display object                                   -- \b IN.
     */
     explicit TGP_Output_Model
-    ( const std::list<const NOMAD::Eval_Point *> & X_pts     ,
-      int                                          bbo_index ,
-      int                                          seed      ,
-      const NOMAD::Display                       & out         );
+    (const std::list<const NOMAD::Eval_Point *> &X_pts     ,
+     int                                          bbo_index ,
+     int                                          seed      ,
+     const NOMAD::Display                        &out);
 
     /// Destructor.
-    virtual ~TGP_Output_Model ( void );
+    virtual ~TGP_Output_Model(void);
 
     /// Force quit (called by pressing ctrl-c).
-    static void force_quit ( void )
+    static void force_quit(void)
     {
-      NOMAD::TGP_Output_Model::_force_quit = true;
+        NOMAD::TGP_Output_Model::_force_quit = true;
     }
 
     /// Access to the \c force_quit flag.
     /**
        \return The \c force_quit flag.
     */
-    static bool get_force_quit ( void ) { return NOMAD::TGP_Output_Model::_force_quit; }
+    static bool get_force_quit(void)
+    {
+        return NOMAD::TGP_Output_Model::_force_quit;
+    }
 
     /// Compute the model.
     /**
@@ -165,20 +170,20 @@ namespace NOMAD {
        \param Ds2x           Expected reduction in predictive var (size \c n_XX) -- \b OUT.
        \param improv         Expected improvement of the obj. (size \c n_XX)     -- \b OUT.
     */
-    void compute ( double ** X           ,
-		   double ** XX          ,
-		   double ** Xsplit      ,
-		   int       n           ,
-		   int       n_XX        ,
-		   int       nsplit      ,
-		   Params  * tgp_params  ,
-		   double ** tgp_rect    ,
-		   int     * tgp_BTE     ,
-		   bool      tgp_linburn ,
-		   bool      tgp_verb    ,
-		   double  * ZZ          ,
-		   double  * Ds2x        ,
-		   int     * improv        );
+    void compute(double **X           ,
+                 double **XX          ,
+                 double **Xsplit      ,
+                 int       n           ,
+                 int       n_XX        ,
+                 int       nsplit      ,
+                 Params   *tgp_params  ,
+                 double **tgp_rect    ,
+                 int      *tgp_BTE     ,
+                 bool      tgp_linburn ,
+                 bool      tgp_verb    ,
+                 double   *ZZ          ,
+                 double   *Ds2x        ,
+                 int      *improv);
 
     /// Prediction at one point.
     /**
@@ -188,50 +193,63 @@ namespace NOMAD {
        \param tgp_rect   TGP rectangle                                       -- \b IN.
        \return A boolean equal to \c true if the prediction went well.
     */
-    bool predict ( double  * XX       ,
-		   int       n        ,
-		   double  & ZZ       ,
-		   double ** tgp_rect   ) const;
+    bool predict(double   *XX       ,
+                 int       n        ,
+                 double   &ZZ       ,
+                 double **tgp_rect) const;
 
     /// Access to \c Z.
     /**
        \return The \c Z vector.
     */
-    const double * get_Z ( void ) const { return _Z; }
+    const double *get_Z(void) const
+    {
+        return _Z;
+    }
 
     /// Access to the \c fixed flag.
     /**
        \return The \c fixed flag.
     */
-    bool is_fixed ( void ) const { return _is_fixed; }
+    bool is_fixed(void) const
+    {
+        return _is_fixed;
+    }
 
     /// Access to the \c binary flag.
     /**
        \return The \c binary flag.
     */
-    bool is_binary ( void ) const { return _is_binary; }
+    bool is_binary(void) const
+    {
+        return _is_binary;
+    }
 
     /// Default display.
-    void display ( void ) { display ( _out ); }
+    void display(void)
+    {
+        display(_out);
+    }
 
     /// Display.
     /**
        \param out Display -- \b IN.
     */
-    void display ( const NOMAD::Display & out ) const;
-  };
+    void display(const NOMAD::Display &out) const;
+};
 
-  /// Display a NOMAD::TGP_Output_Model object.
-  /**
-     \param out The NOMAD::Display object                          -- \b IN.
-     \param s   The NOMAD::TGP_Output_Model object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display          & out ,
-					      const NOMAD::TGP_Output_Model & s     ) {
-    s.display ( out );
+/// Display a NOMAD::TGP_Output_Model object.
+/**
+   \param out The NOMAD::Display object                          -- \b IN.
+   \param s   The NOMAD::TGP_Output_Model object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display           &out ,
+                                          const NOMAD::TGP_Output_Model &s)
+{
+    s.display(out);
     return out;
-  }
+}
 
 }
 

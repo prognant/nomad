@@ -45,21 +45,24 @@
 /*-----------------------------------------------*/
 /*          insertion of a pair bbe/f            */
 /*-----------------------------------------------*/
-void NOMAD::L_Curve::insert ( int bbe , const NOMAD::Double & f )
+void NOMAD::L_Curve::insert(int bbe , const NOMAD::Double &f)
 {
-  if ( _f.empty() ) {   
-    _f.push_back   ( f );
-    _bbe.push_back (bbe);
-  }
-  else {
-    size_t nm1 = _bbe.size()-1;
-    if ( _bbe[nm1] == bbe )
-      _f[nm1] = f;
-    else {
-      _f.push_back   ( f );
-      _bbe.push_back (bbe);
+    if (_f.empty())
+    {
+        _f.push_back(f);
+        _bbe.push_back(bbe);
     }
-  }
+    else
+    {
+        size_t nm1 = _bbe.size()-1;
+        if (_bbe[nm1] == bbe)
+            _f[nm1] = f;
+        else
+        {
+            _f.push_back(f);
+            _bbe.push_back(bbe);
+        }
+    }
 }
 
 /*---------------------------------------------------------------*/
@@ -67,29 +70,30 @@ void NOMAD::L_Curve::insert ( int bbe , const NOMAD::Double & f )
 /*  returns true if it detects that the target won't be reached  */
 /*  after bbe evaluations)                                       */
 /*---------------------------------------------------------------*/
-bool NOMAD::L_Curve::check_stop ( int bbe ) const
+bool NOMAD::L_Curve::check_stop(int bbe) const
 {
-  // we check the p last successes and approximate the L-curve
-  // with a line joining the extremities:
-  const size_t p = 7;
+    // we check the p last successes and approximate the L-curve
+    // with a line joining the extremities:
+    const size_t p = 7;
 
-  if ( _f.size() >= p ) {
-	
-    size_t n = _f.size();
-    
-    NOMAD::Double f2 = _f[n-1];
-    if ( f2 <= _target )
-      return false;
-    
-    size_t       nmp = n-p;
-    int         bbe1 = _bbe [ nmp ];
-    NOMAD::Double f1 = _f   [ nmp ];
-    NOMAD::Double  a = ( f2 - f1 ) / ( bbe - bbe1 );
-    NOMAD::Double  b = f1 - a * bbe1;
-    int   bbe_target = static_cast<int> ( ceil ( ( ( _target - b ) / a ).value() ) );
-    
-    // test: if ( bbe_target > bbe+(bbe-bbe1) )
-    return ( bbe_target > 2*bbe - bbe1 );
-  }
-  return false;
+    if (_f.size() >= p)
+    {
+
+        size_t n = _f.size();
+
+        NOMAD::Double f2 = _f[n-1];
+        if (f2 <= _target)
+            return false;
+
+        size_t       nmp = n-p;
+        int         bbe1 = _bbe [ nmp ];
+        NOMAD::Double f1 = _f   [ nmp ];
+        NOMAD::Double  a = (f2 - f1) / (bbe - bbe1);
+        NOMAD::Double  b = f1 - a * bbe1;
+        int   bbe_target = static_cast<int>(ceil(((_target - b) / a).value()));
+
+        // test: if ( bbe_target > bbe+(bbe-bbe1) )
+        return (bbe_target > 2*bbe - bbe1);
+    }
+    return false;
 }

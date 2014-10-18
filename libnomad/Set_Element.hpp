@@ -42,60 +42,62 @@
 #ifndef __SET_ELEMENT__
 #define __SET_ELEMENT__
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  // forward declarations:
-  class Double;
-  class Eval_Point;
+// forward declarations:
+class Double;
+class Eval_Point;
 
-  /// Generic class for elements of a \c std::set.
-  /**
-     This is an abstract class (it is not possible to create NOMAD::Set_Element objects).
-  */
-  template <class T>
-  class Set_Element {
+/// Generic class for elements of a \c std::set.
+/**
+   This is an abstract class (it is not possible to create NOMAD::Set_Element objects).
+*/
+template <class T>
+class Set_Element
+{
 
-  private:
+private:
 
 #ifdef MEMORY_DEBUG
     static int _cardinality;     ///< Number of NOMAD::Set_Element objects in memory.
     static int _max_cardinality; ///< Max number of NOMAd::Set_Element objects in memory.
 #endif
 
-    const T * _el; ///< A pointer to the element.
+    const T *_el;  ///< A pointer to the element.
 
     /// Affectation operator.
     /**
        \param se The right-hand side object -- \b IN.
     */
-    Set_Element & operator = ( const Set_Element & se );
+    Set_Element &operator = (const Set_Element &se);
 
     /// Copy constructor.
     /**
        \param se The copied object -- \b IN.
     */
-    Set_Element ( const Set_Element & se );
+    Set_Element(const Set_Element &se);
 
-  public:
-  
+public:
+
     /// Constructor.
     /**
        \param el A pointer on the element -- \b IN.
     */
-    explicit Set_Element ( const T * el ) : _el ( el )
+    explicit Set_Element(const T *el) : _el(el)
     {
 #ifdef MEMORY_DEBUG
-      ++Set_Element::_cardinality;
-      if ( Set_Element::_cardinality > Set_Element::_max_cardinality )
-	++Set_Element::_max_cardinality;
+        ++Set_Element::_cardinality;
+        if (Set_Element::_cardinality > Set_Element::_max_cardinality)
+            ++Set_Element::_max_cardinality;
 #endif
     }
 
     /// Destructor.
-    virtual ~Set_Element ( void )
+    virtual ~Set_Element(void)
     {
 #ifdef MEMORY_DEBUG
-      --Set_Element::_cardinality;
+        --Set_Element::_cardinality;
 #endif
     }
 
@@ -110,56 +112,68 @@ namespace NOMAD {
        \param c5 A real -- \b IN.
        \param c6 A real -- \b IN.
     */
-    virtual void get_priority_criteria ( NOMAD::Double & c1 ,
-					 NOMAD::Double & c2 ,
-					 NOMAD::Double & c3 ,
-					 NOMAD::Double & c4 ,
-					 NOMAD::Double & c5 ,
-					 NOMAD::Double & c6   ) const {}
+    virtual void get_priority_criteria(NOMAD::Double &c1 ,
+                                       NOMAD::Double &c2 ,
+                                       NOMAD::Double &c3 ,
+                                       NOMAD::Double &c4 ,
+                                       NOMAD::Double &c5 ,
+                                       NOMAD::Double &c6) const {}
     /// Comparison operator.
     /**
        - Has to be implemented by every NOMAD::Set_Element subclass.
        - Pure virtual method.
        \param se The right-hand side object -- \b IN.
     */
-    virtual bool operator < ( const Set_Element & se ) const = 0;
-    
+    virtual bool operator < (const Set_Element &se) const = 0;
+
     /// Access to the element.
     /**
        \return A pointer to the element.
     */
-    const T * get_element ( void ) const { return _el; }
-    
+    const T *get_element(void) const
+    {
+        return _el;
+    }
+
     /// Set an element.
     /**
        \param el A pointer to the element -- \b IN.
     */
-    void set_element ( const T * el ) { _el = el; }
-    
+    void set_element(const T *el)
+    {
+        _el = el;
+    }
+
 #ifdef MEMORY_DEBUG
 
     /// Access to the number of NOMAD::Set_Element objects in memory.
     /**
        \return Number of NOMAD::Set_Element objects in memory.
     */
-    static int get_cardinality ( void ) { return Set_Element::_cardinality; }
+    static int get_cardinality(void)
+    {
+        return Set_Element::_cardinality;
+    }
 
     /// Access to the max number of NOMAD::Set_Element objects in memory.
     /**
        \return Max number of NOMAD::Set_Element objects in memory.
     */
-    static int get_max_cardinality ( void ) { return Set_Element::_max_cardinality; }
-    
+    static int get_max_cardinality(void)
+    {
+        return Set_Element::_max_cardinality;
+    }
+
 #endif
-  };
+};
 
 #ifdef MEMORY_DEBUG
 
-  /// Initialization of _cardinality.
-  template<class T> int NOMAD::Set_Element<T>::_cardinality = 0;
+/// Initialization of _cardinality.
+template<class T> int NOMAD::Set_Element<T>::_cardinality = 0;
 
-  /// Initialization of _max_cardinality.
-  template<class T> int NOMAD::Set_Element<T>::_max_cardinality = 0;
+/// Initialization of _max_cardinality.
+template<class T> int NOMAD::Set_Element<T>::_max_cardinality = 0;
 #endif
 }
 

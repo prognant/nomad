@@ -45,69 +45,77 @@
 
 #include "Point.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class used to order interpolation points.
-  class Model_Sorted_Point {
+/// Class used to order interpolation points.
+class Model_Sorted_Point
+{
 
-  private:
+private:
 
-    NOMAD::Point  * _x;    ///< The point.
+    NOMAD::Point   *_x;    ///< The point.
     NOMAD::Double   _dist; ///< Distance to center.
 
-  public:
+public:
 
     /// Constructor 1/2.
     /**
        \param x      Interpolaton point -- \b IN.
        \param center Model center       -- \b IN.
     */
-    Model_Sorted_Point ( NOMAD::Point * x , const NOMAD::Point & center );
+    Model_Sorted_Point(NOMAD::Point *x , const NOMAD::Point &center);
 
     /// Constructor 2/2.
     /**
        \param x      Interpolaton point          -- \b IN.
        \param dist   Custom distance with center -- \b IN.
     */
-    Model_Sorted_Point ( NOMAD::Point * x , const NOMAD::Double & dist )
-      : _x ( x ) , _dist ( dist ) {}
+    Model_Sorted_Point(NOMAD::Point *x , const NOMAD::Double &dist)
+        : _x(x) , _dist(dist) {}
 
     /// Copy constructor.
     /**
        \param x The copied object -- \b IN.
     */
-    Model_Sorted_Point ( const Model_Sorted_Point & x )
-      : _x ( x._x ) , _dist ( x._dist ) {}
-  
+    Model_Sorted_Point(const Model_Sorted_Point &x)
+        : _x(x._x) , _dist(x._dist) {}
+
     /// Affectation operator.
     /**
        \param x The right-hand side object -- \b IN.
        \return \c *this as the result of the affectation.
     */
-    Model_Sorted_Point & operator = ( const Model_Sorted_Point & x );
+    Model_Sorted_Point &operator = (const Model_Sorted_Point &x);
 
     /// Destructor.
-    virtual ~Model_Sorted_Point ( void ) {}
+    virtual ~Model_Sorted_Point(void) {}
 
     /// Comparison operator.
     /**
        \param x The right-hand side object -- \b IN.
        \return \c true if the current interpolation point is closer to the center.
     */
-    bool operator < ( const Model_Sorted_Point & x ) const;
-  
+    bool operator < (const Model_Sorted_Point &x) const;
+
     /// Access to the interpolation point.
     /**
        \return The interpolation point.
     */
-    NOMAD::Point * get_point ( void ) const { return _x; }
+    NOMAD::Point *get_point(void) const
+    {
+        return _x;
+    }
 
     /// Access to the distance.
     /**
        \return The distance
     */
-    const NOMAD::Double & get_dist ( void ) const { return _dist; }
-  };
+    const NOMAD::Double &get_dist(void) const
+    {
+        return _dist;
+    }
+};
 }
 
 #endif

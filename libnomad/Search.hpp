@@ -44,36 +44,38 @@
 
 #include "Evaluator_Control.hpp"
 
-namespace NOMAD {
-  
-  // Forward declarations.
-  class Mads;
+namespace NOMAD
+{
 
-  /// Generic class for search strategies.
-  /**
-     This is an abstract class (it is not possible to create NOMAD::Search objects).
-  */
-  class Search {
+// Forward declarations.
+class Mads;
 
-  protected:
+/// Generic class for search strategies.
+/**
+   This is an abstract class (it is not possible to create NOMAD::Search objects).
+*/
+class Search
+{
 
-    NOMAD::Parameters  & _p;    ///< Parameters.
+protected:
+
+    NOMAD::Parameters   &_p;    ///< Parameters.
     NOMAD::search_type   _type; ///< Search type.
 
-  public:
+public:
 
     /// Constructor.
     /**
       \param p Parameters  -- \b IN.
       \param t Search type -- \b IN.
     */
-    Search ( NOMAD::Parameters  & p ,
-	     NOMAD::search_type   t   )
-      : _p    ( p ) ,
-	_type ( t ) {}
+    Search(NOMAD::Parameters   &p ,
+           NOMAD::search_type   t)
+        : _p(p) ,
+          _type(t) {}
 
     /// Destructor.
-    virtual ~Search ( void ) {}
+    virtual ~Search(void) {}
 
     /// The search.
     /**
@@ -89,37 +91,38 @@ namespace NOMAD {
       \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
     virtual void search
-    ( NOMAD::Mads              & mads           ,
-      int                      & nb_search_pts  ,
-      bool                     & stop           ,
-      NOMAD::stop_type         & stop_reason    ,
-      NOMAD::success_type      & success        ,
-      bool                     & count_search   ,
-      const NOMAD::Eval_Point *& new_feas_inc   ,
-      const NOMAD::Eval_Point *& new_infeas_inc   ) = 0;
+    (NOMAD::Mads               &mads           ,
+     int                       &nb_search_pts  ,
+     bool                      &stop           ,
+     NOMAD::stop_type          &stop_reason    ,
+     NOMAD::success_type       &success        ,
+     bool                      &count_search   ,
+     const NOMAD::Eval_Point  *&new_feas_inc   ,
+     const NOMAD::Eval_Point  *&new_infeas_inc) = 0;
 
     /// Reset.
-    virtual void reset ( void ) {}
+    virtual void reset(void) {}
 
     /// Display.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    virtual void display ( const NOMAD::Display & out ) const {}
+    virtual void display(const NOMAD::Display &out) const {}
 
-  };
+};
 
-  /// Display a NOMAD::Search object.
-  /**
-     \param out The NOMAD::Display object                -- \b IN.
-     \param s   The NOMAD::Search object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display & out ,
- 					      const NOMAD::Search  & s     ) {
-    s.display ( out );
+/// Display a NOMAD::Search object.
+/**
+   \param out The NOMAD::Display object                -- \b IN.
+   \param s   The NOMAD::Search object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display &out ,
+                                          const NOMAD::Search   &s)
+{
+    s.display(out);
     return out;
-  }
+}
 
 }
 #endif

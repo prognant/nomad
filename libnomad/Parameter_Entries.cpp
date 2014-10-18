@@ -45,63 +45,64 @@
 /*--------------------------------------------*/
 /*                 destructor                 */
 /*--------------------------------------------*/
-NOMAD::Parameter_Entries::~Parameter_Entries ( void )
+NOMAD::Parameter_Entries::~Parameter_Entries(void)
 {
-  std::multiset<NOMAD::Parameter_Entry*, NOMAD::Parameter_Entry_Comp>::iterator
+    std::multiset<NOMAD::Parameter_Entry *, NOMAD::Parameter_Entry_Comp>::iterator
     end = _entries.end() , it;
-  for ( it = _entries.begin() ; it != end ; ++it)
-    delete *it;
+    for (it = _entries.begin() ; it != end ; ++it)
+        delete *it;
 }
 
 /*--------------------------------------------*/
 /*      finds a specific entry in the set     */
 /*--------------------------------------------*/
-NOMAD::Parameter_Entry * NOMAD::Parameter_Entries::find ( const std::string & name ) const
+NOMAD::Parameter_Entry *NOMAD::Parameter_Entries::find(const std::string &name) const
 {
-  NOMAD::Parameter_Entry p (name);
-  std::multiset<NOMAD::Parameter_Entry*, NOMAD::Parameter_Entry_Comp>::const_iterator
-    it = _entries.find ( &p );
-  if ( it != _entries.end() )
-    return (*it);
-  return NULL;
+    NOMAD::Parameter_Entry p(name);
+    std::multiset<NOMAD::Parameter_Entry *, NOMAD::Parameter_Entry_Comp>::const_iterator
+    it = _entries.find(&p);
+    if (it != _entries.end())
+        return (*it);
+    return NULL;
 }
 
 /*----------------------------------------*/
 /*      inserts an entry into the set     */
 /*----------------------------------------*/
-void NOMAD::Parameter_Entries::insert ( NOMAD::Parameter_Entry * entry )
+void NOMAD::Parameter_Entries::insert(NOMAD::Parameter_Entry *entry)
 {
-  NOMAD::Parameter_Entry * cur = find ( entry->get_name() );
-  if ( cur ) {
-    entry->set_unique ( false );
-    cur->set_unique   ( false );
-    while ( cur->get_next() )
-      cur = cur->get_next();
-    cur->set_next ( entry );
-  }
-  _entries.insert ( entry );
+    NOMAD::Parameter_Entry *cur = find(entry->get_name());
+    if (cur)
+    {
+        entry->set_unique(false);
+        cur->set_unique(false);
+        while (cur->get_next())
+            cur = cur->get_next();
+        cur->set_next(entry);
+    }
+    _entries.insert(entry);
 }
 
 /*----------------------------------------*/
 /*       find a non-interpreted entry     */
 /*----------------------------------------*/
-NOMAD::Parameter_Entry * NOMAD::Parameter_Entries::find_non_interpreted ( void ) const
+NOMAD::Parameter_Entry *NOMAD::Parameter_Entries::find_non_interpreted(void) const
 {
-  std::multiset<NOMAD::Parameter_Entry*, NOMAD::Parameter_Entry_Comp>::const_iterator
+    std::multiset<NOMAD::Parameter_Entry *, NOMAD::Parameter_Entry_Comp>::const_iterator
     end = _entries.end() , it;
-  for ( it = _entries.begin() ; it != end ; ++it )
-    if ( !(*it)->has_been_interpreted() )
-      return *it;
-  return NULL;
+    for (it = _entries.begin() ; it != end ; ++it)
+        if (!(*it)->has_been_interpreted())
+            return *it;
+    return NULL;
 }
 
 /*--------------------------------------------*/
 /*                   display                  */
 /*--------------------------------------------*/
-void NOMAD::Parameter_Entries::display ( const NOMAD::Display & out ) const
+void NOMAD::Parameter_Entries::display(const NOMAD::Display &out) const
 {
-  std::multiset<NOMAD::Parameter_Entry*,NOMAD::Parameter_Entry_Comp>::const_iterator
+    std::multiset<NOMAD::Parameter_Entry *,NOMAD::Parameter_Entry_Comp>::const_iterator
     end = _entries.end() , it;
-  for ( it = _entries.begin() ; it != end ; ++it )
-    out << **it << std::endl;
+    for (it = _entries.begin() ; it != end ; ++it)
+        out << **it << std::endl;
 }

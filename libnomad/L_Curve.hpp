@@ -46,34 +46,36 @@
 #include "Double.hpp"
 #include "Uncopyable.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class implementing the L_CURVE_TARGET stopping criterion.
-  class L_Curve : private NOMAD::Uncopyable {
+/// Class implementing the L_CURVE_TARGET stopping criterion.
+class L_Curve : private NOMAD::Uncopyable
+{
 
-  private:
-	  
+private:
+
     NOMAD::Double              _target;  ///< L_CURVE_TARGET parameter value.
     std::vector<NOMAD::Double> _f;       ///< List of objective values.
     std::vector<int          > _bbe;     ///< List of numbers of evaluations.
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param target L_CURVE_TARGET parameter value -- \b IN.
     */
-    L_Curve ( const NOMAD::Double & target ) : _target ( target ) {}
+    L_Curve(const NOMAD::Double &target) : _target(target) {}
 
     /// Destructor.
-    virtual ~L_Curve ( void ) {}
+    virtual ~L_Curve(void) {}
 
     /// Insertion of a pair \c bbe/f in the lists \c _f and \c _bbe.
     /**
        \param bbe A new number of evaluations -- \b IN.
        \param f   A new objective value       -- \b IN.
     */
-    void insert ( int bbe , const NOMAD::Double & f );
+    void insert(int bbe , const NOMAD::Double &f);
 
     /// Check the L_CURVE_TARGET stopping criterion.
     /**
@@ -82,7 +84,7 @@ namespace NOMAD {
        \return A boolean equal to \c true if the method detects that
                the target will not be reached after bbe evaluations.
     */
-    bool check_stop ( int bbe ) const;
-  };
+    bool check_stop(int bbe) const;
+};
 }
 #endif

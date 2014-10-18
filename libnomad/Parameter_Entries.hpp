@@ -45,27 +45,29 @@
 
 #include "Parameter_Entry.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Parameter entries.
-  /**
-     - Objects of this class store NOMAD::Parameter_Entry objects.
-     - One NOMAD::Parameter_Entries object summarizes an entire parameters file.
-  */
-  class Parameter_Entries : private NOMAD::Uncopyable {
+/// Parameter entries.
+/**
+   - Objects of this class store NOMAD::Parameter_Entry objects.
+   - One NOMAD::Parameter_Entries object summarizes an entire parameters file.
+*/
+class Parameter_Entries : private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     /// List of NOMAD::Parameter_Entry objects (the entries).
     std::multiset<NOMAD::Parameter_Entry *, NOMAD::Parameter_Entry_Comp> _entries;
 
-  public:
+public:
 
     /// Constructor.
-    explicit Parameter_Entries ( void ) {}
+    explicit Parameter_Entries(void) {}
 
     /// Destructor.
-    virtual ~Parameter_Entries ( void );
+    virtual ~Parameter_Entries(void);
 
     /// Find a specific entry in a set.
     /**
@@ -74,13 +76,13 @@ namespace NOMAD {
                     has been found in the list of entries,
                     or \c NULL otherwise.
     */
-    NOMAD::Parameter_Entry * find ( const std::string & name ) const;
-  
+    NOMAD::Parameter_Entry *find(const std::string &name) const;
+
     /// Insert a new entry in the list of entries.
     /**
        \param entry A pointer to the new NOMAD::Parameter_Entry object -- \b IN.
     */
-    void insert ( NOMAD::Parameter_Entry * entry );
+    void insert(NOMAD::Parameter_Entry *entry);
 
     /// Find a non-interpreted entry.
     /**
@@ -88,26 +90,26 @@ namespace NOMAD {
                interpreted so far,
                or \c NULL if all entries have already been interpreted.
     */
-    NOMAD::Parameter_Entry * find_non_interpreted ( void ) const;
+    NOMAD::Parameter_Entry *find_non_interpreted(void) const;
 
     /// Display.
     /**
        \param out The NOMAD::Display object -- \b IN.
-    */    void display ( const NOMAD::Display & out ) const;
-  };
+    */    void display(const NOMAD::Display &out) const;
+};
 
-  /// Display a NOMAD::Parameter_Entries object.
-  /**
-     \param out The NOMAD::Display object -- \b IN.
-     \param e   The NOMAD::Parameter_Entries object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display           & out ,
-					      const NOMAD::Parameter_Entries & e     )
-  {
-    e.display ( out );
+/// Display a NOMAD::Parameter_Entries object.
+/**
+   \param out The NOMAD::Display object -- \b IN.
+   \param e   The NOMAD::Parameter_Entries object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display            &out ,
+                                          const NOMAD::Parameter_Entries &e)
+{
+    e.display(out);
     return out;
-  }
+}
 }
 
 #endif

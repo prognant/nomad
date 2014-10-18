@@ -46,32 +46,34 @@
 #include "Search.hpp"
 
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// NOMAD::Evaluator subclass for quadratic model optimization.
-	class Quad_Model_Evaluator  { 
+/// NOMAD::Evaluator subclass for quadratic model optimization.
+class Quad_Model_Evaluator
+{
 
-  private:
+private:
 
     int       _n;           ///< Number of variables.
     int       _nm1;         ///< Number of variables minus one.
     int       _m;           ///< Number of blackbox outputs.
-    double  * _x;           ///< An evaluation point.
-    double ** _alpha;       ///< Model parameters.
+    double   *_x;           ///< An evaluation point.
+    double **_alpha;        ///< Model parameters.
     bool      _model_ready; ///< \c true if model ready to evaluate.
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p     Parameters -- \b IN.
        \param model Model      -- \b IN.
     */
-    Quad_Model_Evaluator ( const NOMAD::Parameters & p     ,
-			   const NOMAD::Quad_Model & model   );
+    Quad_Model_Evaluator(const NOMAD::Parameters &p     ,
+                         const NOMAD::Quad_Model &model);
 
     /// Destructor.
-    virtual ~Quad_Model_Evaluator ( void );
+    virtual ~Quad_Model_Evaluator(void);
 
     /// Evaluate the blackboxes at a given trial point.
     /**
@@ -81,26 +83,26 @@ namespace NOMAD {
                          or not -- \b OUT.
        \return A boolean equal to \c false if the evaluation failed.
      */
-    virtual bool eval_x ( NOMAD::Eval_Point   & x          ,
-						 const NOMAD::Double & h_max      ,
-			  bool                & count_eval   ) const;
+    virtual bool eval_x(NOMAD::Eval_Point    &x          ,
+                        const NOMAD::Double &h_max      ,
+                        bool                 &count_eval) const;
 
-	  /// Evaluate the gradient of a blackboxe at a given trial point.
-	  /**
-       \param x The trial point -- \b IN/OUT.
-       \param g The gradient of a bb model at the trial point \c x -- \b OUT.
-	   \param output_index The index of the black box.           -- \b IN.
-       \param count_eval Flag indicating if the evaluation has to be counted
-	   or not -- \b OUT.
-       \return A boolean equal to \c false if the evaluation failed.
-	   */
-	  
-	  virtual bool evalGrad_x (const NOMAD::Point   & x   ,
-							   NOMAD::Point   & g         ,
-							   const int & output_index   ,
-							   bool                & count_eval   ) const;
-	  
-  };
+    /// Evaluate the gradient of a blackboxe at a given trial point.
+    /**
+     \param x The trial point -- \b IN/OUT.
+     \param g The gradient of a bb model at the trial point \c x -- \b OUT.
+     \param output_index The index of the black box.           -- \b IN.
+     \param count_eval Flag indicating if the evaluation has to be counted
+     or not -- \b OUT.
+     \return A boolean equal to \c false if the evaluation failed.
+     */
+
+    virtual bool evalGrad_x(const NOMAD::Point    &x   ,
+                            NOMAD::Point    &g         ,
+                            const int &output_index   ,
+                            bool                 &count_eval) const;
+
+};
 }
 
 #endif

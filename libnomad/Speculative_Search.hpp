@@ -46,26 +46,28 @@
 #include "Search.hpp"
 #include "Mads.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Speculative search.
-  /**
-     The speculative search consists in looking further away along
-     the successful direction after an improvement.
-  */
-  class Speculative_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// Speculative search.
+/**
+   The speculative search consists in looking further away along
+   the successful direction after an improvement.
+*/
+class Speculative_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    Speculative_Search ( NOMAD::Parameters & p )
-      : NOMAD::Search ( p , NOMAD::SPEC_SEARCH ) {}
-    
+    Speculative_Search(NOMAD::Parameters &p)
+        : NOMAD::Search(p , NOMAD::SPEC_SEARCH) {}
+
     /// Destructor.
-    virtual ~Speculative_Search ( void ) {}
+    virtual ~Speculative_Search(void) {}
 
     /// The speculative search.
     /**
@@ -78,7 +80,7 @@ namespace NOMAD {
          \code
           if ( new_feas_inc || new_infeas_inc )
          \endcode
-	 is equal to \c true and has already been made in \c Mads.cpp.
+     is equal to \c true and has already been made in \c Mads.cpp.
 
       \param mads           NOMAD::Mads object invoking this search -- \b IN/OUT.
       \param nb_search_pts  Number of generated search points       -- \b OUT.
@@ -89,15 +91,15 @@ namespace NOMAD {
       \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
       \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
-  };
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
+};
 }
 
 #endif

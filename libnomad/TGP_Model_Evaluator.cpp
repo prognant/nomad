@@ -52,14 +52,14 @@ int TGP_MODEL_EVALUATOR_DUMMY; // avoids that TGP_Model_Evaluator.o has no symbo
 /*------------------------------------------------------------------------*/
 /*                evaluate the TGP model at a given trial point           */
 /*------------------------------------------------------------------------*/
-bool NOMAD::TGP_Model_Evaluator::eval_x ( NOMAD::Eval_Point   & x          ,
-					  const NOMAD::Double & h_max      ,
-					  bool                & count_eval   ) const
+bool NOMAD::TGP_Model_Evaluator::eval_x(NOMAD::Eval_Point    &x          ,
+                                        const NOMAD::Double &h_max      ,
+                                        bool                 &count_eval) const
 {
-  count_eval = true;
-  if ( !_model.predict ( x , true ) )
-    return false;
-  return true;
+    count_eval = true;
+    if (!_model.predict(x , true))
+        return false;
+    return true;
 }
 
 #endif

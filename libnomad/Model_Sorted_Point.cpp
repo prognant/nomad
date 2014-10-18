@@ -46,43 +46,47 @@
 /*                        constructor                      */
 /*---------------------------------------------------------*/
 NOMAD::Model_Sorted_Point::Model_Sorted_Point
-( NOMAD::Point * x , const NOMAD::Point & center ) : _x(x)
+(NOMAD::Point *x , const NOMAD::Point &center) : _x(x)
 {
-  int i , n = center.size();
-  if ( x && x->size() == n ) {
-    _dist = 0.0;
-    for ( i = 0 ; i < n ; ++i )
-      if ( (*x)[i].is_defined() && center[i].is_defined() ) {
-	_dist += ( (*x)[i] - center[i] ).pow2();
-      }
-      else {
-	_dist.clear();
-	break;
-      }
-  }
+    int i , n = center.size();
+    if (x && x->size() == n)
+    {
+        _dist = 0.0;
+        for (i = 0 ; i < n ; ++i)
+            if ((*x)[i].is_defined() && center[i].is_defined())
+            {
+                _dist += ((*x)[i] - center[i]).pow2();
+            }
+            else
+            {
+                _dist.clear();
+                break;
+            }
+    }
 }
 
 /*---------------------------------------------------------*/
 /*                   affectation operator                  */
 /*---------------------------------------------------------*/
-NOMAD::Model_Sorted_Point & NOMAD::Model_Sorted_Point::operator =
-( const NOMAD::Model_Sorted_Point & x )
+NOMAD::Model_Sorted_Point &NOMAD::Model_Sorted_Point::operator =
+(const NOMAD::Model_Sorted_Point &x)
 {
-  _x    = x._x;
-  _dist = x._dist;
-  return *this;
+    _x    = x._x;
+    _dist = x._dist;
+    return *this;
 }
 
 /*---------------------------------------------------------*/
 /*                    comparison operator                  */
 /*---------------------------------------------------------*/
 bool NOMAD::Model_Sorted_Point::operator <
-( const Model_Sorted_Point & x ) const
+(const Model_Sorted_Point &x) const
 {
-  if ( _dist.is_defined() ) {
-    if ( !x._dist.is_defined() )
-      return true;
-    return _dist < x._dist;
-  }
-  return false;
+    if (_dist.is_defined())
+    {
+        if (!x._dist.is_defined())
+            return true;
+        return _dist < x._dist;
+    }
+    return false;
 }

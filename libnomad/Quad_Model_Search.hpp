@@ -47,12 +47,14 @@
 #include "Single_Obj_Quad_Model_Evaluator.hpp"
 #include "Multi_Obj_Quad_Model_Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Model search.
-  class Quad_Model_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// Model search.
+class Quad_Model_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     NOMAD::Model_Stats _one_search_stats;   ///< Stats for one search.
     NOMAD::Model_Stats _all_searches_stats; ///< Stats for all searches.
@@ -69,15 +71,15 @@ namespace NOMAD {
        \param stop           Stop flag                          -- \b OUT.
        \param stop_reason    Stop reason                        -- \b OUT.
     */
-    bool optimize_model ( const NOMAD::Quad_Model  & model          ,
-			  const NOMAD::Eval_Point ** xk             ,
-			  int                        i_inc          ,
-			  NOMAD::dd_type             display_degree ,
-			  const NOMAD::Display     & out            ,
-			  NOMAD::Point             & xf             ,
-			  NOMAD::Point             & xi             ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason      );
+    bool optimize_model(const NOMAD::Quad_Model   &model          ,
+                        const NOMAD::Eval_Point **xk             ,
+                        int                        i_inc          ,
+                        NOMAD::dd_type             display_degree ,
+                        const NOMAD::Display      &out            ,
+                        NOMAD::Point              &xf             ,
+                        NOMAD::Point              &xi             ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason);
 
     /// Project to mesh and create a trial point.
     /**
@@ -91,31 +93,31 @@ namespace NOMAD {
        \param out            The NOMAD::Display object           -- \b IN.
     */
     void create_trial_point
-    ( NOMAD::Evaluator_Control & ev_control     ,
-      NOMAD::Point               x              ,
-      const NOMAD::Quad_Model  & model          ,
-      NOMAD::Signature         & signature      ,
-      int                        mesh_index     ,
-      const NOMAD::Point       & delta_m        ,
-      NOMAD::dd_type             display_degree ,
-      const NOMAD::Display     & out              );
+    (NOMAD::Evaluator_Control &ev_control     ,
+     NOMAD::Point               x              ,
+     const NOMAD::Quad_Model   &model          ,
+     NOMAD::Signature          &signature      ,
+     int                        mesh_index     ,
+     const NOMAD::Point        &delta_m        ,
+     NOMAD::dd_type             display_degree ,
+     const NOMAD::Display      &out);
 
     /*----------------------------------------------------------------------*/
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    Quad_Model_Search ( NOMAD::Parameters & p )
-      : NOMAD::Search ( p , NOMAD::MODEL_SEARCH ) {}
-    
+    Quad_Model_Search(NOMAD::Parameters &p)
+        : NOMAD::Search(p , NOMAD::MODEL_SEARCH) {}
+
     /// Destructor.
-    virtual ~Quad_Model_Search ( void ) {}
+    virtual ~Quad_Model_Search(void) {}
 
     /// Reset.
-    virtual void reset ( void ) {}
+    virtual void reset(void) {}
 
     /// The quadratic model search.
     /**
@@ -129,23 +131,23 @@ namespace NOMAD {
        \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
        \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
     //// Display stats.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    virtual void display ( const NOMAD::Display & out ) const
+    virtual void display(const NOMAD::Display &out) const
     {
-      out << _all_searches_stats;
+        out << _all_searches_stats;
     }
-  };
+};
 }
 
 #endif

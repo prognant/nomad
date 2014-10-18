@@ -45,44 +45,49 @@
 
 #include "Phase_One_Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// NOMAD::Evaluator subclass for multiobjective optimization.
-  /**
-     Version for two objective functions.
-  */
-  class Multi_Obj_Evaluator : public NOMAD::Evaluator {
+/// NOMAD::Evaluator subclass for multiobjective optimization.
+/**
+   Version for two objective functions.
+*/
+class Multi_Obj_Evaluator : public NOMAD::Evaluator
+{
 
-  private:
+private:
 
     static int           _i1;   ///< Index of the first objective.
     static int           _i2;   ///< Index of the second objective.
 
     NOMAD::Double        _w1;   ///< Weight on the first objective function.
     NOMAD::Double        _w2;   ///< Weight on the second objective function.
-  
-    const NOMAD::Point * _ref;  ///< Reference point.
 
-  public:
+    const NOMAD::Point *_ref;   ///< Reference point.
+
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    Multi_Obj_Evaluator ( const NOMAD::Parameters & p )
-      : NOMAD::Evaluator ( p    ) ,
-	_w1              ( 1.0  ) ,
-	_w2              ( 0.0  ) ,
-	_ref             ( NULL )   { _is_multi_obj = true; }
+    Multi_Obj_Evaluator(const NOMAD::Parameters &p)
+        : NOMAD::Evaluator(p) ,
+          _w1(1.0) ,
+          _w2(0.0) ,
+          _ref(NULL)
+    {
+        _is_multi_obj = true;
+    }
 
     /// Destructor.
-    virtual ~Multi_Obj_Evaluator ( void ) {}
+    virtual ~Multi_Obj_Evaluator(void) {}
 
     /// Initialization of objective indexes.
     /**
        \param index_obj List of objective indexes -- \b IN.
     */
-    static void set_obj_indexes ( const std::list<int> & index_obj );
+    static void set_obj_indexes(const std::list<int> &index_obj);
 
     /// Updates after a MADS run.
     /**
@@ -93,11 +98,11 @@ namespace NOMAD {
        \param sgte_barrier Barrier for surrogate functions -- \b IN.
        \param pareto_front Pareto front                    -- \b IN.
     */
-    virtual void update_mads_run ( const NOMAD::Stats             & stats        ,
-				   const NOMAD::Evaluator_Control & ev_control   ,
-				   const NOMAD::Barrier           & true_barrier ,
-				   const NOMAD::Barrier           & sgte_barrier ,
-				   const NOMAD::Pareto_Front      & pareto_front   ) {}
+    virtual void update_mads_run(const NOMAD::Stats              &stats        ,
+                                 const NOMAD::Evaluator_Control &ev_control   ,
+                                 const NOMAD::Barrier            &true_barrier ,
+                                 const NOMAD::Barrier            &sgte_barrier ,
+                                 const NOMAD::Pareto_Front       &pareto_front) {}
 
     /// Compute \c f(x) from the blackbox outputs of a point.
     /**
@@ -105,36 +110,49 @@ namespace NOMAD {
        - Computation of \c f taking into account the two objectives
          with a reformulation based on a reference point, or
          with weights when no reference is available.
-	 \param x The evaluation point -- \b IN/OUT.
+     \param x The evaluation point -- \b IN/OUT.
     */
-    virtual void compute_f ( NOMAD::Eval_Point & x ) const;
+    virtual void compute_f(NOMAD::Eval_Point &x) const;
 
     /// Get the index of the first objective function.
     /**
        \return The index of the first objective function.
     */
-    static int get_i1 ( void ) { return _i1; }
+    static int get_i1(void)
+    {
+        return _i1;
+    }
 
     /// Get the index of the second objective function.
     /**
        \return The index of the second objective function.
     */
-    static int get_i2 ( void ) { return _i2; }
-    
+    static int get_i2(void)
+    {
+        return _i2;
+    }
+
     /// Set the weights.
     /**
        \param w1 Weight on the first objective function  -- \b IN.
        \param w2 Weight on the second objective function -- \b IN.
     */
-    void set_weights ( const NOMAD::Double & w1 ,
-		       const NOMAD::Double & w2   ) { _w1 = w1; _w2 = w2; }
-    
+    void set_weights(const NOMAD::Double &w1 ,
+                     const NOMAD::Double &w2)
+    {
+        _w1 = w1;
+        _w2 = w2;
+    }
+
     /// Set the reference point.
     /**
        \param ref A pointer to the reference point -- \b IN.
     */
-    void set_ref ( const NOMAD::Point * ref ) { _ref = ref; }
-  };
+    void set_ref(const NOMAD::Point *ref)
+    {
+        _ref = ref;
+    }
+};
 }
 
 #endif

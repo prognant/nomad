@@ -34,7 +34,7 @@
 /**
  \file   RNG.hpp
  \brief  Custom class for random number generator
- \author Christophe Tribes and Sebastien Le Digabel 
+ \author Christophe Tribes and Sebastien Le Digabel
  \date   2011-09-28
  \see    RNG.cpp
  */
@@ -47,42 +47,47 @@
 
 using namespace std;
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-	
-	/// Class for random number generator 
-	/**
-		This class is used to set a seed for the random number generator and
-	    get a random integer or a random double between two values.
-	 */
-	class RNG {
-		
-	public:
 
-		/// Set seed
-		/*
-		 /param s The seed -- \b IN.
-		 /return A boolean if the seed is acceptable, that is in [0,UINT32_MAX].
-		 */
-		static bool set_seed(int s);
-		
-		/// Get a random integer as uint32
-		/** This function serves to obtain a random number \c 
-		 /return An integer in the interval [0,UINT32_MAX].
-		 */
-		static uint32_t rand();
-		
-		/// Get a random number as double
-		/*
-			/param a Lower bound  -- \b IN.
-			/param b Upper bound  -- \b IN.
-		    /return A double in the interval [a,b].
-		 */		
-		static double rand(double a, double b){return a+((b-a)*NOMAD::RNG::rand())/UINT32_MAX;}
-		
-	private:
-		static uint32_t x,y,z;  ///< Default parameter value for the random seed generator.
-	};
+/// Class for random number generator
+/**
+    This class is used to set a seed for the random number generator and
+    get a random integer or a random double between two values.
+ */
+class RNG
+{
+
+public:
+
+    /// Set seed
+    /*
+     /param s The seed -- \b IN.
+     /return A boolean if the seed is acceptable, that is in [0,UINT32_MAX].
+     */
+    static bool set_seed(int s);
+
+    /// Get a random integer as uint32
+    /** This function serves to obtain a random number \c
+     /return An integer in the interval [0,UINT32_MAX].
+     */
+    static uint32_t rand();
+
+    /// Get a random number as double
+    /*
+        /param a Lower bound  -- \b IN.
+        /param b Upper bound  -- \b IN.
+        /return A double in the interval [a,b].
+     */
+    static double rand(double a, double b)
+    {
+        return a+((b-a)*NOMAD::RNG::rand())/UINT32_MAX;
+    }
+
+private:
+    static uint32_t x,y,z;  ///< Default parameter value for the random seed generator.
+};
 }
 
 #endif

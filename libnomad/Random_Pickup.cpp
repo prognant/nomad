@@ -45,48 +45,49 @@
 /*---------------------------------------------------------*/
 /*                         constructor                     */
 /*---------------------------------------------------------*/
-NOMAD::Random_Pickup::Random_Pickup ( int n )
-  : _n0   ( n          ) ,
-    _n    ( n          ) ,
-    _elts ( new int[n] )
+NOMAD::Random_Pickup::Random_Pickup(int n)
+    : _n0(n) ,
+      _n(n) ,
+      _elts(new int[n])
 {
-  for ( int i = 0 ; i < n ; ++i )
-    _elts[i] = i;
+    for (int i = 0 ; i < n ; ++i)
+        _elts[i] = i;
 }
 
 /*---------------------------------------------------------*/
 /*                           reset                         */
 /*---------------------------------------------------------*/
-void NOMAD::Random_Pickup::reset ( void )
+void NOMAD::Random_Pickup::reset(void)
 {
-  _n = _n0;
-  for ( int i = 0 ; i < _n ; ++i )
-    _elts[i] = i;
+    _n = _n0;
+    for (int i = 0 ; i < _n ; ++i)
+        _elts[i] = i;
 }
 
 /*---------------------------------------------------------*/
 /*                randomly pick up an element              */
 /*---------------------------------------------------------*/
-int NOMAD::Random_Pickup::pickup ( void )
+int NOMAD::Random_Pickup::pickup(void)
 {
-  if ( _n == 0 )
-    return 0;
-  int ind = NOMAD::RNG::rand()%_n; 
-  int tmp = _elts[ind];
-  if ( ind < _n - 1 ) {
-    _elts[ind ] = _elts[_n-1];
-    _elts[_n-1] = tmp;
-  }
-  --_n;
-	
-  return tmp;
+    if (_n == 0)
+        return 0;
+    int ind = NOMAD::RNG::rand()%_n;
+    int tmp = _elts[ind];
+    if (ind < _n - 1)
+    {
+        _elts[ind ] = _elts[_n-1];
+        _elts[_n-1] = tmp;
+    }
+    --_n;
+
+    return tmp;
 }
 
 /*---------------------------------------------------------*/
 /*                   cancel the last pick up               */
 /*---------------------------------------------------------*/
-void NOMAD::Random_Pickup::cancel_last_pickup ( void )
+void NOMAD::Random_Pickup::cancel_last_pickup(void)
 {
-  if ( _n < _n0 )
-    ++_n;
+    if (_n < _n0)
+        ++_n;
 }

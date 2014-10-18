@@ -45,28 +45,30 @@
 
 #include "Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// NOMAD::Evaluator subclass for the phase one.
-  class Phase_One_Evaluator : public NOMAD::Evaluator {
+/// NOMAD::Evaluator subclass for the phase one.
+class Phase_One_Evaluator : public NOMAD::Evaluator
+{
 
-  private:
+private:
 
-    NOMAD::Evaluator & _basic_ev; ///< The original evaluator.
+    NOMAD::Evaluator &_basic_ev;  ///< The original evaluator.
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p  Parameters         -- \b IN.
        \param ev Original evaluator -- \b IN.
     */
-    Phase_One_Evaluator ( const NOMAD::Parameters & p , NOMAD::Evaluator & ev )
-      : NOMAD::Evaluator ( p  ) ,
-	_basic_ev        ( ev )   {}
+    Phase_One_Evaluator(const NOMAD::Parameters &p , NOMAD::Evaluator &ev)
+        : NOMAD::Evaluator(p) ,
+          _basic_ev(ev)   {}
 
     /// Destructor.
-    virtual ~Phase_One_Evaluator ( void ) {}
+    virtual ~Phase_One_Evaluator(void) {}
 
     /// User updates after a success.
     /**
@@ -74,9 +76,9 @@ namespace NOMAD {
        \param s Stats -- \b IN.
        \param x Successful point -- \b IN.
     */
-    virtual void update_success ( const NOMAD::Stats & s , const NOMAD::Eval_Point & x )
+    virtual void update_success(const NOMAD::Stats &s , const NOMAD::Eval_Point &x)
     {
-      _basic_ev.update_success ( s , x );
+        _basic_ev.update_success(s , x);
     }
 
     /// Evaluate the blackboxes at a given trial point.
@@ -87,60 +89,60 @@ namespace NOMAD {
                          or not -- \b OUT.
        \return A boolean equal to \c false if the evaluation failed.
      */
-    virtual bool eval_x ( NOMAD::Eval_Point   & x          ,
-			  const NOMAD::Double & h_max      ,
-			  bool                & count_eval   ) const
+    virtual bool eval_x(NOMAD::Eval_Point    &x          ,
+                        const NOMAD::Double &h_max      ,
+                        bool                 &count_eval) const
     {
-      return _basic_ev.eval_x ( x , h_max , count_eval );
+        return _basic_ev.eval_x(x , h_max , count_eval);
     }
 
-	  
-	  /// Evaluate the blackboxes at a given list of trial points.
-	  /**
-       \param list_x The list of trial points -- \b IN/OUT.
-       \param h_max      Maximal feasibility value \c h_max -- \b IN.
-       \param list_count_eval Flags indicating if the evaluations have to be counted
-	   or not -- \b OUT.
-       \return A boolean equal to \c false if the evaluation failed.
-	   */
-	  virtual bool eval_x ( std::list<NOMAD::Eval_Point *>   & list_x          ,
-						   const NOMAD::Double & h_max      ,
-						   std::list<bool>                & list_count_eval   ) const
-	  {
-		  return _basic_ev.eval_x ( list_x , h_max , list_count_eval );
-	  }
-	  
-	  
+
+    /// Evaluate the blackboxes at a given list of trial points.
+    /**
+     \param list_x The list of trial points -- \b IN/OUT.
+     \param h_max      Maximal feasibility value \c h_max -- \b IN.
+     \param list_count_eval Flags indicating if the evaluations have to be counted
+     or not -- \b OUT.
+     \return A boolean equal to \c false if the evaluation failed.
+     */
+    virtual bool eval_x(std::list<NOMAD::Eval_Point *>    &list_x          ,
+                        const NOMAD::Double &h_max      ,
+                        std::list<bool>                 &list_count_eval) const
+    {
+        return _basic_ev.eval_x(list_x , h_max , list_count_eval);
+    }
+
+
     /// User preprocessing of points before evaluations.
     /**
        This method is called before the evaluation of a list of points.
        \param pts List of points to preprocess -- \b IN/OUT.
     */
     virtual void list_of_points_preprocessing
-    ( std::set<NOMAD::Priority_Eval_Point> & pts ) const
+    (std::set<NOMAD::Priority_Eval_Point> &pts) const
     {
-      _basic_ev.list_of_points_preprocessing ( pts );
+        _basic_ev.list_of_points_preprocessing(pts);
     }
-	  
-	  
-	  /// Access to the model evaluator flag.
-	  /**
-	   \return The model evaluator flag.
-	   */
-	  virtual bool is_model_evaluator ( void ) const 
-	  { 
-		  return _basic_ev.is_model_evaluator(); 
-	  }
-	  
-    
+
+
+    /// Access to the model evaluator flag.
+    /**
+     \return The model evaluator flag.
+     */
+    virtual bool is_model_evaluator(void) const
+    {
+        return _basic_ev.is_model_evaluator();
+    }
+
+
     /// Objective computation.
     /**
        - Compute \c f(x) from the blackbox outputs of a point.
        - Special objective for MADS phase one.
        \param x The trial point -- \b IN/OUT.
     */
-    virtual void compute_f ( NOMAD::Eval_Point & x ) const;
-  };
+    virtual void compute_f(NOMAD::Eval_Point &x) const;
+};
 }
 
 #endif

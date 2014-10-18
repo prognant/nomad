@@ -45,12 +45,14 @@
 
 #include "Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Slave process for the parallel version.
-  class Slave : private NOMAD::Uncopyable {
+/// Slave process for the parallel version.
+class Slave : private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     static int  _rank;        /// Process rank.
     static int  _np;          /// Number of processes.
@@ -61,11 +63,11 @@ namespace NOMAD {
     static bool _are_running; ///< \c true if the slaves are running.
     static bool _stop_ok;     ///< \c true if the slaves stopped without error.
 
-    const NOMAD::Parameters * _p;  ///< Parameters (may be NULL).
-    NOMAD::Evaluator        * _ev; ///< Evaluator  (may be NULL).
+    const NOMAD::Parameters *_p;   ///< Parameters (may be NULL).
+    NOMAD::Evaluator         *_ev; ///< Evaluator  (may be NULL).
 
     /// Initializations.
-    void init ( void ) const;
+    void init(void) const;
 
     /// Force quit.
     /**
@@ -73,85 +75,100 @@ namespace NOMAD {
        - Does nothing: the slave will be stopped by the master.
        \param signalValue Signal value -- \b IN.
     */
-    static void force_quit ( int signalValue ) {}
+    static void force_quit(int signalValue) {}
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p  Parameters                -- \b IN.
        \param ev A pointer to an evaluator -- \b IN.
     */
-    Slave ( const NOMAD::Parameters & p ,
-	    NOMAD::Evaluator        * ev )
-      : _p  ( &p  ) ,
-	_ev ( ev  )   { init(); } 
+    Slave(const NOMAD::Parameters &p ,
+          NOMAD::Evaluator         *ev)
+        : _p(&p) ,
+          _ev(ev)
+    {
+        init();
+    }
 
     /// Destructor.
-    virtual ~Slave ( void ) {}
+    virtual ~Slave(void) {}
 
     /// Run the slave code.
-    void run ( void ) const;
+    void run(void) const;
 
     /// Access to the stat \c _data_sent.
     /**
        \return The stat \c _data_sent.
     */
-    static int get_data_sent ( void ) { return Slave::_data_sent; }
+    static int get_data_sent(void)
+    {
+        return Slave::_data_sent;
+    }
 
     /// Access to the stat \c _data_rcvd.
     /**
        \return The stat \c _data_rcvd.
     */
-    static int get_data_rcvd ( void ) { return Slave::_data_rcvd; }
-    
+    static int get_data_rcvd(void)
+    {
+        return Slave::_data_rcvd;
+    }
+
     /// Access to the process rank.
     /**
        \return The process rank.
     */
-    static int get_rank ( void );
+    static int get_rank(void);
 
     /// Access to the number of processes.
     /**
        \return The number of processes.
     */
-    static int get_nb_processes ( void );
+    static int get_nb_processes(void);
 
     /// Check if the slaves are running.
     /**
        \return A boolean equal to \c true if the slaves are running.
     */
-    static bool are_running ( void ) { return _are_running; }
-    
+    static bool are_running(void)
+    {
+        return _are_running;
+    }
+
     /// Check if the current slave is the master.
     /**
        \return A boolean equal to \c true if the current slave is the master.
     */
-    static bool is_master ( void ) { return ( Slave::get_rank() == 0 ); }
+    static bool is_master(void)
+    {
+        return (Slave::get_rank() == 0);
+    }
 
     /// Initialize all the slaves.
     /**
        \param out Display -- \b IN.
     */
-    static void init_slaves ( const NOMAD::Display & out );
+    static void init_slaves(const NOMAD::Display &out);
 
     /// Stop all the slaves.
     /**
        \param out Display -- \b IN.
     */
-    static void stop_slaves ( const NOMAD::Display & out );
+    static void stop_slaves(const NOMAD::Display &out);
 
 #ifdef USE_MPI
 
-  private:
-    
+private:
+
     /// Receive and evaluate a point from the master.
     /**
        \param count_eval Flag indicating if the evaluation has to be counted
                          or not -- \b OUT.
        \return A pointer to the point.
     */
-    NOMAD::Eval_Point * eval_point ( bool & count_eval ) const;
+    NOMAD::Eval_Point *eval_point(bool &count_eval) const;
 
     /// Send an evaluation result to the master.
     /**
@@ -159,8 +176,8 @@ namespace NOMAD {
        \param count_eval Flag indicating if the evaluation has to be counted
                          or not -- \b IN.
     */
-    void send_eval_result ( const NOMAD::Eval_Point * x , bool count_eval ) const;
-    
+    void send_eval_result(const NOMAD::Eval_Point *x , bool count_eval) const;
+
     /// Send data.
     /**
        \param buf        Data to send  -- \b IN.
@@ -170,12 +187,12 @@ namespace NOMAD {
        \param ready_send Flag equal to \c true if \c Rsend is used instead of \c Send
                                        -- \b IN.
     */
-    static void send_data ( const void  * buf        ,
-			    int           count      ,
-			    MPI_Datatype  datatype   ,
-			    int           dest       ,
-			    bool          ready_send   );
-    
+    static void send_data(const void   *buf        ,
+                          int           count      ,
+                          MPI_Datatype  datatype   ,
+                          int           dest       ,
+                          bool          ready_send);
+
     /// Receive data.
     /**
        \param buf      Data to receive                           -- \b OUT.
@@ -185,19 +202,19 @@ namespace NOMAD {
        \param req      Pointer to a MPI request (may be \c NULL) -- \b IN/OUT.
        \return         The source.
     */
-    static int receive_data ( void        * buf      ,
-			      int           count    ,
-			      MPI_Datatype  datatype ,
-			      int           source   ,
-			      MPI_Request * req        );
+    static int receive_data(void         *buf      ,
+                            int           count    ,
+                            MPI_Datatype  datatype ,
+                            int           source   ,
+                            MPI_Request *req);
 
     /// Wait for a MPI request.
     /**
        \param req The request -- \b IN/OUT.
     */
-    static void wait_request ( MPI_Request & req );
-    
-  public:
+    static void wait_request(MPI_Request &req);
+
+public:
 
     /// Send an evaluation point to a slave.
     /**
@@ -205,10 +222,10 @@ namespace NOMAD {
        \param slave_rank Destination                               -- \b IN.
        \param h_max      Maximal feasibility value \c h_max        -- \b IN.
     */
-    void send_eval_point ( const NOMAD::Eval_Point * x          ,
-			   int                       slave_rank ,
-			   const NOMAD::Double     & h_max        ) const;
-    
+    void send_eval_point(const NOMAD::Eval_Point *x          ,
+                         int                       slave_rank ,
+                         const NOMAD::Double      &h_max) const;
+
     /// Receive an evaluation result from a slave.
     /**
        \param slave_rank Source                                      -- \b IN.
@@ -217,19 +234,19 @@ namespace NOMAD {
        \param count_eval Flag indicating if the evaluation has to be counted
                          or not -- \b OUT.
     */
-    void receive_eval_result ( int                 slave_rank ,
-			       NOMAD::Eval_Point * x          ,
-			       bool              & eval_ok    ,
-			       bool              & count_eval    ) const;
-    
+    void receive_eval_result(int                 slave_rank ,
+                             NOMAD::Eval_Point *x          ,
+                             bool               &eval_ok    ,
+                             bool               &count_eval) const;
+
     /// Receive a signal from a slave.
     /**
        \param signal The signal -- \b OUT.
        \return The source.
     */
-    static int receive_signal ( char & signal )
+    static int receive_signal(char &signal)
     {
-      return Slave::receive_data ( &signal , 1 , MPI_CHAR , MPI_ANY_SOURCE , NULL );
+        return Slave::receive_data(&signal , 1 , MPI_CHAR , MPI_ANY_SOURCE , NULL);
     }
 
     /// Send a signal to a slave.
@@ -237,12 +254,12 @@ namespace NOMAD {
        \param signal     The signal  -- \b IN.
        \param slave_rank Destination -- \b IN.
     */
-    static void send_signal ( char signal , int slave_rank )
+    static void send_signal(char signal , int slave_rank)
     {
-      Slave::send_data ( &signal , 1 , MPI_CHAR , slave_rank , true );
+        Slave::send_data(&signal , 1 , MPI_CHAR , slave_rank , true);
     }
 
 #endif
-  };
+};
 }
 #endif

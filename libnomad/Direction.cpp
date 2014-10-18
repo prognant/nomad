@@ -53,146 +53,147 @@ int NOMAD::Direction::_max_cardinality = 0;
 /*---------------------------------------------------------*/
 /*                       constructor 1                     */
 /*---------------------------------------------------------*/
-NOMAD::Direction::Direction ( void )
-  : NOMAD::Point  (                            ) ,
-    _type         ( NOMAD::UNDEFINED_DIRECTION ) ,
-_index        ( -1                         ),
-_dir_group_index (-1)
+NOMAD::Direction::Direction(void)
+    : NOMAD::Point() ,
+      _type(NOMAD::UNDEFINED_DIRECTION) ,
+      _index(-1),
+      _dir_group_index(-1)
 {
 #ifdef MEMORY_DEBUG
-  ++NOMAD::Direction::_cardinality;
-  if ( NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality )
-    ++NOMAD::Direction::_max_cardinality;
+    ++NOMAD::Direction::_cardinality;
+    if (NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality)
+        ++NOMAD::Direction::_max_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                       constructor 2                     */
 /*---------------------------------------------------------*/
-NOMAD::Direction::Direction ( int                     n    ,
-			      const NOMAD::Double   & v    ,
-			      NOMAD::direction_type   type ,		 
-					int dir_group_index		 )
-  : NOMAD::Point  ( n , v ) ,
-    _type         ( type  ) ,
-    _index        ( -1   ) ,
-    _dir_group_index (dir_group_index)
+NOMAD::Direction::Direction(int                     n    ,
+                            const NOMAD::Double    &v    ,
+                            NOMAD::direction_type   type ,
+                            int dir_group_index)
+    : NOMAD::Point(n , v) ,
+      _type(type) ,
+      _index(-1) ,
+      _dir_group_index(dir_group_index)
 {
 #ifdef MEMORY_DEBUG
-  ++NOMAD::Direction::_cardinality;
-  if ( NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality )
-    ++NOMAD::Direction::_max_cardinality;
+    ++NOMAD::Direction::_cardinality;
+    if (NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality)
+        ++NOMAD::Direction::_max_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                       constructor 2b                    */
 /*---------------------------------------------------------*/
-NOMAD::Direction::Direction ( int                     n    ,
-							 const NOMAD::Double   & v    ,
-							 NOMAD::direction_type   type   )
-: NOMAD::Point  ( n , v ) ,
-_type         ( type  ) ,
-_index        ( -1    ),
-_dir_group_index (-1)
+NOMAD::Direction::Direction(int                     n    ,
+                            const NOMAD::Double    &v    ,
+                            NOMAD::direction_type   type)
+    : NOMAD::Point(n , v) ,
+      _type(type) ,
+      _index(-1),
+      _dir_group_index(-1)
 {
 #ifdef MEMORY_DEBUG
-  ++NOMAD::Direction::_cardinality;
-  if ( NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality )
-    ++NOMAD::Direction::_max_cardinality;
+    ++NOMAD::Direction::_cardinality;
+    if (NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality)
+        ++NOMAD::Direction::_max_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                       constructor 3                     */
 /*---------------------------------------------------------*/
-NOMAD::Direction::Direction ( const NOMAD::Point    & x    , 
-			      NOMAD::direction_type   type   )
-  : NOMAD::Point  ( x    ) ,
-    _type         ( type ) ,
-_index        ( -1   ),
-_dir_group_index (-1)
+NOMAD::Direction::Direction(const NOMAD::Point     &x    ,
+                            NOMAD::direction_type   type)
+    : NOMAD::Point(x) ,
+      _type(type) ,
+      _index(-1),
+      _dir_group_index(-1)
 {
 #ifdef MEMORY_DEBUG
-  ++NOMAD::Direction::_cardinality;
-  if ( NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality )
-    ++NOMAD::Direction::_max_cardinality;
+    ++NOMAD::Direction::_cardinality;
+    if (NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality)
+        ++NOMAD::Direction::_max_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                      copy constructor                   */
 /*---------------------------------------------------------*/
-NOMAD::Direction::Direction ( const Direction & d )
-  : NOMAD::Point  ( d        ) ,
-    _type         ( d._type  ) ,
-    _index        ( d._index ),
-_dir_group_index (d._dir_group_index)
+NOMAD::Direction::Direction(const Direction &d)
+    : NOMAD::Point(d) ,
+      _type(d._type) ,
+      _index(d._index),
+      _dir_group_index(d._dir_group_index)
 {
 #ifdef MEMORY_DEBUG
-  ++NOMAD::Direction::_cardinality;
-  if ( NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality )
-    ++NOMAD::Direction::_max_cardinality;
+    ++NOMAD::Direction::_cardinality;
+    if (NOMAD::Direction::_cardinality > NOMAD::Direction::_max_cardinality)
+        ++NOMAD::Direction::_max_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                         destructor                      */
 /*---------------------------------------------------------*/
-NOMAD::Direction::~Direction ( void )
+NOMAD::Direction::~Direction(void)
 {
 #ifdef MEMORY_DEBUG
-  --NOMAD::Direction::_cardinality;
+    --NOMAD::Direction::_cardinality;
 #endif
 }
 
 /*---------------------------------------------------------*/
 /*                  affectation operator                   */
 /*---------------------------------------------------------*/
-NOMAD::Direction & NOMAD::Direction::operator = ( const NOMAD::Direction & d )
+NOMAD::Direction &NOMAD::Direction::operator = (const NOMAD::Direction &d)
 {
-  if ( this == &d )
+    if (this == &d)
+        return *this;
+
+    NOMAD::Point::operator = (d);
+
+    _type  = d._type;
+    _index = d._index;
+
     return *this;
-
-  NOMAD::Point::operator = ( d );
-  
-  _type  = d._type;
-  _index = d._index;
-
-  return *this;
 }
 
 /*---------------------------------------------------------*/
 /*                            clear                        */
 /*---------------------------------------------------------*/
-void NOMAD::Direction::clear ( void )
+void NOMAD::Direction::clear(void)
 {
-  NOMAD::Point::clear();
-  _type  = NOMAD::UNDEFINED_DIRECTION;
-  _index = -1;
+    NOMAD::Point::clear();
+    _type  = NOMAD::UNDEFINED_DIRECTION;
+    _index = -1;
 }
 
 /*-----------------------------------------------------------*/
 /*                           negation                        */
 /*-----------------------------------------------------------*/
-const NOMAD::Direction NOMAD::Direction::operator - ( void ) const
+const NOMAD::Direction NOMAD::Direction::operator - (void) const
 {
-  return NOMAD::Direction ( this->NOMAD::Point::operator-() , _type );
+    return NOMAD::Direction(this->NOMAD::Point::operator-() , _type);
 }
 
 /*---------------------------------------------------------*/
 /*                          display                        */
 /*---------------------------------------------------------*/
-void NOMAD::Direction::display ( const NOMAD::Display & out ,
-				 const std::string    & sep ,
-				 int                    w   ,
-				 int                    lim   ) const
+void NOMAD::Direction::display(const NOMAD::Display &out ,
+                               const std::string     &sep ,
+                               int                    w   ,
+                               int                    lim) const
 {
-  if ( is_defined() ) {
-    out << "( ";
-    NOMAD::Point::display ( out , sep , w , lim );
-    out << " ) " << _type;
-  }
-  else
-    out << "undefined";
+    if (is_defined())
+    {
+        out << "( ";
+        NOMAD::Point::display(out , sep , w , lim);
+        out << " ) " << _type;
+    }
+    else
+        out << "undefined";
 }

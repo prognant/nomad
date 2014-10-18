@@ -46,53 +46,58 @@
 #include <iostream>
 #include <cstdlib>
 #include "Uncopyable.hpp"
-#include "RNG.hpp" 
+#include "RNG.hpp"
 
-namespace NOMAD {
-  
-  /// Class for randomly pick up integers.
-  /**
-     - The integers are chosen in [0;n-1] and are distinct.
-     - Example displaying 5 different integers in [0;4]:
-     \code
-     NOMAD::Random_Pickup rp(5);
-     for ( int i = 0 ; i < 5 ; ++i )
-       std::cout << rp.pickup() << std::endl;
-     \endcode
-  */
-  class Random_Pickup : private NOMAD::Uncopyable {
+namespace NOMAD
+{
 
-  private:
+/// Class for randomly pick up integers.
+/**
+   - The integers are chosen in [0;n-1] and are distinct.
+   - Example displaying 5 different integers in [0;4]:
+   \code
+   NOMAD::Random_Pickup rp(5);
+   for ( int i = 0 ; i < 5 ; ++i )
+     std::cout << rp.pickup() << std::endl;
+   \endcode
+*/
+class Random_Pickup : private NOMAD::Uncopyable
+{
+
+private:
 
     int   _n0;    ///< Initial value of \c n.
     int   _n;     ///< Current value of \c n.
-    int * _elts;  ///< Elements that have not been chosen yet.
+    int *_elts;   ///< Elements that have not been chosen yet.
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param n -- The integer \c n defining the range
                    of values that can be picked up -- \b IN.
     */
-    Random_Pickup ( int n );
+    Random_Pickup(int n);
 
     /// Destructor.
-    virtual ~Random_Pickup ( void ) { delete [] _elts; }
+    virtual ~Random_Pickup(void)
+    {
+        delete [] _elts;
+    }
 
     /// Reset.
-    void reset ( void );
+    void reset(void);
 
     /// Randomly pick up an element in [0;n-1].
     /**
        \return The element.
     */
-    int pickup ( void );
-    
+    int pickup(void);
+
     /// Cancel the last pick up.
-    void cancel_last_pickup ( void );
-    
-  };
+    void cancel_last_pickup(void);
+
+};
 }
 
 #endif

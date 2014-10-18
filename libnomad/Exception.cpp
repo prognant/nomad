@@ -45,12 +45,12 @@
 /*----------------------------------------------------------------*/
 /*                     NOMAD::Exception::what()                   */
 /*----------------------------------------------------------------*/
-const char * NOMAD::Exception::what ( void ) const throw()
+const char *NOMAD::Exception::what(void) const throw()
 {
-  std::ostringstream oss;
-  oss << "NOMAD::Exception thrown (" << _file << ", " << _line << ")";
-  if ( !_what.empty() )
-    oss << " " << _what;
-  _what = oss.str();
-  return _what.c_str();
+    std::ostringstream oss;
+    oss << "NOMAD::Exception thrown (" << _file << ", " << _line << ")";
+    if (!_what.empty())
+        oss << " " << _what;
+    _what = oss.str();
+    return _what.c_str();
 }

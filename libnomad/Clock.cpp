@@ -51,9 +51,9 @@ const double NOMAD::Clock::_D_CLOCKS_PER_SEC = static_cast<double>(CLOCKS_PER_SE
 /*  compute the wall-clock time (real time) elapsed since  */
 /*  the construction of the Clock object                   */
 /*---------------------------------------------------------*/
-int NOMAD::Clock::get_real_time ( void ) const
+int NOMAD::Clock::get_real_time(void) const
 {
-  time_t t2;
-  time  (&t2);
-  return static_cast<int> (difftime ( t2 , _real_t0 ) );
+    time_t t2;
+    time(&t2);
+    return static_cast<int>(difftime(t2 , _real_t0));
 }

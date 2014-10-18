@@ -46,18 +46,20 @@
 #include "Mads.hpp"
 #include "Search.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Variable Neighborhood Search (VNS) search.
-  class VNS_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// Variable Neighborhood Search (VNS) search.
+class VNS_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     int                           _k; ///< VNS neighborhood parameter.
     int                       _k_max; ///< Maximum value of \c _k.
     int                _halton_index; ///< Halton index used for shaking directions.
-    const NOMAD::Eval_Point * _old_x; ///< Previous reference point (updates \c _k).
-    
+    const NOMAD::Eval_Point *_old_x;  ///< Previous reference point (updates \c _k).
+
     /// Search frequency.
     /**
        \c _nb_performed[ell] corresponds to the number of times that
@@ -65,24 +67,24 @@ namespace NOMAD {
     */
     int _nb_performed [NOMAD::L_LIMITS+1];
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    VNS_Search ( NOMAD::Parameters & p )
-      : NOMAD::Search ( p , NOMAD::VNS_SEARCH     ) ,
-	_k            ( 1                         ) ,
-	_k_max        ( 1                         ) ,
-	_halton_index ( NOMAD::VNS_HALTON_INDEX_0 ) ,
-	_old_x        ( NULL                      )   {}
-    
+    VNS_Search(NOMAD::Parameters &p)
+        : NOMAD::Search(p , NOMAD::VNS_SEARCH) ,
+          _k(1) ,
+          _k_max(1) ,
+          _halton_index(NOMAD::VNS_HALTON_INDEX_0) ,
+          _old_x(NULL)   {}
+
     /// Destructor.
-    virtual ~VNS_Search ( void ) {}
+    virtual ~VNS_Search(void) {}
 
     /// Reset.
-    virtual void reset ( void );
+    virtual void reset(void);
 
     /// The VNS search.
     /**
@@ -96,25 +98,25 @@ namespace NOMAD {
        \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
        \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
-  
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
+
     /// Access to the search frequency.
     /**
        \param ell The mesh index -- \b IN.
        \return Number of times that the VNS search has been performed on a given mesh.
     */
-    int get_nb_performed ( int ell ) const
+    int get_nb_performed(int ell) const
     {
-      return ( ell < 0 ) ? 0 : _nb_performed[ell];
+        return (ell < 0) ? 0 : _nb_performed[ell];
     }
-  };
+};
 }
 
 #endif

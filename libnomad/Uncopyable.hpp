@@ -42,31 +42,33 @@
 #ifndef __UNCOPYABLE__
 #define __UNCOPYABLE__
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Uncopyable class.
-  /**
-     Base class for uncopyable classes
-     (see Scott Meyer's Effective C++, 3rd ed., item #6).
-  */
-  class Uncopyable {
+/// Uncopyable class.
+/**
+   Base class for uncopyable classes
+   (see Scott Meyer's Effective C++, 3rd ed., item #6).
+*/
+class Uncopyable
+{
 
-  protected:
+protected:
 
     /// Constructor.
-    explicit Uncopyable  ( void ) {}
+    explicit Uncopyable(void) {}
 
     /// Destructor.
-    virtual ~Uncopyable ( void ) {}
+    virtual ~Uncopyable(void) {}
 
-  private:
-    
+private:
+
     /// Undefined copy constructor.
-    Uncopyable ( const Uncopyable & );
+    Uncopyable(const Uncopyable &);
 
     /// Undefined affectation operator.
-    Uncopyable & operator = ( const Uncopyable & );
-  };
+    Uncopyable &operator = (const Uncopyable &);
+};
 }
 
 #endif

@@ -45,53 +45,58 @@
 
 #include "Eval_Point.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class for the representation of NOMAD::Eval_Point objects stored in the cache.
-  class Cache_Point : public NOMAD::Set_Element<NOMAD::Eval_Point> {
+/// Class for the representation of NOMAD::Eval_Point objects stored in the cache.
+class Cache_Point : public NOMAD::Set_Element<NOMAD::Eval_Point>
+{
 
-  private:
+private:
 
     /// Affectation operator.
     /**
        \param cp The right-hand side object -- \b IN.
        \return \c *this as the result of the affectation.
     */
-    Cache_Point & operator = ( const Cache_Point & cp );
+    Cache_Point &operator = (const Cache_Point &cp);
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param x A pointer to the NOMAD::Eval_Point object
                 that is stored in the cache -- \b IN.
     */
-    explicit Cache_Point ( const NOMAD::Eval_Point * x )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( x ) {}
+    explicit Cache_Point(const NOMAD::Eval_Point *x)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (x) {}
 
     /// Copy constructor.
     /**
        \param cp The copied object -- \b IN.
     */
-    Cache_Point ( const Cache_Point & cp )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( cp.get_element() ) {}
+    Cache_Point(const Cache_Point &cp)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (cp.get_element()) {}
 
     /// Destructor.
-    virtual ~Cache_Point ( void ) {}
+    virtual ~Cache_Point(void) {}
 
     /// Comparison operator.
     /**
        \param  cp The right-hand side object.
        \return A boolean equal to \c true if \c *this \c < \c cp.
     */
-    virtual bool operator < ( const NOMAD::Set_Element<NOMAD::Eval_Point> & cp ) const;
+    virtual bool operator < (const NOMAD::Set_Element<NOMAD::Eval_Point> &cp) const;
 
     /// Access to the point.
     /**
        \return A pointer to the NOMAD::Eval_Point stored in the cache.
     */
-    const NOMAD::Eval_Point * get_point ( void ) const { return get_element(); }
-  };
+    const NOMAD::Eval_Point *get_point(void) const
+    {
+        return get_element();
+    }
+};
 }
 
 #endif

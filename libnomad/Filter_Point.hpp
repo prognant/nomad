@@ -45,55 +45,60 @@
 #include "Eval_Point.hpp"
 #include "Set_Element.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class for the representation of NOMAD::Eval_Point objects stored in the filter.
-  class Filter_Point : public NOMAD::Set_Element<NOMAD::Eval_Point> {
+/// Class for the representation of NOMAD::Eval_Point objects stored in the filter.
+class Filter_Point : public NOMAD::Set_Element<NOMAD::Eval_Point>
+{
 
-  private:
+private:
 
     /// Affectation operator.
     /**
        \param fp The right-hand side object -- \b IN.
        \return \c *this as the result of the affectation.
     */
-    Filter_Point & operator = ( const Filter_Point & fp );
+    Filter_Point &operator = (const Filter_Point &fp);
 
-  public:
-  
+public:
+
     /// Constructor.
     /**
        \param ep A pointer to the NOMAD::Eval_Point object that
                  is stored in the filter -- \b IN.
     */
-    Filter_Point ( const NOMAD::Eval_Point * ep )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( ep ) {}
+    Filter_Point(const NOMAD::Eval_Point *ep)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (ep) {}
 
     /// Copy constructor.
     /**
        \param fp The copied object -- \b IN.
     */
-    explicit Filter_Point ( const Filter_Point & fp )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( fp.get_element() ) {}
+    explicit Filter_Point(const Filter_Point &fp)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (fp.get_element()) {}
 
     /// Destructor.
-    virtual ~Filter_Point ( void ) {}
+    virtual ~Filter_Point(void) {}
 
     /// Comparison operator.
     /**
        \param  fp The right-hand side object.
        \return A boolean equal to \c true if \c *this \c < \c fp.
     */
-    virtual bool operator < ( const NOMAD::Set_Element<NOMAD::Eval_Point> & fp ) const
+    virtual bool operator < (const NOMAD::Set_Element<NOMAD::Eval_Point> &fp) const
     {
-      return get_element()->get_h().value() < fp.get_element()->get_h().value();
+        return get_element()->get_h().value() < fp.get_element()->get_h().value();
     }
 
     /// Access to the point.
     /**
        \return A pointer to the NOMAD::Eval_Point stored in the cache.
     */
-    const NOMAD::Eval_Point * get_point ( void ) const { return get_element(); }
-  };
+    const NOMAD::Eval_Point *get_point(void) const
+    {
+        return get_element();
+    }
+};
 }
 #endif

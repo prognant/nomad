@@ -46,27 +46,29 @@
 #include "Search.hpp"
 #include "Mads.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// NOMAD::Search subclass for the phase one.
-  /**
-     - The phase one occurs when no feasible starting point has been given.
-     - It consists in minimizing the constraint violations and it stops
-       as soon as a feasible point is found.
-  */
-  class Phase_One_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// NOMAD::Search subclass for the phase one.
+/**
+   - The phase one occurs when no feasible starting point has been given.
+   - It consists in minimizing the constraint violations and it stops
+     as soon as a feasible point is found.
+*/
+class Phase_One_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    Phase_One_Search ( NOMAD::Parameters & p )
-      : NOMAD::Search ( p , NOMAD::P1_SEARCH ) {}
-  
+    Phase_One_Search(NOMAD::Parameters &p)
+        : NOMAD::Search(p , NOMAD::P1_SEARCH) {}
+
     /// Destructor.
-    virtual ~Phase_One_Search ( void ) {}
+    virtual ~Phase_One_Search(void) {}
 
     /// The phase one search.
     /**
@@ -79,15 +81,15 @@ namespace NOMAD {
        \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
        \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
-  };
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
+};
 }
 
 #endif

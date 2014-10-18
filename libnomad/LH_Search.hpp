@@ -45,14 +45,16 @@
 
 #include "Search.hpp"
 #include "Mads.hpp"
-#include "RNG.hpp"  
+#include "RNG.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class for the Latin-Hypercube search.
-  class LH_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// Class for the Latin-Hypercube search.
+class LH_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     bool _initial_search;  /// Initial search flag (for display only).
 
@@ -67,29 +69,29 @@ namespace NOMAD {
        \param ub          Upper bound                                -- \b IN.
        \param x           The \p values                              -- \b OUT.
     */
-    void values_for_var_i ( int                          p           ,
-			    const NOMAD::Double        & delta_m     ,
-			    const NOMAD::Double        & delta_m_max ,
-			    const NOMAD::bb_input_type & bbit        ,
-			    const NOMAD::Double        & lb          ,
-			    const NOMAD::Double        & ub          ,
-			    NOMAD::Point               & x             ) const;
-  public:
-    
+    void values_for_var_i(int                          p           ,
+                          const NOMAD::Double         &delta_m     ,
+                          const NOMAD::Double         &delta_m_max ,
+                          const NOMAD::bb_input_type &bbit        ,
+                          const NOMAD::Double         &lb          ,
+                          const NOMAD::Double         &ub          ,
+                          NOMAD::Point                &x) const;
+public:
+
     /// Constructor.
     /**
        \param p              Parameters          -- \b IN.
        \param initial_search Initial search flag -- \b IN.
        \param phase_one      Phase one flag      -- \b IN.
     */
-    LH_Search ( NOMAD::Parameters        & p              ,
-		bool                       initial_search ,
-		bool                       phase_one        )
-      : NOMAD::Search   ( p , phase_one ? NOMAD::LH_SEARCH_P1 : NOMAD::LH_SEARCH ) ,
-	_initial_search ( initial_search                                         )   {}
+    LH_Search(NOMAD::Parameters         &p              ,
+              bool                       initial_search ,
+              bool                       phase_one)
+        : NOMAD::Search(p , phase_one ? NOMAD::LH_SEARCH_P1 : NOMAD::LH_SEARCH) ,
+          _initial_search(initial_search)   {}
 
     /// Destructor.
-    virtual ~LH_Search ( void ) {}
+    virtual ~LH_Search(void) {}
 
     /// The Latin-Hypercube search.
     /**
@@ -102,14 +104,14 @@ namespace NOMAD {
        \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
        \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
 
     /// Simpler method used to generate a list of LH points.
     /**
@@ -121,13 +123,13 @@ namespace NOMAD {
        \param pts LH points           -- \b OUT.
        \return A boolean equal to \c true if no error occured.
     */
-    static bool LH_points ( int                                n   ,
-			    int                                m   ,
-			    int                                p   ,
-			    const NOMAD::Point               & lb  ,
-			    const NOMAD::Point               & ub  ,
-			    std::vector<NOMAD::Eval_Point *> & pts   );
-  };
+    static bool LH_points(int                                n   ,
+                          int                                m   ,
+                          int                                p   ,
+                          const NOMAD::Point                &lb  ,
+                          const NOMAD::Point                &ub  ,
+                          std::vector<NOMAD::Eval_Point *> &pts);
+};
 }
 
 #endif

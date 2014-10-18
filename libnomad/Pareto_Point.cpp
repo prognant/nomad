@@ -49,15 +49,15 @@
 /*  . we compare f1(x) and f1(y)                          */
 /*--------------------------------------------------------*/
 bool NOMAD::Pareto_Point::operator <
-( const NOMAD::Set_Element<NOMAD::Eval_Point> & fp ) const
+(const NOMAD::Set_Element<NOMAD::Eval_Point> &fp) const
 {
-  if ( this == &fp || get_element() == fp.get_element() )
-    return false;
-  
-  int i1 = NOMAD::Multi_Obj_Evaluator::get_i1();
+    if (this == &fp || get_element() == fp.get_element())
+        return false;
 
-  return get_element()->get_bb_outputs()[i1].value() <
-         fp.get_element()->get_bb_outputs()[i1].value();
+    int i1 = NOMAD::Multi_Obj_Evaluator::get_i1();
+
+    return get_element()->get_bb_outputs()[i1].value() <
+           fp.get_element()->get_bb_outputs()[i1].value();
 }
 
 /*---------------------------------------------------------------*/
@@ -65,42 +65,42 @@ bool NOMAD::Pareto_Point::operator <
 /*  . used for the comparison (dominance) of two Pareto points,  */
 /*    before they are inserted into the Pareto front             */
 /*---------------------------------------------------------------*/
-bool NOMAD::Pareto_Point::dominates ( const NOMAD::Pareto_Point & pp ) const
+bool NOMAD::Pareto_Point::dominates(const NOMAD::Pareto_Point &pp) const
 {
-  if ( this == &pp || get_element() == pp.get_element() )
+    if (this == &pp || get_element() == pp.get_element())
+        return false;
+
+    int i1 = NOMAD::Multi_Obj_Evaluator::get_i1();
+    int i2 = NOMAD::Multi_Obj_Evaluator::get_i2();
+
+    // we compare F(x)=[f1(x),f2(x)] and F(y)=[f1(y),f2(y)]:
+    double f1x  = get_element()->get_bb_outputs()[i1].value();
+    double f2x  = get_element()->get_bb_outputs()[i2].value();
+    double f1y  = pp.get_element()->get_bb_outputs()[i1].value();
+    double f2y  = pp.get_element()->get_bb_outputs()[i2].value();
+
+    if (f1x < f1y)
+        return f2x <= f2y;
+
+    if (f1x == f1y)
+        return (f2x < f2y);
+
     return false;
-
-  int i1 = NOMAD::Multi_Obj_Evaluator::get_i1();
-  int i2 = NOMAD::Multi_Obj_Evaluator::get_i2();
-
-  // we compare F(x)=[f1(x),f2(x)] and F(y)=[f1(y),f2(y)]:
-  double f1x  = get_element()->get_bb_outputs   ()[i1].value();
-  double f2x  = get_element()->get_bb_outputs   ()[i2].value();
-  double f1y  = pp.get_element()->get_bb_outputs()[i1].value();
-  double f2y  = pp.get_element()->get_bb_outputs()[i2].value();
-  
-  if ( f1x < f1y )
-    return f2x <= f2y;
-
-  if ( f1x == f1y )
-    return ( f2x < f2y );
-  
-  return false;
 }
 
 /*---------------------------------------------------------------*/
 /*                           display                             */
 /*---------------------------------------------------------------*/
-void NOMAD::Pareto_Point::display ( const NOMAD::Display & out ) const
+void NOMAD::Pareto_Point::display(const NOMAD::Display &out) const
 {
-  const NOMAD::Point & bbo = get_element()->get_bb_outputs();
-  int                  w   = 13;
+    const NOMAD::Point &bbo = get_element()->get_bb_outputs();
+    int                  w   = 13;
 
-  out << "x=( ";
-  get_element()->NOMAD::Point::display ( out , " " , w , -1 );
-  out << " ) F(x)=[ ";
-  bbo.Point::display ( out , " " , w , -1 );
-  out << " ] [ f1(x) f2(x) ]=[ "
-      << std::setw(w) << bbo[NOMAD::Multi_Obj_Evaluator::get_i1()] << " "
-      << std::setw(w) << bbo[NOMAD::Multi_Obj_Evaluator::get_i2()] << " ]";
+    out << "x=( ";
+    get_element()->NOMAD::Point::display(out , " " , w , -1);
+    out << " ) F(x)=[ ";
+    bbo.Point::display(out , " " , w , -1);
+    out << " ] [ f1(x) f2(x) ]=[ "
+        << std::setw(w) << bbo[NOMAD::Multi_Obj_Evaluator::get_i1()] << " "
+        << std::setw(w) << bbo[NOMAD::Multi_Obj_Evaluator::get_i2()] << " ]";
 }

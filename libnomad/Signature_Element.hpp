@@ -45,56 +45,58 @@
 #include "Set_Element.hpp"
 #include "Signature.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Signature inside a set of signatures.
-  class Signature_Element : public NOMAD::Set_Element<NOMAD::Signature> {
+/// Signature inside a set of signatures.
+class Signature_Element : public NOMAD::Set_Element<NOMAD::Signature>
+{
 
-  private:
+private:
 
     /// Affectation operator.
     /**
        \param se The right-hand side object -- \b IN.
     */
-    Signature_Element & operator = ( const Signature_Element & se );
+    Signature_Element &operator = (const Signature_Element &se);
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param s A pointer to a NOMAD::Signature -- \b IN.
     */
-    explicit Signature_Element ( const NOMAD::Signature * s )
-      : NOMAD::Set_Element<NOMAD::Signature> ( s ) {}
+    explicit Signature_Element(const NOMAD::Signature *s)
+        : NOMAD::Set_Element<NOMAD::Signature> (s) {}
 
     /// Copy constructor.
     /**
        \param se The copied object -- \b IN.
     */
-    Signature_Element ( const Signature_Element & se )
-      : NOMAD::Set_Element<NOMAD::Signature> ( se.get_element() ) {}
-    
+    Signature_Element(const Signature_Element &se)
+        : NOMAD::Set_Element<NOMAD::Signature> (se.get_element()) {}
+
     /// Destructor.
-    virtual ~Signature_Element ( void ) {}
-    
+    virtual ~Signature_Element(void) {}
+
     /// Comparison operator.
     /**
        \param se The right-hand side object -- \b IN.
     */
-    virtual bool operator < ( const NOMAD::Set_Element<NOMAD::Signature> & se ) const
+    virtual bool operator < (const NOMAD::Set_Element<NOMAD::Signature> &se) const
     {
-      return ( *get_element() < *(se.get_element()) );
+        return (*get_element() < *(se.get_element()));
     }
 
     /// Access to the signature.
     /**
        \return A pointer to the signature.
     */
-    NOMAD::Signature * get_signature ( void ) const
+    NOMAD::Signature *get_signature(void) const
     {
-      return const_cast<NOMAD::Signature *> ( get_element() );
+        return const_cast<NOMAD::Signature *>(get_element());
     }
-  };
+};
 }
 
 #endif

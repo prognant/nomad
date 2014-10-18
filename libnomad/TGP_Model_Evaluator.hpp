@@ -48,12 +48,14 @@
 #include "Search.hpp"
 #include "Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// NOMAD::Evaluator subclass for quadratic model optimization.
-  class TGP_Model_Evaluator : public NOMAD::Evaluator {
+/// NOMAD::Evaluator subclass for quadratic model optimization.
+class TGP_Model_Evaluator : public NOMAD::Evaluator
+{
 
-  private:
+private:
 
 //     int       _n;           ///< Number of variables.
 //     int       _nm1;         ///< Number of variables minus one.
@@ -62,22 +64,22 @@ namespace NOMAD {
 //     double ** _alpha;       ///< Model parameters.
 //     bool      _model_ready; ///< \c true if model ready to evaluate.
 
-    NOMAD::TGP_Model & _model; ///< The TGP model.
+    NOMAD::TGP_Model &_model;  ///< The TGP model.
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p     Parameters -- \b IN.
        \param model Model      -- \b IN.
     */
-    TGP_Model_Evaluator ( const NOMAD::Parameters & p     ,
-			  NOMAD::TGP_Model        & model   )
-      : NOMAD::Evaluator ( p     ) ,        
-	_model           ( model )   {}
+    TGP_Model_Evaluator(const NOMAD::Parameters &p     ,
+                        NOMAD::TGP_Model         &model)
+        : NOMAD::Evaluator(p) ,
+          _model(model)   {}
 
     /// Destructor.
-    virtual ~TGP_Model_Evaluator ( void ) {}
+    virtual ~TGP_Model_Evaluator(void) {}
 
     /// Evaluate the blackboxes at a given trial point.
     /**
@@ -87,10 +89,10 @@ namespace NOMAD {
                          or not -- \b OUT.
        \return A boolean equal to \c false if the evaluation failed.
      */
-    virtual bool eval_x ( NOMAD::Eval_Point   & x          ,
-			  const NOMAD::Double & h_max      ,
-			  bool                & count_eval   ) const;
-  };
+    virtual bool eval_x(NOMAD::Eval_Point    &x          ,
+                        const NOMAD::Double &h_max      ,
+                        bool                 &count_eval) const;
+};
 }
 
 #endif

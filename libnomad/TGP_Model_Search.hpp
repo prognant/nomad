@@ -48,14 +48,16 @@
 #include "LH_Search.hpp"
 #include "TGP_Model_Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Model search.
-  class TGP_Model_Search : public NOMAD::Search , private NOMAD::Uncopyable {
+/// Model search.
+class TGP_Model_Search : public NOMAD::Search , private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
-    NOMAD::TGP_Model * _model;
+    NOMAD::TGP_Model *_model;
 
     NOMAD::Model_Stats _one_search_stats;   ///< Stats for one search.
     NOMAD::Model_Stats _all_searches_stats; ///< Stats for all searches.
@@ -64,13 +66,13 @@ namespace NOMAD {
     /**
        \param pts The points -- \b IN/OUT.
     */
-    static void clear_pts ( std::vector<NOMAD::Point *> & pts );
+    static void clear_pts(std::vector<NOMAD::Point *> &pts);
 
     /// Delete a list of evaluation points.
     /**
        \param pts The points -- \b IN/OUT.
     */
-    static void clear_pts ( std::vector<NOMAD::Eval_Point *> & pts );
+    static void clear_pts(std::vector<NOMAD::Eval_Point *> &pts);
 
     /// Model construction.
     /**
@@ -88,18 +90,18 @@ namespace NOMAD {
        \param  error_std      Error string                              -- \b OUT.
        \return A boolean equal to \c true if the model has been constructed.
     */
-    bool model_construction ( const NOMAD::Cache               & cache          ,
-			      const NOMAD::Point               & incumbent      ,
-			      const NOMAD::Point               & delta_m        ,
-			      const NOMAD::Display             & out            ,
-			      NOMAD::dd_type                     display_degree ,
-			      int                                display_lim    ,
-			      NOMAD::Stats                     & stats          ,
-			      bool                             & compute_Ds2x   ,
-			      std::vector<NOMAD::Eval_Point *> & XX             ,
-			      bool                             & stop           ,
-			      NOMAD::stop_type                 & stop_reason    ,
-			      std::string                      & error_str        );
+    bool model_construction(const NOMAD::Cache                &cache          ,
+                            const NOMAD::Point                &incumbent      ,
+                            const NOMAD::Point                &delta_m        ,
+                            const NOMAD::Display              &out            ,
+                            NOMAD::dd_type                     display_degree ,
+                            int                                display_lim    ,
+                            NOMAD::Stats                      &stats          ,
+                            bool                              &compute_Ds2x   ,
+                            std::vector<NOMAD::Eval_Point *> &XX             ,
+                            bool                              &stop           ,
+                            NOMAD::stop_type                  &stop_reason    ,
+                            std::string                       &error_str);
 
     /// Create a list of prediction points.
     /**
@@ -110,12 +112,12 @@ namespace NOMAD {
        \param  delta_m   Mesh size parameter          -- \b IN.
        \param  XX        The set of prediction points -- \b OUT.
     */
-    void set_XX ( const NOMAD::Cache               & cache     ,
-		  int                                n         ,
-		  int                                m         ,
-		  const NOMAD::Point               & incumbent ,
-		  const NOMAD::Point               & delta_m   ,
-		  std::vector<NOMAD::Eval_Point *> & XX          ) const;
+    void set_XX(const NOMAD::Cache                &cache     ,
+                int                                n         ,
+                int                                m         ,
+                const NOMAD::Point                &incumbent ,
+                const NOMAD::Point                &delta_m   ,
+                std::vector<NOMAD::Eval_Point *> &XX) const;
 
     /// Create the complete list of trial points (oracle + Ds2x + improv).
     /**
@@ -129,14 +131,14 @@ namespace NOMAD {
        \param trial_pts      The list of trial points   -- \b OUT.
      */
     void create_trial_pts
-    ( const std::vector<NOMAD::Point *> & oracle_pts     ,
-      const std::vector<NOMAD::Point *> & Ds2x_pts       ,
-      const std::vector<NOMAD::Point *> & improv_pts     ,
-      const NOMAD::Point                & incumbent      ,
-      int                                 max_pts        ,
-      const NOMAD::Display              & out            ,
-      NOMAD::dd_type                      display_degree ,
-      std::vector<NOMAD::Point *>       & trial_pts        ) const;
+    (const std::vector<NOMAD::Point *> &oracle_pts     ,
+     const std::vector<NOMAD::Point *> &Ds2x_pts       ,
+     const std::vector<NOMAD::Point *> &improv_pts     ,
+     const NOMAD::Point                 &incumbent      ,
+     int                                 max_pts        ,
+     const NOMAD::Display               &out            ,
+     NOMAD::dd_type                      display_degree ,
+     std::vector<NOMAD::Point *>        &trial_pts) const;
 
     /// Create oracle points by optimizing the model.
     /**
@@ -153,16 +155,16 @@ namespace NOMAD {
        \return A boolean equal to \c true oracle points are proposed.
     */
     bool create_oracle_pts
-    ( const NOMAD::Cache                     & cache          ,
-      const NOMAD::Point                     & incumbent      ,
-      const NOMAD::Point                     & delta_m        ,
-      const NOMAD::Display                   & out            ,
-      NOMAD::dd_type                           display_degree ,
-      int                                      display_lim    ,
-      const std::vector<NOMAD::Eval_Point *> & XX             ,
-      std::vector<NOMAD::Point *>            & oracle_pts     ,
-      bool                                   & stop           ,
-      NOMAD::stop_type                       & stop_reason      );
+    (const NOMAD::Cache                      &cache          ,
+     const NOMAD::Point                      &incumbent      ,
+     const NOMAD::Point                      &delta_m        ,
+     const NOMAD::Display                    &out            ,
+     NOMAD::dd_type                           display_degree ,
+     int                                      display_lim    ,
+     const std::vector<NOMAD::Eval_Point *> &XX             ,
+     std::vector<NOMAD::Point *>             &oracle_pts     ,
+     bool                                    &stop           ,
+     NOMAD::stop_type                        &stop_reason);
 
     /// Model optimization.
     /**
@@ -174,13 +176,13 @@ namespace NOMAD {
        \param stop           Stop flag                 -- \b OUT.
        \param stop_reason    Stop reason               -- \b OUT.
     */
-    bool optimize_model ( const NOMAD::Eval_Point * x0s[3]         ,
-			  const NOMAD::Display    & out            ,
-			  NOMAD::dd_type            display_degree ,
-			  NOMAD::Point           *& xf             ,
-			  NOMAD::Point           *& xi             ,
-			  bool                    & stop           ,
-			  NOMAD::stop_type        & stop_reason      );
+    bool optimize_model(const NOMAD::Eval_Point *x0s[3]         ,
+                        const NOMAD::Display     &out            ,
+                        NOMAD::dd_type            display_degree ,
+                        NOMAD::Point            *&xf             ,
+                        NOMAD::Point            *&xi             ,
+                        bool                     &stop           ,
+                        NOMAD::stop_type         &stop_reason);
 
     /// Project and accept or reject an oracle trial point.
     /**
@@ -193,12 +195,12 @@ namespace NOMAD {
        \return A boolean equal to \c true if the point is accepted.
     */
     bool check_oracle_point
-    ( const NOMAD::Cache   & cache          ,
-      const NOMAD::Point   & incumbent      ,
-      const NOMAD::Point   & delta_m        ,
-      const NOMAD::Display & out            ,
-      NOMAD::dd_type         display_degree ,
-      NOMAD::Point         & x                );
+    (const NOMAD::Cache    &cache          ,
+     const NOMAD::Point    &incumbent      ,
+     const NOMAD::Point    &delta_m        ,
+     const NOMAD::Display &out            ,
+     NOMAD::dd_type         display_degree ,
+     NOMAD::Point          &x);
 
     /// Insert a trial point in the evaluator control object.
     /**
@@ -209,12 +211,12 @@ namespace NOMAD {
        \param display_degree Display degree                      -- \b IN.
        \param ev_control     The NOMAD::Evaluator_Control object -- \b IN/OUT.
     */
-    void register_point ( NOMAD::Point               x              ,
-			  NOMAD::Signature         & signature      ,
-			  const NOMAD::Point       & incumbent      ,
-			  int                        mesh_index     ,
-			  NOMAD::dd_type             display_degree ,
-			  NOMAD::Evaluator_Control & ev_control       ) const;
+    void register_point(NOMAD::Point               x              ,
+                        NOMAD::Signature          &signature      ,
+                        const NOMAD::Point        &incumbent      ,
+                        int                        mesh_index     ,
+                        NOMAD::dd_type             display_degree ,
+                        NOMAD::Evaluator_Control &ev_control) const;
 
     /// Create the list of improv points.
     /**
@@ -230,13 +232,13 @@ namespace NOMAD {
        \param Ds2x_pts       The list of improv points                 -- \b OUT.
     */
     void create_improv_pts
-    ( const std::vector<NOMAD::Eval_Point *> & XX             ,
-      const NOMAD::Point                     & incumbent      ,
-      int                                      max_pts        ,
-      const NOMAD::Display                   & out            ,
-      NOMAD::dd_type                           display_degree ,
-      int                                      display_lim    ,
-      std::vector<NOMAD::Point *>            & improv_pts       ) const;
+    (const std::vector<NOMAD::Eval_Point *> &XX             ,
+     const NOMAD::Point                      &incumbent      ,
+     int                                      max_pts        ,
+     const NOMAD::Display                    &out            ,
+     NOMAD::dd_type                           display_degree ,
+     int                                      display_lim    ,
+     std::vector<NOMAD::Point *>             &improv_pts) const;
 
     /// Create the list of Ds2x points.
     /**
@@ -249,11 +251,11 @@ namespace NOMAD {
        \param Ds2x_pts       The list of Ds2x points                   -- \b OUT.
     */
     void create_Ds2x_pts
-    ( const std::vector<NOMAD::Eval_Point *> & XX             ,
-      const NOMAD::Display                   & out            ,
-      NOMAD::dd_type                           display_degree ,
-      int                                      display_lim    ,
-      std::vector<NOMAD::Point *>            & Ds2x_pts         ) const;
+    (const std::vector<NOMAD::Eval_Point *> &XX             ,
+     const NOMAD::Display                    &out            ,
+     NOMAD::dd_type                           display_degree ,
+     int                                      display_lim    ,
+     std::vector<NOMAD::Point *>             &Ds2x_pts) const;
 
     /// Prediction at one point.
     /**
@@ -262,9 +264,9 @@ namespace NOMAD {
        \param  f Value of \c f -- \b OUT.
        \return A boolean equal to \c true if the prediction was possible.
     */
-    bool predict ( const NOMAD::Point & x ,
-		   NOMAD::Double      & h ,
-		   NOMAD::Double      & f   ) const;
+    bool predict(const NOMAD::Point &x ,
+                 NOMAD::Double       &h ,
+                 NOMAD::Double       &f) const;
 
     /// Display the prediction error for the evaluated points.
     /**
@@ -272,25 +274,28 @@ namespace NOMAD {
        \param out           The NOMAD::Display object -- \b IN.
     */
     void display_eval_pred_errors
-    ( const std::list<const NOMAD::Eval_Point *> & evaluated_pts ,
-      const NOMAD::Display                       & out             );
+    (const std::list<const NOMAD::Eval_Point *> &evaluated_pts ,
+     const NOMAD::Display                        &out);
 
     /*----------------------------------------------------------------------*/
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param p Parameters -- \b IN.
     */
-    TGP_Model_Search ( NOMAD::Parameters & p )
-      : NOMAD::Search ( p , NOMAD::MODEL_SEARCH ) , _model ( NULL ) {}
-    
+    TGP_Model_Search(NOMAD::Parameters &p)
+        : NOMAD::Search(p , NOMAD::MODEL_SEARCH) , _model(NULL) {}
+
     /// Destructor.
-    virtual ~TGP_Model_Search ( void ) { reset(); }
+    virtual ~TGP_Model_Search(void)
+    {
+        reset();
+    }
 
     /// Reset.
-    virtual void reset ( void );
+    virtual void reset(void);
 
     /// The TGP model search.
     /**
@@ -304,30 +309,33 @@ namespace NOMAD {
        \param new_feas_inc   New feasible incumbent                  -- \b IN/OUT.
        \param new_infeas_inc New infeasible incumbent                -- \b IN/OUT.
     */
-    virtual void search ( NOMAD::Mads              & mads           ,
-			  int                      & nb_search_pts  ,
-			  bool                     & stop           ,
-			  NOMAD::stop_type         & stop_reason    ,
-			  NOMAD::success_type      & success        ,
-			  bool                     & count_search   ,
-			  const NOMAD::Eval_Point *& new_feas_inc   ,
-			  const NOMAD::Eval_Point *& new_infeas_inc   );
+    virtual void search(NOMAD::Mads               &mads           ,
+                        int                       &nb_search_pts  ,
+                        bool                      &stop           ,
+                        NOMAD::stop_type          &stop_reason    ,
+                        NOMAD::success_type       &success        ,
+                        bool                      &count_search   ,
+                        const NOMAD::Eval_Point  *&new_feas_inc   ,
+                        const NOMAD::Eval_Point  *&new_infeas_inc);
 
     /// Access to the model.
     /**
        \return The model.
     */
-    NOMAD::TGP_Model * get_model ( void ) const { return _model; }
+    NOMAD::TGP_Model *get_model(void) const
+    {
+        return _model;
+    }
 
     //// Display stats.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    virtual void display ( const NOMAD::Display & out ) const
+    virtual void display(const NOMAD::Display &out) const
     {
-      out << _all_searches_stats;
+        out << _all_searches_stats;
     }
-  };
+};
 }
 
 #endif

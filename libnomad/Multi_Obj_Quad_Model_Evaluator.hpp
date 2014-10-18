@@ -37,7 +37,7 @@
 /**
  \file   Multi_Obj_Quad_Model_Evaluator.hpp
  \brief  NOMAD::Mulit_Obj_Evaluator subclass for quadratic model optimization (headers)
- \author Christophe Tribes 
+ \author Christophe Tribes
  \date   2012-06-19
  \see    Multi_Obj_Quad_Model_Evaluator.cpp
  */
@@ -47,37 +47,48 @@
 #include "Quad_Model_Evaluator.hpp"
 #include "Multi_Obj_Evaluator.hpp"
 
-namespace NOMAD {
-	
-	/// Bi-objective NOMAD::Evaluator subclass for quadratic model.
-	class Multi_Obj_Quad_Model_Evaluator : public NOMAD::Quad_Model_Evaluator, public NOMAD::Multi_Obj_Evaluator {     		
-	public:
-		
-		/// Constructor.
-		/**
-		 \param p     Parameters -- \b IN.
-		 \param model Model      -- \b IN.
-		 */
-		Multi_Obj_Quad_Model_Evaluator ( const NOMAD::Parameters & p     ,
-										const NOMAD::Quad_Model & model   ) : NOMAD::Quad_Model_Evaluator(p,model),NOMAD::Multi_Obj_Evaluator(p) {_is_model_evaluator=true;}
-		
-		/// Destructor.
-		virtual ~Multi_Obj_Quad_Model_Evaluator ( void ){;}
-		
-		
-		///  Evaluate the blackboxes quad model at a given trial point
-		/**
-		 \param x          point to evaluate     -- \b IN/OUT.
-		 \param h_max      h_max for barrier     -- \b IN.
-		 \param count_eval Count eval if true    -- \b IN.
-		 \return A boolean equal to \c false if the evaluation failed.
-		 */	
-		virtual bool eval_x ( NOMAD::Eval_Point   & x          ,
-							 const NOMAD::Double & h_max      ,
-							 bool                & count_eval   ) const {return Quad_Model_Evaluator::eval_x(x,h_max,count_eval);}
-		
-		
-	};
+namespace NOMAD
+{
+
+/// Bi-objective NOMAD::Evaluator subclass for quadratic model.
+class Multi_Obj_Quad_Model_Evaluator : public NOMAD::Quad_Model_Evaluator, public NOMAD::Multi_Obj_Evaluator
+{
+public:
+
+    /// Constructor.
+    /**
+     \param p     Parameters -- \b IN.
+     \param model Model      -- \b IN.
+     */
+    Multi_Obj_Quad_Model_Evaluator(const NOMAD::Parameters &p     ,
+                                   const NOMAD::Quad_Model &model) : NOMAD::Quad_Model_Evaluator(p,model),NOMAD::Multi_Obj_Evaluator(p)
+    {
+        _is_model_evaluator=true;
+    }
+
+    /// Destructor.
+    virtual ~Multi_Obj_Quad_Model_Evaluator(void)
+    {
+        ;
+    }
+
+
+    ///  Evaluate the blackboxes quad model at a given trial point
+    /**
+     \param x          point to evaluate     -- \b IN/OUT.
+     \param h_max      h_max for barrier     -- \b IN.
+     \param count_eval Count eval if true    -- \b IN.
+     \return A boolean equal to \c false if the evaluation failed.
+     */
+    virtual bool eval_x(NOMAD::Eval_Point    &x          ,
+                        const NOMAD::Double &h_max      ,
+                        bool                 &count_eval) const
+    {
+        return Quad_Model_Evaluator::eval_x(x,h_max,count_eval);
+    }
+
+
+};
 }
 
 #endif

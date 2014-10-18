@@ -45,9 +45,9 @@
 /*-----------------------------------------------------------*/
 /*                     comparison operator                   */
 /*-----------------------------------------------------------*/
-bool NOMAD::Cache_Point::operator < ( const Set_Element<NOMAD::Eval_Point> & cp ) const
+bool NOMAD::Cache_Point::operator < (const Set_Element<NOMAD::Eval_Point> &cp) const
 {
-  if ( get_element()->get_tag() == cp.get_element()->get_tag() )
-    return false;
-  return get_element()->Point::operator < ( *(cp.get_element()) );
+    if (get_element()->get_tag() == cp.get_element()->get_tag())
+        return false;
+    return get_element()->Point::operator < (*(cp.get_element()));
 }

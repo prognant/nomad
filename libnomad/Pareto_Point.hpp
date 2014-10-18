@@ -45,12 +45,14 @@
 
 #include "Multi_Obj_Evaluator.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Pareto point for two objective functions.
-  class Pareto_Point : public NOMAD::Set_Element<NOMAD::Eval_Point> {
-  
-  private:
+/// Pareto point for two objective functions.
+class Pareto_Point : public NOMAD::Set_Element<NOMAD::Eval_Point>
+{
+
+private:
 
     int _w; ///< Weight.
 
@@ -58,58 +60,64 @@ namespace NOMAD {
     /**
        \param p The right-hand side object -- \b IN.
     */
-    Pareto_Point & operator = ( const Pareto_Point & p );
+    Pareto_Point &operator = (const Pareto_Point &p);
 
-  public:
+public:
 
     /// Constructor.
     /**
        \param ep A pointer to an evaluation point -- \b IN.
     */
-    Pareto_Point ( const NOMAD::Eval_Point * ep )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( ep ) ,
-	_w                                    ( 0  )   {}
+    Pareto_Point(const NOMAD::Eval_Point *ep)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (ep) ,
+          _w(0)   {}
 
     /// Copy constructor.
     /**
        \param pp The copied object -- \b IN.
     */
-    explicit Pareto_Point ( const Pareto_Point & pp )
-      : NOMAD::Set_Element<NOMAD::Eval_Point> ( pp.get_element() ) ,
-	_w                                    ( 0                )   {}
+    explicit Pareto_Point(const Pareto_Point &pp)
+        : NOMAD::Set_Element<NOMAD::Eval_Point> (pp.get_element()) ,
+          _w(0)   {}
 
     /// Destructor.
-    virtual ~Pareto_Point ( void ) {}
+    virtual ~Pareto_Point(void) {}
 
     /// Update the weight.
     /**
        A more evolved formula than \c ++w is used in order
        to avoid stagnation with large number of evaluations.
     */
-    void update_w ( void ) { _w = 2 * _w + 2; }
+    void update_w(void)
+    {
+        _w = 2 * _w + 2;
+    }
 
     /// Access to the weight.
     /**
        \return The weight.
     */
-    int get_w ( void ) const { return _w; }
+    int get_w(void) const
+    {
+        return _w;
+    }
 
     /// Access to the value of the first objective function.
     /**
        \return The value of the first objective function.
     */
-    const NOMAD::Double & get_f1 ( void ) const
+    const NOMAD::Double &get_f1(void) const
     {
-      return get_element()->get_bb_outputs()[NOMAD::Multi_Obj_Evaluator::get_i1()];
+        return get_element()->get_bb_outputs()[NOMAD::Multi_Obj_Evaluator::get_i1()];
     }
 
     /// Access to the value of the second objective function.
     /**
        \return The value of the second objective function.
     */
-    const NOMAD::Double & get_f2 ( void ) const
+    const NOMAD::Double &get_f2(void) const
     {
-      return get_element()->get_bb_outputs()[NOMAD::Multi_Obj_Evaluator::get_i2()];
+        return get_element()->get_bb_outputs()[NOMAD::Multi_Obj_Evaluator::get_i2()];
     }
 
     /// Comparison operator.
@@ -120,7 +128,7 @@ namespace NOMAD {
        \param y The right-hand side of the comparison -- \b IN.
        \return A boolean equal to \c true if \c *this \c < \c y.
     */
-    virtual bool operator < ( const NOMAD::Set_Element<NOMAD::Eval_Point> & y ) const;
+    virtual bool operator < (const NOMAD::Set_Element<NOMAD::Eval_Point> &y) const;
 
     /// Dominance operator.
     /**
@@ -129,27 +137,27 @@ namespace NOMAD {
        \param y The right-hand side of the comparison -- \b IN.
        \return A boolean equal to \c true if \c *this dominates \c y.
     */
-    bool dominates ( const Pareto_Point & y ) const;
-    
+    bool dominates(const Pareto_Point &y) const;
+
     /// Display the Pareto point.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    void display ( const NOMAD::Display & out ) const;
-  };
+    void display(const NOMAD::Display &out) const;
+};
 
-  /// Display a NOMAD::Pareto_Point object.
-  /**
-     \param out The NOMAD::Display object -- \b IN.
-     \param pp  The NOMAD::Pareto_Point object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display      & out ,
-					      const NOMAD::Pareto_Point & pp    )
-  {
-    pp.display ( out );
+/// Display a NOMAD::Pareto_Point object.
+/**
+   \param out The NOMAD::Display object -- \b IN.
+   \param pp  The NOMAD::Pareto_Point object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display       &out ,
+                                          const NOMAD::Pareto_Point &pp)
+{
+    pp.display(out);
     return out;
-  }
+}
 }
 
 #endif

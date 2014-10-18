@@ -45,35 +45,36 @@
 #include "Mads.hpp"
 
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Display NOMAD information.
-  /**
-     \param out A NOMAD::Display object -- \b IN.
-  */
-  void display_info ( const NOMAD::Display & out );
+/// Display NOMAD information.
+/**
+   \param out A NOMAD::Display object -- \b IN.
+*/
+void display_info(const NOMAD::Display &out);
 
-  /// Display NOMAD version.
-  /**
-     \param out A NOMAD::Display object -- \b IN.
-  */
-  void display_version ( const NOMAD::Display & out );
+/// Display NOMAD version.
+/**
+   \param out A NOMAD::Display object -- \b IN.
+*/
+void display_version(const NOMAD::Display &out);
 
-  /// Display NOMAD usage.
-  /**
-     \param exeName Name of executable  -- \b IN.
-     \param out A NOMAD::Display object -- \b IN.
-  */
-  void display_usage ( char* exeName, const NOMAD::Display & out );
-  void display_usage ( const NOMAD::Display & out );	
+/// Display NOMAD usage.
+/**
+   \param exeName Name of executable  -- \b IN.
+   \param out A NOMAD::Display object -- \b IN.
+*/
+void display_usage(char *exeName, const NOMAD::Display &out);
+void display_usage(const NOMAD::Display &out);
 
 #ifdef MEMORY_DEBUG
-  /// Display NOMAD most important structures in memory.
-  /**
-     Is defined only in debug mode with flag MEMORY_DEBUG active.
-     \param out A NOMAD::Display object -- \b IN.
-  */
-  void display_cardinalities ( const NOMAD::Display & out );
+/// Display NOMAD most important structures in memory.
+/**
+   Is defined only in debug mode with flag MEMORY_DEBUG active.
+   \param out A NOMAD::Display object -- \b IN.
+*/
+void display_cardinalities(const NOMAD::Display &out);
 #endif
 }
 

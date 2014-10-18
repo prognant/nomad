@@ -45,43 +45,45 @@
 
 #include "Point.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Class for the MADS mesh.
-  /**
-     - The mesh in NOMAD is defined with the basic directions and the
-       mesh size parameter Delta^m_k.
-     - The mesh size parameter is defined with the mesh index (the integer ell_k).
-     - Use the static function \c NOMAD::Mesh::get_mesh_index() to access the value
-       of the mesh index ell_k.
-     - The poll size parameter Delta^p_k is not used to define the mesh but
-       to define the poll trial points.
-     - At each MADS iteration the mesh is updated with
-       Delta^m_k+1 = tau^w+ Delta^m_k and w+ >= 0 (dominating iteration)
-       or with
-       Delta^m_k+1 = tau^w- Delta^m_k and w- < 0 (iteration failure).
-       The mesh is not changed after improving iterations.
-     - Mesh and poll size parameters are stored as NOMAD::Point objects
-       (one value for each variable) in order to ensure automatic scaling.
-     - See the MADS papers for more details on the mesh.
-  */
-  class Mesh {
+/// Class for the MADS mesh.
+/**
+   - The mesh in NOMAD is defined with the basic directions and the
+     mesh size parameter Delta^m_k.
+   - The mesh size parameter is defined with the mesh index (the integer ell_k).
+   - Use the static function \c NOMAD::Mesh::get_mesh_index() to access the value
+     of the mesh index ell_k.
+   - The poll size parameter Delta^p_k is not used to define the mesh but
+     to define the poll trial points.
+   - At each MADS iteration the mesh is updated with
+     Delta^m_k+1 = tau^w+ Delta^m_k and w+ >= 0 (dominating iteration)
+     or with
+     Delta^m_k+1 = tau^w- Delta^m_k and w- < 0 (iteration failure).
+     The mesh is not changed after improving iterations.
+   - Mesh and poll size parameters are stored as NOMAD::Point objects
+     (one value for each variable) in order to ensure automatic scaling.
+   - See the MADS papers for more details on the mesh.
+*/
+class Mesh
+{
 
-  private:
+private:
 
     static double _mesh_update_basis;        ///< Mesh update basis       (tau)
     static int    _mesh_coarsening_exponent; ///< Mesh coarsening exponent (w+)
     static int    _mesh_refining_exponent;   ///< Mesh refining exponent   (w-)
     static int    _initial_mesh_index;       ///< Initial mesh index    (ell_0)
     static int    _mesh_index;               ///< Mesh index            (ell_k)
-    
+
     static int    _min_mesh_index;           ///< Minimal value reached by the mesh index
     static int    _max_mesh_index;           ///< Maximal value reached by the mesh index
 
     static int    _max_halton_index;         ///< Maximal Halton index for Ortho-MADS
-    
+
     NOMAD::Point  _initial_mesh_size;        ///< Delta^m_0 (abs values; one delta/var)
-    
+
     /// Equivalent of \c _min_poll_size for the mesh size parameter Delta^m_k.
     NOMAD::Point  _min_mesh_size;
 
@@ -94,40 +96,40 @@ namespace NOMAD {
     /**
        \param m The right-hand side object -- \b IN.
     */
-    const Mesh & operator = ( const Mesh & m );
+    const Mesh &operator = (const Mesh &m);
 
     /// Check the minimal poll size criterion.
-    bool check_min_poll_size_criterion ( int mesh_index = Mesh::_mesh_index ) const;
+    bool check_min_poll_size_criterion(int mesh_index = Mesh::_mesh_index) const;
 
     /// Check the minimal mesh size criterion.
-    bool check_min_mesh_size_criterion ( int mesh_index = Mesh::_mesh_index ) const;
+    bool check_min_mesh_size_criterion(int mesh_index = Mesh::_mesh_index) const;
 
     /*--------------------------------------------------------------*/
 
-  public:
-    
+public:
+
     /// Constructor.
     /**
        \param delta_m_0    Initial mesh size Delta^m_0                      -- \b IN.
        \param delta_p_min  Minimal poll size Delta^p_min (may be undefined) -- \b IN.
        \param delta_m_min  Minimal mesh size Delta^m_min (may be undefined) -- \b IN.
     */
-    Mesh ( const NOMAD::Point & delta_m_0   ,
-	   const NOMAD::Point & delta_p_min ,
-	   const NOMAD::Point & delta_m_min   );
-    
+    Mesh(const NOMAD::Point &delta_m_0   ,
+         const NOMAD::Point &delta_p_min ,
+         const NOMAD::Point &delta_m_min);
+
     /// Copy constructor.
     /**
        \param m The copied object -- \b IN.
     */
-    Mesh ( const Mesh & m )
-      : _initial_mesh_size ( m._initial_mesh_size ) ,
-	_min_mesh_size     ( m._min_mesh_size     ) ,
-	_min_poll_size     ( m._min_poll_size     )   {}
-    
+    Mesh(const Mesh &m)
+        : _initial_mesh_size(m._initial_mesh_size) ,
+          _min_mesh_size(m._min_mesh_size) ,
+          _min_poll_size(m._min_poll_size)   {}
+
     /// Destructor.
-    virtual ~Mesh ( void ) {}
-    
+    virtual ~Mesh(void) {}
+
     /// Static members initialization.
     /**
        \param mesh_update_basis         Mesh update basis       (tau) -- \b IN.
@@ -135,115 +137,148 @@ namespace NOMAD {
        \param mesh_refining_exponent    Mesh refining exponent   (w-) -- \b IN.
        \param initial_mesh_index        Initial mesh index ell_0      -- \b IN.
     */
-    static void init ( double mesh_update_basis        ,
-		       int    mesh_coarsening_exponent ,
-		       int    mesh_refining_exponent   ,
-		       int    initial_mesh_index         );
-    
+    static void init(double mesh_update_basis        ,
+                     int    mesh_coarsening_exponent ,
+                     int    mesh_refining_exponent   ,
+                     int    initial_mesh_index);
+
     /// Access to the initial mesh size.
     /**
        \return A NOMAD::Point for the initial mesh size.
     */
-    const NOMAD::Point & get_initial_mesh_size ( void ) const
+    const NOMAD::Point &get_initial_mesh_size(void) const
     {
-      return _initial_mesh_size;
+        return _initial_mesh_size;
     }
 
     /// Access to the minimal mesh size.
     /**
        \return A NOMAD::Point for the minimal mesh size.
     */
-    const NOMAD::Point & get_min_mesh_size ( void ) const { return _min_mesh_size; }
+    const NOMAD::Point &get_min_mesh_size(void) const
+    {
+        return _min_mesh_size;
+    }
 
     /// Access to the minimal poll size.
     /**
        \return A NOMAD::Point for the minimal poll size.
     */
-    const NOMAD::Point & get_min_poll_size ( void ) const { return _min_poll_size; }
-    
+    const NOMAD::Point &get_min_poll_size(void) const
+    {
+        return _min_poll_size;
+    }
+
     /// Access to the mesh index.
     /**
        \return An integer with the mesh index.
     */
-    static int get_mesh_index ( void  ) { return Mesh::_mesh_index; }
+    static int get_mesh_index(void)
+    {
+        return Mesh::_mesh_index;
+    }
 
     /// Manually set the mesh index.
     /**
        \param mesh_index The mesh index ell_k -- \b IN.
     */
-    static void set_mesh_index ( int mesh_index );
-    
+    static void set_mesh_index(int mesh_index);
+
     /// Access to the maximal mesh index.
     /**
        This corresponds to the maximal value of ell_k reached so far.
        \return An integer with the maximal mesh index.
     */
-    static int get_max_mesh_index ( void ) { return Mesh::_max_mesh_index; }
+    static int get_max_mesh_index(void)
+    {
+        return Mesh::_max_mesh_index;
+    }
 
 
     /// Manually set the maximum mesh index.
     /**
        This corresponds to the maximum value of ell_k reached so far.
        \param h The maximum mesh index -- \b IN.
-	   */
-	  static void set_max_mesh_index ( int h ) { _max_mesh_index = h; }
-	  
+       */
+    static void set_max_mesh_index(int h)
+    {
+        _max_mesh_index = h;
+    }
+
     /// Access to the minimal mesh index.
     /**
        This corresponds to the minimal value of ell_k reached so far.
        \return An integer with the minimal mesh index.
     */
-    static int get_min_mesh_index ( void ) { return Mesh::_min_mesh_index; }
-    
-	  /// Manually set the minimum mesh index.
-	  /**
-       This corresponds to the minimum value of ell_k reached so far.
-       \param h The minimum mesh index -- \b IN.
+    static int get_min_mesh_index(void)
+    {
+        return Mesh::_min_mesh_index;
+    }
+
+    /// Manually set the minimum mesh index.
+    /**
+     This corresponds to the minimum value of ell_k reached so far.
+     \param h The minimum mesh index -- \b IN.
     */
-    static void set_min_mesh_index ( int h ) { _min_mesh_index = h; }
+    static void set_min_mesh_index(int h)
+    {
+        _min_mesh_index = h;
+    }
 
     /// Test if mesh index<max_mesh_index so far.
     /**
        \return True if mesh index lower than maximal mesh index False otherwise.
-    */	
+    */
     // Use 1- Apply dynamic reduction of poll dir only if true
-    // use 2- Ortho n+1. Apply selection n directions out of 2n based on target dir only if true. Otherwise the selection alternates +/-.  
-    static bool mesh_index_is_not_max(void){return Mesh::_mesh_index<Mesh::_max_mesh_index; /*true*/ }  
-	      
+    // use 2- Ortho n+1. Apply selection n directions out of 2n based on target dir only if true. Otherwise the selection alternates +/-.
+    static bool mesh_index_is_not_max(void)
+    {
+        return Mesh::_mesh_index<Mesh::_max_mesh_index; /*true*/
+    }
+
     /// Access to the mesh update basis tau.
     /**
        \return A double with the mesh update basis tau.
     */
-    static double get_mesh_update_basis ( void ) { return Mesh::_mesh_update_basis; }
-    
+    static double get_mesh_update_basis(void)
+    {
+        return Mesh::_mesh_update_basis;
+    }
+
     /// Access to the maximal Halton index.
     /**
        This corresponds to the maximal value of the Halton index reached so far.
        \return An integer with the maximal Halton index.
     */
-    static int get_max_halton_index ( void  ) { return _max_halton_index; }
+    static int get_max_halton_index(void)
+    {
+        return _max_halton_index;
+    }
 
     /// Manually set the maximal Halton index.
     /**
        This corresponds to the maximal value of the Halton index reached so far.
        \param h The maximal Halton index -- \b IN.
     */
-    static void set_max_halton_index ( int h ) { _max_halton_index = h; }
-    
+    static void set_max_halton_index(int h)
+    {
+        _max_halton_index = h;
+    }
+
     /// Update the mesh (#1).
     /**
        \param success    Type of success of the iteration           -- \b IN.
        \param mesh_index The mesh index before and after the update -- \b IN/OUT.
     */
-    static void update ( NOMAD::success_type success , int & mesh_index );
+    static void update(NOMAD::success_type success , int &mesh_index);
 
     /// Update the mesh (#2).
     /**
        \param success Type of success of the iteration -- \b IN.
     */
-    static void update ( NOMAD::success_type success )
+    static void update(NOMAD::success_type success)
     {
-      Mesh::update ( success , Mesh::_mesh_index );
+        Mesh::update(success , Mesh::_mesh_index);
     }
 
     /// Access to the number of variables.
@@ -252,7 +287,10 @@ namespace NOMAD {
        of the current NOMAD::Mesh object.
        \return An integer with the number of variables.
     */
-    int get_n ( void ) const { return _initial_mesh_size.size(); }
+    int get_n(void) const
+    {
+        return _initial_mesh_size.size();
+    }
 
     /// Access to the mesh size parameter Delta^m_k.
     /**
@@ -264,11 +302,11 @@ namespace NOMAD {
        -- \b optional (default = the current mesh index ell_k.)
        \return A boolean equal to \c true if all values are
                strictly inferior than the associated minimal
-	       mesh size Delta^m_min
-	       (stopping criterion MIN_MESH_SIZE).
+           mesh size Delta^m_min
+           (stopping criterion MIN_MESH_SIZE).
     */
-    virtual bool get_delta_m ( NOMAD::Point & delta_m                        ,
-		       int            mesh_index = Mesh::_mesh_index   ) const;
+    virtual bool get_delta_m(NOMAD::Point &delta_m                        ,
+                             int            mesh_index = Mesh::_mesh_index) const;
 
     /// Access to the mesh size parameter Delta^m_k.
     /**
@@ -283,11 +321,11 @@ namespace NOMAD {
        \param initial_mesh_index Initial mesh index ell_0                   -- \b IN.
        \param mesh_index         Mesh index ell_k                           -- \b IN.
     */
-    static void get_delta_m ( NOMAD::Point       & delta_m            ,
-			      const NOMAD::Point & initial_mesh_size  ,
-			      double               mesh_update_basis  ,
-			      int                  initial_mesh_index ,
-			      int                  mesh_index           );
+    static void get_delta_m(NOMAD::Point        &delta_m            ,
+                            const NOMAD::Point &initial_mesh_size  ,
+                            double               mesh_update_basis  ,
+                            int                  initial_mesh_index ,
+                            int                  mesh_index);
 
     /// Access to the poll size parameter Delta^p_k.
     /**
@@ -300,12 +338,12 @@ namespace NOMAD {
        -- \b optional (default = the current mesh index ell_k.)
        \return A boolean equal to \c true if all values are
                strictly inferior than the associated minimal
-	       poll size Delta^p_min
-	       (stopping criterion MIN_POLL_SIZE).
+           poll size Delta^p_min
+           (stopping criterion MIN_POLL_SIZE).
     */
-    virtual bool get_delta_p ( NOMAD::Point & delta_p                        ,
-		       int            mesh_index = Mesh::_mesh_index   ) const;
-    
+    virtual bool get_delta_p(NOMAD::Point &delta_p                        ,
+                             int            mesh_index = Mesh::_mesh_index) const;
+
     /// Access to the poll size parameter Delta^p_k.
     /**
        - The poll size parameter is computed with
@@ -320,11 +358,11 @@ namespace NOMAD {
        \param initial_mesh_index Initial mesh index ell_0                   -- \b IN.
        \param mesh_index         Mesh index ell_k                           -- \b IN.
     */
-    static void get_delta_p ( NOMAD::Point       & delta_p            ,
-			      const NOMAD::Point & initial_mesh_size  ,
-			      double               mesh_update_basis  ,
-			      int                  initial_mesh_index ,
-			      int                  mesh_index           );
+    static void get_delta_p(NOMAD::Point        &delta_p            ,
+                            const NOMAD::Point &initial_mesh_size  ,
+                            double               mesh_update_basis  ,
+                            int                  initial_mesh_index ,
+                            int                  mesh_index);
 
     /// Check the stopping conditions on the minimal poll and mesh sizes.
     /**
@@ -333,29 +371,29 @@ namespace NOMAD {
        \param stop           Stop flag                  -- \b IN/OUT.
        \param stop_reason    Stop reason                -- \b OUT.
     */
-    void check_min_mesh_sizes ( int                max_mesh_index ,
-				int                mesh_index     ,
-				bool             & stop           ,
-				NOMAD::stop_type & stop_reason      ) const;
+    void check_min_mesh_sizes(int                max_mesh_index ,
+                              int                mesh_index     ,
+                              bool              &stop           ,
+                              NOMAD::stop_type &stop_reason) const;
     /// Display.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    void display ( const NOMAD::Display & out ) const;
-  };
+    void display(const NOMAD::Display &out) const;
+};
 
-  /// Display a NOMAD::Mesh object.
-  /**
-     \param out The NOMAD::Display object -- \b IN.
-     \param m   The NOMAD::Mesh object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display & out ,
-					      const NOMAD::Mesh    & m     )
-  {
-    m.display ( out );
+/// Display a NOMAD::Mesh object.
+/**
+   \param out The NOMAD::Display object -- \b IN.
+   \param m   The NOMAD::Mesh object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display &out ,
+                                          const NOMAD::Mesh     &m)
+{
+    m.display(out);
     return out;
-  }
+}
 }
 
 #endif

@@ -45,22 +45,24 @@
 
 #include "Pareto_Point.hpp"
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Pareto front for two objective functions.
-  /**
-     Browse the front with the following instructions:
-     \code
-     const Eval_Point * cur = pareto_front.begin();
-     while ( cur ) {
-       ...
-       cur = pareto_front.next();
-     }
-     \endcode
-  */
-  class Pareto_Front : private NOMAD::Uncopyable {
+/// Pareto front for two objective functions.
+/**
+   Browse the front with the following instructions:
+   \code
+   const Eval_Point * cur = pareto_front.begin();
+   while ( cur ) {
+     ...
+     cur = pareto_front.next();
+   }
+   \endcode
+*/
+class Pareto_Front : private NOMAD::Uncopyable
+{
 
-  private:
+private:
 
     /// The set of Pareto points.
     std::set<NOMAD::Pareto_Point> _pareto_pts;
@@ -68,13 +70,13 @@ namespace NOMAD {
     /// Iterator to browse the front with begin() and next().
     mutable std::set<NOMAD::Pareto_Point>::const_iterator _it;
 
-  public:
+public:
 
     /// Constructor.
-    Pareto_Front ( void ) {}
+    Pareto_Front(void) {}
 
     /// Destructor.
-    virtual ~Pareto_Front ( void ) {}
+    virtual ~Pareto_Front(void) {}
 
     /// Access to the first Pareto point.
     /**
@@ -82,7 +84,7 @@ namespace NOMAD {
        \return A pointer to the first Pareto point and \c NULL if the front
                is empty.
     */
-    const NOMAD::Eval_Point * begin ( void ) const;
+    const NOMAD::Eval_Point *begin(void) const;
 
     /// Access to the next Pareto point.
     /**
@@ -90,19 +92,25 @@ namespace NOMAD {
        \return A pointer to the next Pareto point and \c NULL if
                the current point is the last point in the front.
     */
-    const NOMAD::Eval_Point * next  ( void ) const;
+    const NOMAD::Eval_Point *next(void) const;
 
     /// Access to the number of Pareto points.
     /**
        \return The number of Pareto points.
     */
-    int size ( void ) const { return static_cast<int>(_pareto_pts.size()); }
+    int size(void) const
+    {
+        return static_cast<int>(_pareto_pts.size());
+    }
 
     /// Check if the front is empty.
     /**
        \return A boolean equal to \c true if the front is empty.
     */
-    bool empty ( void ) const { return _pareto_pts.empty(); }
+    bool empty(void) const
+    {
+        return _pareto_pts.empty();
+    }
 
     /// Computation and access to the reference point.
     /**
@@ -112,15 +120,15 @@ namespace NOMAD {
        \return A pointer to the reference point and
                \c NULL if there is no reference point.
     */
-    NOMAD::Point * get_ref ( const NOMAD::Pareto_Point *& xj      ,
-			     NOMAD::Double              & delta_j   ) const;
+    NOMAD::Point *get_ref(const NOMAD::Pareto_Point  *&xj      ,
+                          NOMAD::Double               &delta_j) const;
 
     /// Access to the Pareto point minimizing f2(x).
     /**
        \return A pointer to the Pareto point minimizing f2 and
                \c NULL if such a point does not exist.
     */
-    const NOMAD::Eval_Point * get_best_f2 ( void ) const;
+    const NOMAD::Eval_Point *get_best_f2(void) const;
 
     /// Compute the stats \c delta and \c surf.
     /**
@@ -130,37 +138,38 @@ namespace NOMAD {
        \param surf      The \c surf stat  -- \b OUT.
        \param f_bounds  NOMAD::Point with 4 values (f1_min, f1_max, f2_min, and f2_max)
                         defining bounds for f1 and f2 for the computation
-			of the \c surf stat -- \b IN.
+            of the \c surf stat -- \b IN.
     */
-    void get_delta_surf ( NOMAD::Double      & delta_j ,
-			  NOMAD::Double      & surf    ,
-			  const NOMAD::Point & f_bounds  ) const;       
-    
+    void get_delta_surf(NOMAD::Double       &delta_j ,
+                        NOMAD::Double       &surf    ,
+                        const NOMAD::Point &f_bounds) const;
+
     /// Insertion of a point in the Pareto front.
     /**
        \param x The point to be inserted -- \b IN.
        \return A boolean equal to \c true if the point is a new Pareto point.
     */
-    bool insert ( const NOMAD::Eval_Point & x );
+    bool insert(const NOMAD::Eval_Point &x);
 
     /// Display the Pareto points.
     /**
        \param out The NOMAD::Display object -- \b IN.
     */
-    void display ( const NOMAD::Display & out ) const;
-  };
+    void display(const NOMAD::Display &out) const;
+};
 
-  /// Display a NOMAD::Pareto_Front object.
-  /**
-     \param out The NOMAD::Display object -- \b IN.
-     \param pf  The NOMAD::Pareto_Front object to be displayed -- \b IN.
-     \return    The NOMAD::Display object.
-  */
-  inline const NOMAD::Display & operator << ( const NOMAD::Display      & out ,
-					      const NOMAD::Pareto_Front & pf    ) {
-    pf.display ( out );
+/// Display a NOMAD::Pareto_Front object.
+/**
+   \param out The NOMAD::Display object -- \b IN.
+   \param pf  The NOMAD::Pareto_Front object to be displayed -- \b IN.
+   \return    The NOMAD::Display object.
+*/
+inline const NOMAD::Display &operator << (const NOMAD::Display       &out ,
+                                          const NOMAD::Pareto_Front &pf)
+{
+    pf.display(out);
     return out;
-  }
+}
 }
 
 #endif

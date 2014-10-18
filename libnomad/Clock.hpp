@@ -45,77 +45,82 @@
 
 #include <ctime>
 
-namespace NOMAD {
+namespace NOMAD
+{
 
-  /// Clock class.
-  /**
-     Time measurement.\n\n
-     \b Example:
-     \code
-     Clock c;
+/// Clock class.
+/**
+   Time measurement.\n\n
+   \b Example:
+   \code
+   Clock c;
 
-     // some instructions here
+   // some instructions here
 
-     std::cout << "elapsed real time = " << c.get_real_time() << std::endl;
-     std::cout << "elapsed CPU time  = " << c.get_CPU_time()  << std::endl;
-     \endcode
-  */
-  class Clock {
+   std::cout << "elapsed real time = " << c.get_real_time() << std::endl;
+   std::cout << "elapsed CPU time  = " << c.get_CPU_time()  << std::endl;
+   \endcode
+*/
+class Clock
+{
 
-  private:
+private:
 
     time_t              _real_t0;          ///< Wall clock time measurement.
     clock_t             _CPU_t0;           ///< CPU time measurement.
     static const double _D_CLOCKS_PER_SEC; ///< System constant for CPU time measurement.
 
-  public:
+public:
 
     /// Constructor.
-    Clock ( void ) : _CPU_t0 ( clock() ) { time (&_real_t0); }
+    Clock(void) : _CPU_t0(clock())
+    {
+        time(&_real_t0);
+    }
 
     /// Copy constructor.
     /**
        \param c The copied object -- \b IN.
     */
-    Clock ( const Clock & c ) : _real_t0 ( c._real_t0 ) , _CPU_t0 ( c._CPU_t0 ) {}
+    Clock(const Clock &c) : _real_t0(c._real_t0) , _CPU_t0(c._CPU_t0) {}
 
     /// Affectation operator.
     /**
        \param  c The right-hand side object -- \b IN.
        \return \c *this as the result of the affectation.
     */
-    Clock & operator = ( const Clock & c )
+    Clock &operator = (const Clock &c)
     {
-      _real_t0 = c._real_t0;
-      _CPU_t0  = c._CPU_t0;
-      return *this;
+        _real_t0 = c._real_t0;
+        _CPU_t0  = c._CPU_t0;
+        return *this;
     }
 
     /// Destructor.
-    virtual ~Clock ( void ) {}
+    virtual ~Clock(void) {}
 
     /// Reset the clock.
-    void reset ( void )
+    void reset(void)
     {
-      time ( &_real_t0 );
-      _CPU_t0 = clock();
+        time(&_real_t0);
+        _CPU_t0 = clock();
     }
 
     /// Get wall clock time.
     /**
        \return The wall clock time.
     */
-    int get_real_time ( void ) const;
+    int get_real_time(void) const;
 
     /// Get the CPU time.
     /**
        \return The CPU time.
     */
-    double get_CPU_time ( void ) const
+    double get_CPU_time(void) const
     {
-      return ( clock() - _CPU_t0 ) / _D_CLOCKS_PER_SEC;
+        return (clock() - _CPU_t0) / _D_CLOCKS_PER_SEC;
     }
-  };
+};
 }
 
 #endif

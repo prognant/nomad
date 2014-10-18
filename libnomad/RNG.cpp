@@ -44,35 +44,36 @@
 //** Default values for the random number seed  */
 uint32_t NOMAD::RNG::x = 123456789;
 uint32_t NOMAD::RNG::y = 362436069;
-uint32_t NOMAD::RNG::z = 521288629; 
+uint32_t NOMAD::RNG::z = 521288629;
 
 
 bool NOMAD::RNG::set_seed(int s)
 {
     x=static_cast<uint32_t>(s);
-	if(x<=UINT32_MAX && s>=0)
-		return true;
-	else
+    if (x<=UINT32_MAX && s>=0)
+        return true;
+    else
     {
-        throw NOMAD::Exception ( "RNG.cpp" , __LINE__ ,
-                                "NOMAD::RNG::set_seed(): invalid seed. Seed should be in [0,UINT32_MAX]" );
-		return false;
+        throw NOMAD::Exception("RNG.cpp" , __LINE__ ,
+                               "NOMAD::RNG::set_seed(): invalid seed. Seed should be in [0,UINT32_MAX]");
+        return false;
     }
 }
 
-uint32_t NOMAD::RNG::rand ( void )
-{ //period 2^96-1
+uint32_t NOMAD::RNG::rand(void)
+{
+    //period 2^96-1
 
- 	uint32_t t;
- 	x ^= x << 16;
- 	x ^= x >> 5;
- 	x ^= x << 1;
- 	
- 	t = x;
-	x = y;
-	y = z;
-	z = t ^ x ^ y;      
-	
-	return z;
+    uint32_t t;
+    x ^= x << 16;
+    x ^= x >> 5;
+    x ^= x << 1;
+
+    t = x;
+    x = y;
+    y = z;
+    z = t ^ x ^ y;
+
+    return z;
 }
 
