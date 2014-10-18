@@ -12,6 +12,15 @@
 *.la
 *.a
 
-# CDT project
+# CDT project files
 .project
 .cproject
+
+# Cmake files 
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+
+# Binary
+cli/NOMAD
